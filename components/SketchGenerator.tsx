@@ -159,6 +159,7 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
   const historyIndex = useRef(-1);
 
   const [viewMode, setViewMode] = useState<'canvas' | 'split'>('canvas');
+  const [mobileView, setMobileView] = useState<'canvas' | 'result'>('canvas');
   const [brushColor, setBrushColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState(5);
   const [mode, setMode] = useState<'draw' | 'erase'>('draw');
@@ -185,6 +186,9 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
       setCurrentProjectId(loadedProject.id);
       if (images.length > 0) {
         setViewMode('split');
+        if (window.innerWidth < 768) {
+            setMobileView('result');
+        }
       }
       onProjectLoaded();
     }
@@ -220,29 +224,50 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
     saveToHistory();
   }, [aspectRatio]);
 
-  const startDrawing = ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement>) => {
-    const { offsetX, offsetY } = nativeEvent;
+  const getCoords = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>): { x: number, y: number } | null => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    
+    const eventCoord = 'touches' in e ? e.touches[0] : e;
+    if (!eventCoord) return null;
+
+    return {
+        x: eventCoord.clientX - rect.left,
+        y: eventCoord.clientY - rect.top
+    };
+  };
+
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    const coords = getCoords(e);
+    if (!coords) return;
+
     const ctx = getCanvasContext();
     if (!ctx) return;
     ctx.beginPath();
-    ctx.moveTo(offsetX, offsetY);
+    ctx.moveTo(coords.x, coords.y);
     isDrawing.current = true;
   };
 
-  const draw = ({ nativeEvent }: React.MouseEvent<HTMLCanvasElement>) => {
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing.current) return;
-    const { offsetX, offsetY } = nativeEvent;
+    e.preventDefault();
+    const coords = getCoords(e);
+    if (!coords) return;
+
     const ctx = getCanvasContext();
     if (!ctx) return;
     ctx.strokeStyle = brushColor;
     ctx.lineWidth = brushSize;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.lineTo(offsetX, offsetY);
+    ctx.lineTo(coords.x, coords.y);
     ctx.stroke();
   };
 
   const stopDrawing = () => {
+    if (!isDrawing.current) return;
     isDrawing.current = false;
     saveToHistory();
   };
@@ -288,6 +313,9 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
     setError(null);
     setGeneratedImages([]);
     setActiveImageIndex(0);
+    if (window.innerWidth < 768) {
+        setMobileView('result');
+    }
 
     try {
       const canvas = canvasRef.current;
@@ -385,9 +413,9 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
             <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
         </div>
       </header>
-      <div className="flex-grow flex flex-col md:flex-row min-h-0">
+      <div className="flex-grow flex flex-col md:flex-row min-h-0 relative">
         {/* Canvas Panel */}
-        <div className={`p-4 flex flex-col items-center justify-start h-full overflow-y-auto custom-scrollbar transition-all duration-500 ease-in-out ${viewMode === 'canvas' ? 'w-full' : 'w-full md:w-1/2'}`}>
+        <div className={`p-4 flex flex-col items-center justify-start h-full overflow-y-auto custom-scrollbar transition-all duration-500 ease-in-out ${viewMode === 'canvas' ? 'w-full' : 'md:w-1/2'} ${viewMode === 'split' && mobileView === 'result' ? 'hidden md:flex' : 'flex'}`}>
             <div className="w-full max-w-[440px] mb-4 flex flex-col gap-2">
                 <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 px-2 py-1 bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-700">
                     <div className="flex items-center gap-1">
@@ -418,8 +446,11 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
                 ref={canvasRef}
                 onMouseDown={startDrawing}
                 onMouseUp={stopDrawing}
-                onMouseOut={stopDrawing}
+                onMouseLeave={stopDrawing}
                 onMouseMove={draw}
+                onTouchStart={startDrawing}
+                onTouchEnd={stopDrawing}
+                onTouchMove={draw}
                 width={canvasDimensions.width}
                 height={canvasDimensions.height}
                 className={`bg-white rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 cursor-crosshair w-full max-w-[440px] ${aspectRatioClass}`}
@@ -446,7 +477,7 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
         
         {/* Output Panel */}
         {viewMode === 'split' && (
-            <div className="w-full md:w-1/2 h-full bg-zinc-100 dark:bg-zinc-900/50 border-t md:border-t-0 md:border-l border-zinc-200 dark:border-zinc-800 rounded-lg md:rounded-l-lg md:rounded-r-none">
+            <div className={`w-full md:w-1/2 h-full bg-zinc-100 dark:bg-zinc-900/50 border-t md:border-t-0 md:border-l border-zinc-200 dark:border-zinc-800 rounded-lg md:rounded-l-lg md:rounded-r-none ${mobileView === 'canvas' ? 'hidden md:flex' : 'flex'}`}>
                 <div className="flex-grow p-6 flex flex-col items-center justify-center h-full overflow-y-auto custom-scrollbar">
                     {isLoading && generatedImages.length === 0 && (
                         <div className={`relative w-full max-w-[440px] ${aspectRatioClass} bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden flex items-center justify-center`}>
@@ -519,6 +550,12 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
                         </div>
                     )}
                 </div>
+            </div>
+        )}
+        {viewMode === 'split' && (
+            <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-20 bg-zinc-800/80 backdrop-blur-sm text-white p-1 rounded-full flex items-center gap-1 shadow-lg">
+                <button onClick={() => setMobileView('canvas')} className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${mobileView === 'canvas' ? 'bg-zinc-700' : ''}`}>Canvas</button>
+                <button onClick={() => setMobileView('result')} className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${mobileView === 'result' ? 'bg-zinc-700' : ''}`}>Result</button>
             </div>
         )}
       </div>
