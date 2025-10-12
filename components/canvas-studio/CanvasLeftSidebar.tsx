@@ -27,9 +27,10 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ title, children, is
 interface CanvasLeftSidebarProps {
     isCollapsed: boolean;
     onToggle: () => void;
+    onAddItem: (type: BlockType) => void;
 }
 
-const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onToggle }) => {
+const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onToggle, onAddItem }) => {
     const [openSection, setOpenSection] = useState('Typography');
 
     const sections = [
@@ -72,7 +73,7 @@ const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onTo
                     >
                         <div className="grid grid-cols-3 gap-2">
                             {section.items.map(item => (
-                                <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
+                                <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} onAddItem={onAddItem} />
                             ))}
                         </div>
                     </AccordionSection>

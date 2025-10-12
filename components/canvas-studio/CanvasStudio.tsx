@@ -100,6 +100,12 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         return Math.max(lowestPoint + 100, 800); // Add padding and ensure min height
     }, [activeBlocks]);
 
+    const handleAddBlockOnClick = (type: BlockType) => {
+        const newBlock = createNewBlock(type);
+        setPagesHistory(prev => prev.map(p => p.id === activePageId ? { ...p, blocks: [...p.blocks, newBlock] } : p));
+        setSelectedBlockId(newBlock.id);
+    };
+
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over, delta } = event;
         if (active.id.toString().startsWith('toolbox-item-') && over?.id === 'canvas-droppable-area') {
@@ -261,7 +267,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                     </div>
                 </header>
                 <div className="flex-grow flex min-h-0">
-                    <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} />
+                    <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} onAddItem={handleAddBlockOnClick} />
                     <div className="flex-1 flex flex-col min-w-0">
                         <Canvas 
                             blocks={activeBlocks} 
