@@ -12,11 +12,11 @@ interface UserInfoDisplayProps {
 
 const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({ name }) => {
   return (
-    <div className="flex items-center gap-3 bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-full p-2">
+    <div className="flex items-center lg:gap-3 bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-full p-1 lg:p-2">
       <div className="w-8 h-8 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
         <UserIcon />
       </div>
-      <div>
+      <div className="hidden lg:block pr-2">
         <p className="text-sm font-semibold text-zinc-800 dark:text-white truncate max-w-[120px]">{name}</p>
       </div>
     </div>
