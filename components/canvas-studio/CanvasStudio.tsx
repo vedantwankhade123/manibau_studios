@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
@@ -61,11 +61,6 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const { state: pages, setState: setPagesHistory, undo, redo, canUndo, canRedo } = useHistory<Page[]>([
         { id: `page-${Date.now()}`, name: 'Home', blocks: [] }
     ]);
-    const [displayPages, setDisplayPages] = useState(pages);
-
-    useEffect(() => {
-        setDisplayPages(pages);
-    }, [pages]);
 
     const [activePageId, setActivePageId] = useState<string>(pages[0].id);
     const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -74,8 +69,10 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
     const [canvasBackgroundColor, setCanvasBackgroundColor] = useState('#FFFFFF');
     const [resizingState, setResizingState] = useState<{ blockId: string; handle: string; initialX: number; initialY: number; initialWidth: number; initialHeight: number; initialBlockX: number; initialBlockY: number; } | null>(null);
+    
+    const debounceTimer = useRef<number | null>(null);
 
-    const activePage = displayPages.find(p => p.id === activePageId);
+    const activePage = pages.find(p => p.id === activePageId);
     const activeBlocks = activePage?.blocks || [];
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -94,9 +91,24 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         }
     };
 
-    const updateBlockContent = (id: string, content: any) => {
-        setPagesHistory(prev => prev.map(p => p.id === activePageId ? { ...p, blocks: p.blocks.map(b => b.id === id ? { ...b, content: { ...b.content, ...content } } : b) } : p));
-    };
+    const updateBlockContent = useCallback((id: string, content: any) => {
+        // Update the current state in-place for immediate UI feedback without creating a new history entry.
+        setPagesHistory(currentPages => currentPages.map(p => 
+            p.id === activePageId 
+                ? { ...p, blocks: p.blocks.map(b => b.id === id ? { ...b, content: { ...b.content, ...content } } : b) } 
+                : p
+        ), true); // `true` for overwrite
+
+        // Clear previous debounce timer to batch rapid changes.
+        if (debounceTimer.current) {
+            clearTimeout(debounceTimer.current);
+        }
+
+        // Set a new timer to commit this state as a new, single history entry after a pause in editing.
+        debounceTimer.current = window.setTimeout(() => {
+            setPagesHistory(currentPages => [...currentPages]); // Create a new history entry by creating a new array reference.
+        }, 800);
+    }, [activePageId, setPagesHistory]);
 
     const deleteBlock = (id: string) => {
         setPagesHistory(prev => prev.map(p => p.id === activePageId ? { ...p, blocks: p.blocks.filter(b => b.id !== id) } : p));
@@ -130,7 +142,8 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         const deltaX = e.clientX - initialX;
         const deltaY = e.clientY - initialY;
 
-        setDisplayPages(prevPages => prevPages.map(p => p.id === activePageId ? { ...p, blocks: p.blocks.map(b => {
+        // Update the current state in-place for real-time resize feedback.
+        setPagesHistory(prevPages => prevPages.map(p => p.id === activePageId ? { ...p, blocks: p.blocks.map(b => {
             if (b.id === blockId) {
                 const newBlock = { ...b };
                 if (handle.includes('right')) newBlock.width = Math.max(20, initialWidth + deltaX);
@@ -146,15 +159,16 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                 return newBlock;
             }
             return b;
-        })} : p));
-    }, [resizingState, activePageId]);
+        })} : p), true); // `true` for overwrite
+    }, [resizingState, activePageId, setPagesHistory]);
 
     const handleMouseUp = useCallback(() => {
         if (resizingState) {
-            setPagesHistory(displayPages);
+            // Commit the final resized state as a new history entry.
+            setPagesHistory(currentPages => [...currentPages]);
             setResizingState(null);
         }
-    }, [resizingState, displayPages, setPagesHistory]);
+    }, [resizingState, setPagesHistory]);
 
     useEffect(() => {
         if (resizingState) {
