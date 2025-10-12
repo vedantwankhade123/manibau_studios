@@ -202,7 +202,14 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                                 {!isRightSidebarOpen && <button onClick={() => setIsRightSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelRightOpen size={18} /></button>}
                             </div>
                         </div>
-                        <Canvas blocks={activeBlocks} selectedBlockId={selectedBlockId} onSelectBlock={setSelectedBlockId} device={device} backgroundColor={canvasBackgroundColor} />
+                        <Canvas 
+                            blocks={activeBlocks} 
+                            selectedBlockId={selectedBlockId} 
+                            onSelectBlock={setSelectedBlockId} 
+                            device={device} 
+                            backgroundColor={canvasBackgroundColor}
+                            onResizeStart={handleResizeStart}
+                        />
                     </div>
                     <CanvasRightSidebar selectedBlock={selectedBlock} updateBlock={updateBlockContent} deleteBlock={deleteBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} />
                 </div>

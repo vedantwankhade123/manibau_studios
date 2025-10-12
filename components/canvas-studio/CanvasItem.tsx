@@ -49,6 +49,7 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
         width: block.width,
         height: block.height,
         transform: CSS.Translate.toString(transform),
+        zIndex: isSelected ? 10 : 1,
     };
 
     const renderBlock = () => {
@@ -75,7 +76,11 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
             onClick={onClick}
             className={`group border-2 ${isSelected ? 'border-blue-500' : 'border-transparent hover:border-blue-500/50'}`}
         >
-            <div {...attributes} {...listeners} className={`absolute -top-3 -left-3 p-1.5 cursor-grab bg-blue-500 text-white rounded-full z-10 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+            <div 
+                {...attributes} 
+                {...listeners} 
+                className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full p-1.5 cursor-grab bg-blue-500 text-white rounded-full z-10 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+            >
                 <Move size={14} />
             </div>
             <div className="w-full h-full">{renderBlock()}</div>
