@@ -306,20 +306,6 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         setContextMenu({ x: e.clientX, y: e.clientY, blockId });
     };
 
-    const handleExportCode = async () => {
-        if (!activePage) return;
-        const htmlContent = generateHtmlForPage(activePage, canvasBackgroundColor, canvasHeight, device);
-        const blob = new Blob([htmlContent], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${activePage.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    };
-
     const handleExportImage = async () => {
         if (!canvasRef.current || typeof html2canvas === 'undefined') {
             alert("Canvas is not available or screenshot library not loaded.");
@@ -464,7 +450,6 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                     <ExportModal
                         isOpen={isExportModalOpen}
                         onClose={() => setIsExportModalOpen(false)}
-                        onExportCode={handleExportCode}
                         onExportImage={handleExportImage}
                     />,
                     document.body

@@ -5,7 +5,7 @@ import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
 import UserProfilePopover from './UserProfilePopover';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import { KeyRound, Sparkles } from 'lucide-react';
+import { KeyRound, Sparkles, LayoutTemplate } from 'lucide-react';
 
 // --- Icon Components ---
 const SearchIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>);
@@ -43,6 +43,7 @@ interface LibraryProps {
 
 const toolInfo: { [key in Tool]?: { name: string; icon: React.ReactNode; gradient: string } } = {
   [Tool.CHAT_WITH_AI]: { name: 'AI Studio', icon: <Sparkles size={48} />, gradient: 'from-purple-500 to-pink-500' },
+  [Tool.CANVAS_STUDIO]: { name: 'Canvas Studio', icon: <LayoutTemplate size={48} />, gradient: 'from-indigo-500 to-blue-500' },
   [Tool.GENERATE]: { name: 'Image Studio', icon: <GenerateIcon />, gradient: 'from-blue-500 to-purple-600' },
   [Tool.VIDEO_STUDIO]: { name: 'Video Studio', icon: <VideoIcon />, gradient: 'from-red-500 to-orange-500' },
   [Tool.SKETCH_STUDIO]: { name: 'Sketch Studio', icon: <SketchIcon />, gradient: 'from-yellow-400 to-amber-500' },
@@ -59,6 +60,7 @@ const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveToo
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +88,7 @@ const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveToo
   const filters: { id: Tool | 'ALL'; name: string }[] = [
     { id: 'ALL', name: 'All Projects' },
     { id: Tool.CHAT_WITH_AI, name: 'AI Studio' },
+    { id: Tool.CANVAS_STUDIO, name: 'Canvas Studio' },
     { id: Tool.GENERATE, name: 'Image' },
     { id: Tool.VIDEO_STUDIO, name: 'Video' },
     { id: Tool.SKETCH_STUDIO, name: 'Sketch' },
@@ -106,11 +109,16 @@ const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveToo
       setRenameValue('');
   };
   
-  const handleDelete = (projectId: string) => {
-      if (window.confirm("Are you sure you want to delete this project? This action cannot be undone.")) {
-          onDeleteProject(projectId);
-      }
+  const handleDelete = (project: Project) => {
+      setProjectToDelete(project);
       setActiveMenu(null);
+  };
+
+  const confirmDeleteSingleProject = () => {
+    if (projectToDelete) {
+        onDeleteProject(projectToDelete.id);
+        setProjectToDelete(null);
+    }
   };
 
   const handleToggleSelect = (projectId: string) => {
@@ -284,7 +292,7 @@ const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveToo
                                           <button onClick={() => handleStartRename(p)} className="w-full text-left flex items-center gap-2 px-3 py-1.5 text-sm text-zinc-700 dark:text-gray-300 hover:bg-zinc-200 dark:hover:bg-zinc-800">
                                               <PencilIcon /> Rename
                                           </button>
-                                          <button onClick={() => handleDelete(p.id)} className="w-full text-left flex items-center gap-2 px-3 py-1.5 text-sm text-red-500 dark:text-red-400 hover:bg-zinc-200 dark:hover:bg-zinc-800">
+                                          <button onClick={() => handleDelete(p)} className="w-full text-left flex items-center gap-2 px-3 py-1.5 text-sm text-red-500 dark:text-red-400 hover:bg-zinc-200 dark:hover:bg-zinc-800">
                                               <TrashIcon /> Delete
                                           </button>
                                       </div>
@@ -314,6 +322,13 @@ const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveToo
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={confirmDeleteSelected}
         itemCount={selectedProjects.length}
+      />
+      <DeleteConfirmationModal
+        isOpen={!!projectToDelete}
+        onClose={() => setProjectToDelete(null)}
+        onConfirm={confirmDeleteSingleProject}
+        itemCount={1}
+        itemName={projectToDelete?.name}
       />
     </div>
   );

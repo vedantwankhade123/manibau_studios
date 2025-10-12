@@ -12,10 +12,14 @@ interface DeleteConfirmationModalProps {
   onConfirm: () => void;
   itemCount: number;
   isLoading?: boolean;
+  itemName?: string;
 }
 
-const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpen, onClose, onConfirm, itemCount, isLoading }) => {
+const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpen, onClose, onConfirm, itemCount, isLoading, itemName }) => {
   if (!isOpen) return null;
+
+  const title = itemName ? `Delete "${itemName}"?` : `Delete ${itemCount} Project${itemCount > 1 ? 's' : ''}?`;
+  const description = `Are you sure you want to delete ${itemName ? `the project "${itemName}"` : 'the selected project(s)'}? This action cannot be undone.`;
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -27,9 +31,9 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpe
           <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-500/20 border border-red-500/30 mb-4">
             <TrashIcon className="h-6 w-6 text-red-400" />
           </div>
-          <h3 className="text-lg font-bold text-white">Delete {itemCount} Project{itemCount > 1 ? 's' : ''}?</h3>
+          <h3 className="text-lg font-bold text-white">{title}</h3>
           <p className="mt-2 text-sm text-gray-400">
-            Are you sure you want to delete the selected project(s)? This action cannot be undone.
+            {description}
           </p>
         </div>
         <div className="flex gap-3 p-4 bg-zinc-900/50 border-t border-zinc-800 rounded-b-2xl">

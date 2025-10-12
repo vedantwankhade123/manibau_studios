@@ -4,7 +4,7 @@ import DashboardProjectsModal from './DashboardProjectsModal';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
 import UserProfilePopover from './UserProfilePopover';
-import { PartyPopper, Video, KeyRound } from 'lucide-react';
+import { PartyPopper, Video, KeyRound, Sparkles, LayoutTemplate } from 'lucide-react';
 
 interface WebsiteFile {
   name: string;
@@ -52,6 +52,8 @@ const ChevronLeftIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" classNam
 const ChevronRightIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"> <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /> </svg> );
 
 const toolCardsData = [
+    { tool: Tool.CHAT_WITH_AI, title: "AI Studio", description: "Have a conversation with a powerful AI assistant.", icon: <Sparkles strokeWidth={1} /> },
+    { tool: Tool.CANVAS_STUDIO, title: "Canvas Studio", description: "Visually design websites with a drag-and-drop editor.", icon: <LayoutTemplate strokeWidth={1} /> },
     { tool: Tool.GENERATE, title: "Image Studio", description: "Generate and edit stunning visuals with AI.", icon: <GenerateIcon /> },
     { tool: Tool.VIDEO_STUDIO, title: "Video Studio", description: "Create captivating videos from text prompts.", icon: <VideoIcon /> },
     { tool: Tool.SKETCH_STUDIO, title: "Sketch Studio", description: "Turn your drawings into detailed images.", icon: <SketchIcon /> },
@@ -131,9 +133,6 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
       return () => clearInterval(interval);
   }, [banners.length]);
 
-  const devStudioCard = toolCardsData.find(t => t.tool === Tool.DEV_DRAFT);
-  const otherToolCards = toolCardsData.filter(t => t.tool !== Tool.DEV_DRAFT);
-
   return (
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800">
@@ -212,41 +211,23 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
             </div>
             {/* Tools Section */}
             <section>
-                <div className="space-y-6">
-                    {devStudioCard && (
-                        <div key={devStudioCard.title} className="shine-effect rounded-2xl group border border-zinc-200 dark:border-zinc-800 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 p-6 flex items-center justify-between">
-                            <div className="absolute -right-4 -bottom-4 text-zinc-400 dark:text-zinc-600 opacity-40 w-32 h-32 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                                {devStudioCard.icon}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {toolCardsData.map(tool => (
+                        <div key={tool.title} className="shine-effect rounded-2xl group border border-zinc-200 dark:border-zinc-800 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 p-6 flex flex-col justify-between">
+                            <div className="absolute -right-2 -bottom-2 text-zinc-400 dark:text-zinc-600 opacity-40 w-24 h-24 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                                {tool.icon}
                             </div>
                             <div className="relative z-10">
-                                <h3 className="text-xl font-bold text-zinc-800 dark:text-white">{devStudioCard.title}</h3>
-                                <p className="text-sm text-zinc-600 dark:text-gray-300 mt-1 max-w-md">{devStudioCard.description}</p>
+                                <h3 className="text-lg font-bold text-zinc-800 dark:text-white">{tool.title}</h3>
+                                <p className="text-sm text-zinc-600 dark:text-gray-300 mt-1">{tool.description}</p>
                             </div>
-                            <div className="relative z-10">
-                                <button onClick={() => setActiveTool(devStudioCard.tool)} className="bg-zinc-800 text-white dark:bg-white/10 dark:backdrop-blur border border-transparent dark:border-white/20 font-semibold px-5 py-2 rounded-full hover:bg-zinc-700 dark:hover:bg-white/20 transition-colors self-start text-sm">
+                            <div className="relative z-10 mt-4">
+                                <button onClick={() => setActiveTool(tool.tool)} className="bg-zinc-800 text-white dark:bg-white/10 dark:backdrop-blur border border-transparent dark:border-white/20 font-semibold px-5 py-2 rounded-full hover:bg-zinc-700 dark:hover:bg-white/20 transition-colors self-start text-sm">
                                     Launch
                                 </button>
                             </div>
                         </div>
-                    )}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {otherToolCards.map(tool => (
-                            <div key={tool.title} className="shine-effect rounded-2xl group border border-zinc-200 dark:border-zinc-800 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 p-6 flex flex-col justify-between">
-                                <div className="absolute -right-2 -bottom-2 text-zinc-400 dark:text-zinc-600 opacity-40 w-24 h-24 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                                    {tool.icon}
-                                </div>
-                                <div className="relative z-10">
-                                    <h3 className="text-lg font-bold text-zinc-800 dark:text-white">{tool.title}</h3>
-                                    <p className="text-sm text-zinc-600 dark:text-gray-300 mt-1">{tool.description}</p>
-                                </div>
-                                <div className="relative z-10 mt-4">
-                                    <button onClick={() => setActiveTool(tool.tool)} className="bg-zinc-800 text-white dark:bg-white/10 dark:backdrop-blur border border-transparent dark:border-white/20 font-semibold px-5 py-2 rounded-full hover:bg-zinc-700 dark:hover:bg-white/20 transition-colors self-start text-sm">
-                                        Launch
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    ))}
                 </div>
             </section>
 
