@@ -1,4 +1,4 @@
-export type BlockType = 'Heading' | 'Paragraph' | 'Button' | 'Image' | 'Social' | 'Spacer' | 'Divider' | 'Video' | 'Icon';
+export type BlockType = 'Heading' | 'Paragraph' | 'Button' | 'Image' | 'Social' | 'Spacer' | 'Divider' | 'Video' | 'Icon' | 'Text' | 'Map';
 
 export interface Block {
     id: string;
@@ -94,7 +94,28 @@ export interface IconBlock extends Block {
     };
 }
 
-export type CanvasBlock = HeadingBlock | ParagraphBlock | ButtonBlock | ImageBlock | SocialBlock | SpacerBlock | DividerBlock | VideoBlock | IconBlock;
+export interface TextBlock extends Block {
+    type: 'Text';
+    content: {
+        text: string;
+        fontSize: string;
+        textAlign: 'left' | 'center' | 'right';
+        color: string;
+        backgroundColor: string;
+        padding: number;
+        borderRadius: number;
+    };
+}
+
+export interface MapBlock extends Block {
+    type: 'Map';
+    content: {
+        address: string;
+        zoom: number;
+    };
+}
+
+export type CanvasBlock = HeadingBlock | ParagraphBlock | ButtonBlock | ImageBlock | SocialBlock | SpacerBlock | DividerBlock | VideoBlock | IconBlock | TextBlock | MapBlock;
 
 export interface Page {
   id: string;

@@ -10,6 +10,8 @@ import SpacerSettings from './settings/SpacerSettings';
 import DividerSettings from './settings/DividerSettings';
 import VideoSettings from './settings/VideoSettings';
 import IconSettings from './settings/IconSettings';
+import TextSettings from './settings/TextSettings';
+import MapSettings from './settings/MapSettings';
 
 interface CanvasRightSidebarProps {
     selectedBlock: CanvasBlock | null;
@@ -48,6 +50,10 @@ const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ selectedBlock, 
                 return <VideoSettings block={selectedBlock} updateBlock={updateBlock} />;
             case 'Icon':
                 return <IconSettings block={selectedBlock} updateBlock={updateBlock} />;
+            case 'Text':
+                return <TextSettings block={selectedBlock} updateBlock={updateBlock} />;
+            case 'Map':
+                return <MapSettings block={selectedBlock} updateBlock={updateBlock} />;
             default:
                 return <p>No settings available for this block type.</p>;
         }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Type, Pilcrow, Image as ImageIcon, Link, MousePointerClick, Minus, Divide, Video, Star, PanelLeftClose } from 'lucide-react';
+import { ChevronDown, Type, Pilcrow, Image as ImageIcon, Link, MousePointerClick, Minus, Divide, Video, Star, PanelLeftClose, Text, Map } from 'lucide-react';
 import ToolboxItem from './ToolboxItem';
 import { BlockType } from './types';
 
@@ -36,6 +36,7 @@ const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onTo
         { title: 'Typography', items: [
             { type: 'Heading' as BlockType, icon: <Type size={24} />, label: 'Heading' },
             { type: 'Paragraph' as BlockType, icon: <Pilcrow size={24} />, label: 'Paragraph' },
+            { type: 'Text' as BlockType, icon: <Text size={24} />, label: 'Text Box' },
         ]},
         { title: 'Layout', items: [
             { type: 'Spacer' as BlockType, icon: <Minus size={24} />, label: 'Spacer' },
@@ -49,6 +50,7 @@ const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onTo
         { title: 'Actions', items: [
             { type: 'Button' as BlockType, icon: <MousePointerClick size={24} />, label: 'Button' },
             { type: 'Social' as BlockType, icon: <Link size={24} />, label: 'Social Links' },
+            { type: 'Map' as BlockType, icon: <Map size={24} />, label: 'Map' },
         ]},
     ];
 

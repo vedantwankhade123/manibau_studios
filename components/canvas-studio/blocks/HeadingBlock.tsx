@@ -11,17 +11,8 @@ const HeadingBlock: React.FC<HeadingBlockProps> = ({ block }) => {
 
     const wrapperStyle: React.CSSProperties = {
         maxWidth: maxWidth ? `${maxWidth}px` : 'none',
+        width: '100%',
     };
-    if (textAlign === 'center') {
-        wrapperStyle.marginLeft = 'auto';
-        wrapperStyle.marginRight = 'auto';
-    } else if (textAlign === 'right') {
-        wrapperStyle.marginLeft = 'auto';
-        wrapperStyle.marginRight = '0';
-    } else {
-        wrapperStyle.marginLeft = '0';
-        wrapperStyle.marginRight = 'auto';
-    }
 
     const sizeClasses = {
         h1: 'text-4xl',
@@ -32,8 +23,14 @@ const HeadingBlock: React.FC<HeadingBlockProps> = ({ block }) => {
         h6: 'text-base',
     };
 
+    const alignmentClasses = {
+        left: 'items-center justify-start',
+        center: 'items-center justify-center',
+        right: 'items-center justify-end',
+    };
+
     return (
-        <div className="p-4">
+        <div className={`w-full h-full p-4 flex ${alignmentClasses[textAlign]}`}>
             <div style={wrapperStyle}>
                 <Tag
                     style={{

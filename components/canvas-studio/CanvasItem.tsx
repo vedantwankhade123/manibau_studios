@@ -12,6 +12,8 @@ import SpacerBlock from './blocks/SpacerBlock';
 import DividerBlock from './blocks/DividerBlock';
 import VideoBlock from './blocks/VideoBlock';
 import IconBlock from './blocks/IconBlock';
+import TextBlock from './blocks/TextBlock';
+import MapBlock from './blocks/MapBlock';
 
 interface CanvasItemProps {
     block: CanvasBlock;
@@ -63,6 +65,8 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
             case 'Divider': return <DividerBlock block={block} />;
             case 'Video': return <VideoBlock block={block} />;
             case 'Icon': return <IconBlock block={block} />;
+            case 'Text': return <TextBlock block={block} />;
+            case 'Map': return <MapBlock block={block} />;
             default: return <div>Unknown block type</div>;
         }
     };

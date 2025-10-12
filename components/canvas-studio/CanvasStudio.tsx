@@ -46,6 +46,10 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
             return { id, type, x: 50, y: 50, width: 500, height: 300, content: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', aspectRatio: '16/9', width: 100 } };
         case 'Icon':
             return { id, type, x: 50, y: 50, width: 100, height: 100, content: { iconName: 'Smile', size: 48, color: '#18181b' } };
+        case 'Text':
+            return { id, type, x: 50, y: 50, width: 300, height: 150, content: { text: 'This is a text box. You can add more content here.', fontSize: '16px', textAlign: 'left', color: '#18181b', backgroundColor: 'transparent', padding: 16, borderRadius: 8 } };
+        case 'Map':
+            return { id, type, x: 50, y: 50, width: 500, height: 400, content: { address: 'New York, NY', zoom: 13 } };
         default:
             throw new Error(`Unknown block type: ${type}`);
     }
