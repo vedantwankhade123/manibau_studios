@@ -266,9 +266,9 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ setActiveTool, onToggle
                   <button
                     key={i}
                     onClick={() => handleGenerate(p.prompt, [])}
-                    className="bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-700 p-3 rounded-lg text-left hover:border-zinc-300 dark:hover:border-zinc-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black"
+                    className="bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-700 p-2 sm:p-3 rounded-lg text-left hover:border-zinc-300 dark:hover:border-zinc-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black"
                   >
-                    <p className="font-semibold text-base text-zinc-800 dark:text-gray-200 leading-tight">{p.title}</p>
+                    <p className="font-semibold text-sm sm:text-base text-zinc-800 dark:text-gray-200 leading-tight">{p.title}</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug line-clamp-2">{p.prompt}</p>
                   </button>
                 ))}
