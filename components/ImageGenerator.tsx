@@ -12,6 +12,7 @@ import ThemeToggleButton from './ThemeToggleButton';
 import UserProfilePopover from './UserProfilePopover';
 import { SettingsTab } from './SettingsModal';
 import { KeyRound } from 'lucide-react';
+import MenuButton from './MenuButton';
 
 interface ConversationTurn {
   id: number;
@@ -39,6 +40,7 @@ interface ImageGeneratorProps {
   setTheme: (theme: Theme) => void;
   isSidebarCollapsed: boolean;
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
   onSaveApiKey: (apiKey: string) => Promise<void>;
   onLogout: () => void;
@@ -99,7 +101,7 @@ const aspectRatios: { value: string; label: string }[] = [
   { value: '9:16', label: 'Story' },
 ];
 
-const ImageGenerator: React.FC<ImageGeneratorProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onSaveApiKey, onLogout }) => {
+const ImageGenerator: React.FC<ImageGeneratorProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onSaveApiKey, onLogout }) => {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [editingImage, setEditingImage] = useState<{ url: string; prompt: string } | null>(null);
   const [variationsModalState, setVariationsModalState] = useState<{ prompt: string; sourceImageUrl: string } | null>(null);
@@ -226,9 +228,10 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ setActiveTool, onToggle
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-2">
+          <MenuButton onClick={() => setIsMobileMenuOpen(true)} />
           <button
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors"
+            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors hidden lg:block"
             aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}

@@ -11,6 +11,7 @@ import AspectRatioModal from './AspectRatioModal';
 import UserProfilePopover from './UserProfilePopover';
 import { SettingsTab } from './SettingsModal';
 import { KeyRound } from 'lucide-react';
+import MenuButton from './MenuButton';
 
 // --- Icon Components ---
 const CloseIcon = () => (
@@ -87,6 +88,7 @@ interface SketchGeneratorProps {
   setTheme: (theme: Theme) => void;
   isSidebarCollapsed: boolean;
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
   onSaveApiKey: (apiKey: string) => Promise<void>;
   onLogout: () => void;
@@ -150,7 +152,7 @@ const PromptModal: React.FC<{ isOpen: boolean; onClose: () => void; onGenerate: 
 };
 
 const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
-  const { setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onSaveApiKey, onLogout } = props;
+  const { setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onSaveApiKey, onLogout } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
   const history = useRef<ImageData[]>([]);
@@ -360,9 +362,10 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-2">
+          <MenuButton onClick={() => setIsMobileMenuOpen(true)} />
           <button
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors"
+              className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors hidden lg:block"
               aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
               {isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}

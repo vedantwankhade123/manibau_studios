@@ -6,6 +6,7 @@ import ThemeToggleButton from './ThemeToggleButton';
 import UserProfilePopover from './UserProfilePopover';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { KeyRound, Sparkles, LayoutTemplate } from 'lucide-react';
+import MenuButton from './MenuButton';
 
 // --- Icon Components ---
 const SearchIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>);
@@ -33,6 +34,7 @@ interface LibraryProps {
   customApiKey: string | null;
   isSidebarCollapsed: boolean;
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: 'account') => void;
   onDeleteProject: (projectId: string) => void;
   onRenameProject: (projectId: string, newName: string) => void;
@@ -50,7 +52,7 @@ const toolInfo: { [key in Tool]?: { name: string; icon: React.ReactNode; gradien
   [Tool.DEV_DRAFT]: { name: 'Developer Studio', icon: <CodeIcon />, gradient: 'from-green-500 to-teal-500' },
 };
 
-const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveTool, theme, setTheme, customApiKey, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onDeleteProject, onRenameProject, onDeleteMultipleProjects, onSaveApiKey, onLogout }) => {
+const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveTool, theme, setTheme, customApiKey, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onDeleteProject, onRenameProject, onDeleteMultipleProjects, onSaveApiKey, onLogout }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<Tool | 'ALL'>('ALL');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -153,9 +155,10 @@ const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveToo
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-2">
+            <MenuButton onClick={() => setIsMobileMenuOpen(true)} />
             <button
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors"
+                className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors hidden lg:block"
                 aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
                 {isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}

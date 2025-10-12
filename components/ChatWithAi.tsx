@@ -11,6 +11,7 @@ import { KeyRound, Sparkles, User, ChevronLeft, ChevronRight, ThumbsUp, ThumbsDo
 import type { Content } from "@google/genai";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import MenuButton from './MenuButton';
 
 interface ChatWithAiProps {
   setActiveTool: (tool: Tool) => void;
@@ -26,6 +27,7 @@ interface ChatWithAiProps {
   setTheme: (theme: Theme) => void;
   isSidebarCollapsed: boolean;
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
   onSaveApiKey: (apiKey: string) => Promise<void>;
   onLogout: () => void;
@@ -115,7 +117,7 @@ const examplePrompts = [
   { title: 'Draft an email', prompt: 'Draft a professional email to a potential client, introducing my web design services and asking for a brief meeting to discuss their needs.' },
 ];
 
-const ChatWithAi: React.FC<ChatWithAiProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onLogout }) => {
+const ChatWithAi: React.FC<ChatWithAiProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onLogout }) => {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
@@ -281,9 +283,10 @@ const ChatWithAi: React.FC<ChatWithAiProps> = ({ setActiveTool, onToggleNotifica
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-2">
+          <MenuButton onClick={() => setIsMobileMenuOpen(true)} />
           <button
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors"
+            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors hidden lg:block"
             aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isSidebarCollapsed ? <ChevronRight /> : <ChevronLeft />}

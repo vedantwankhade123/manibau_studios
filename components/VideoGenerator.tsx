@@ -8,6 +8,7 @@ import ThemeToggleButton from './ThemeToggleButton';
 import UserProfilePopover from './UserProfilePopover';
 import { SettingsTab } from './SettingsModal';
 import { KeyRound } from 'lucide-react';
+import MenuButton from './MenuButton';
 
 interface ConversationTurn {
   id: number;
@@ -33,6 +34,7 @@ interface VideoGeneratorProps {
   setTheme: (theme: Theme) => void;
   isSidebarCollapsed: boolean;
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
   onSaveApiKey: (apiKey: string) => Promise<void>;
   onLogout: () => void;
@@ -131,7 +133,7 @@ const GeneratedVideo: React.FC<{ src: string; alt: string; showWatermark?: boole
 };
 
 
-const VideoGenerator: React.FC<VideoGeneratorProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onSaveApiKey, onLogout }) => {
+const VideoGenerator: React.FC<VideoGeneratorProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onSaveApiKey, onLogout }) => {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -208,9 +210,10 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({ setActiveTool, onToggle
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-2">
+          <MenuButton onClick={() => setIsMobileMenuOpen(true)} />
           <button
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors"
+            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors hidden lg:block"
             aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
