@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Content } from "@google/genai";
 import { generateWebsite, WebsiteFile, fileToBase64 } from '../services/geminiService';
@@ -9,7 +11,7 @@ import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
 import UserProfilePopover from './UserProfilePopover';
 import { SettingsTab } from './SettingsModal';
-import { KeyRound } from 'lucide-react';
+import { KeyRound, MonitorOff } from 'lucide-react';
 
 // Declare highlight.js, JSZip, and html2canvas for TypeScript
 declare const hljs: any;
@@ -488,6 +490,16 @@ const GeneratingAnimation: React.FC = () => {
         </div>
     );
 };
+
+const DesktopOnlyMessage: React.FC = () => (
+    <div className="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 p-8">
+        <MonitorOff size={48} className="text-gray-400 dark:text-gray-500 mb-4" />
+        <h2 className="text-xl font-semibold text-zinc-800 dark:text-gray-300 mb-2">Desktop Experience Recommended</h2>
+        <p className="max-w-sm">
+            The Developer Studio is designed for a larger screen. For the best experience, please switch to a desktop or laptop computer.
+        </p>
+    </div>
+);
 
 
 const DevDraft: React.FC<DevDraftProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onSaveApiKey, onLogout }) => {
@@ -987,295 +999,300 @@ const DevDraft: React.FC<DevDraftProps> = ({ setActiveTool, onToggleNotification
   );
 
   return (
-    <div className="h-full flex flex-col p-4 gap-4">
-      <header className="flex-shrink-0 flex items-center justify-between bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-xl border border-zinc-200 dark:border-zinc-800 py-2 px-3">
-        <div className="flex items-center gap-2">
-            <button
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors"
-                aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-                {isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </button>
-            <h1 className="text-base font-bold">Developer Studio</h1>
-        </div>
-        <div className="flex items-center gap-3">
-            {showSaveNotification && (
-                <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 animate-fade-in-down">
-                    <CheckCircleIcon />
-                    <span>Saved</span>
-                </div>
-            )}
-            <div className="flex items-center gap-2">
-                <button
-                    onClick={handleNewProject}
-                    title="New Project"
-                    className="text-xs rounded-full transition-colors px-3 py-1.5 font-semibold bg-zinc-800 text-white dark:bg-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200"
-                >
-                    New
-                </button>
-                <HeaderButton onClick={() => setIsProjectsModalOpen(true)} title="My Projects" iconOnly>
-                    <ProjectsIcon />
-                </HeaderButton>
-                <HeaderButton onClick={() => setIsSaveModalOpen(true)} disabled={files.length === 0 || !!currentProjectId} title={currentProjectId ? "Project is auto-saved" : "Save Project"}>
-                    <CloudIcon />
-                </HeaderButton>
-                <HeaderButton onClick={() => setIsExportModalOpen(true)} disabled={files.length === 0} title="Export Project" iconOnly>
-                    <DownloadIcon />
-                </HeaderButton>
-            </div>
-            <div className="flex items-center gap-2">
-                {!customApiKey && (
-                  <button onClick={() => onOpenSettings('account')} className="flex items-center gap-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 px-3 py-1.5 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-900/50">
-                    <KeyRound size={16} />
-                    <span>Add API Key</span>
-                  </button>
-                )}
-                <ThemeToggleButton theme={theme} setTheme={setTheme} />
-                <SearchButton onClick={onToggleCommandPalette} />
-                <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
-                <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
-            </div>
-        </div>
-      </header>
-
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-10 gap-4 min-h-0">
-        {/* Left Panel: Chat */}
-        <div className="flex flex-col bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-xl border border-zinc-200 dark:border-zinc-800 lg:col-span-3 min-h-0">
-            <div className="flex-grow p-4 overflow-y-auto custom-scrollbar">
-                {conversation.length === 0 && !loading ? (
-                    <div className="flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400 h-full">
-                    <div className="w-16 h-16 text-gray-400 dark:text-gray-600 mb-4">
-                        <CodeIcon />
-                    </div>
-                    <h2 className="text-2xl font-semibold text-zinc-800 dark:text-gray-300 mb-2">Developer Studio</h2>
-                    <p className="max-w-md">Describe the website you want to build, or attach a design to get started.</p>
-                    </div>
-                ) : (
-                    <div className="space-y-6">
-                    {conversation.map((turn, index) => (
-                        <div key={index} className={`flex gap-3 items-start ${turn.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        {turn.role === 'model' && <AIIcon />}
-                        <div className={`px-4 py-3 rounded-2xl max-w-md ${
-                            turn.role === 'user' 
-                            ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-gray-200' 
-                            : 'bg-zinc-100/30 dark:bg-zinc-800/30 backdrop-blur-lg border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-gray-300 shadow-lg'
-                        }`}>
-                            {turn.sentImages && turn.sentImages.length > 0 && (
-                            <div className={`flex flex-wrap gap-2 ${turn.text ? 'mb-2' : ''}`}>
-                                {turn.sentImages.map((image, index) => (
-                                <img
-                                    key={index}
-                                    src={image.url}
-                                    alt={image.name}
-                                    className={`rounded-lg object-cover ${turn.sentImages.length === 1 ? 'max-h-32' : 'h-16 w-16'}`}
-                                />
-                                ))}
-                            </div>
-                            )}
-                            {turn.text && <p className="whitespace-pre-wrap">{turn.text}</p>}
-                        </div>
-                        {turn.role === 'user' && <UserIcon />}
-                        </div>
-                    ))}
-                    {loading && (
-                        <div className="flex justify-start items-start gap-3">
-                            <AIIcon />
-                            <div className="px-4 py-3 rounded-2xl bg-zinc-100/30 dark:bg-zinc-800/30 backdrop-blur-lg border border-zinc-200 dark:border-zinc-700 shadow-lg">
-                                <GeneratingAnimation />
-                            </div>
-                        </div>
-                    )}
-                    {error && <div className="flex justify-start items-start gap-3"><AIIcon /><p className="text-red-500 dark:text-red-400 p-2 bg-red-100 dark:bg-red-900/20 rounded-lg max-w-md">{error}</p></div>}
-                    </div>
-                )}
-                <div ref={chatEndRef} />
-            </div>
-            <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
-                 {selectedElementSelector && (
-                    <div className="mb-3 flex items-center justify-between text-sm bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 px-3 py-1.5 rounded-lg">
-                        <span className="font-mono truncate" title={selectedElementSelector}>Editing: {selectedElementSelector}</span>
-                        <button onClick={() => {
-                            setSelectedElementSelector(null);
-                        }} className="p-1 -mr-1 rounded-full hover:bg-purple-200 dark:hover:bg-purple-900/50">
-                            <CloseIcon />
-                        </button>
-                    </div>
-                )}
-                <div className="flex items-center gap-4 mb-3">
-                    <div className="relative" ref={suggestionsRef}>
-                        <button
-                            onClick={() => setIsSuggestionsOpen(p => !p)}
-                            disabled={loading}
-                            className="flex items-center gap-2 bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full text-left text-sm text-zinc-700 dark:text-gray-300 hover:border-zinc-300 dark:hover:border-zinc-600 hover:text-black dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <LightbulbIcon />
-                            <span>Try an example...</span>
-                        </button>
-
-                        {isSuggestionsOpen && (
-                            <div className="absolute bottom-full mb-2 w-80 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-lg z-10 py-2">
-                                <div className="max-h-64 overflow-y-auto custom-scrollbar">
-                                    {suggestionPrompts.map((p, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => {
-                                                promptInputRef.current?.setPromptText(p.prompt);
-                                                setIsSuggestionsOpen(false);
-                                            }}
-                                            className="w-full text-left px-4 py-3 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
-                                        >
-                                            <p className="font-semibold text-zinc-800 dark:text-gray-200">{p.title}</p>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{p.prompt}</p>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                <PromptInput
-                    ref={promptInputRef}
-                    onGenerate={handleSubmit}
-                    isLoading={loading}
-                    placeholder="Describe your website..."
-                />
-            </div>
-        </div>
-
-        {/* Right Panel: Code & Preview */}
-        <div className="flex flex-col bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden lg:col-span-7">
-            <div className="flex-shrink-0 flex items-center justify-between p-2 border-b border-zinc-200 dark:border-zinc-800 gap-2">
-                <div className="bg-zinc-200 dark:bg-zinc-800 p-1 rounded-full flex items-center">
-                    <button onClick={() => setWorkspaceView('code')} className={`px-3 py-1 text-sm rounded-full transition-colors ${workspaceView === 'code' ? 'bg-zinc-300 dark:bg-zinc-700 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-300/50 dark:hover:bg-zinc-800/50 hover:text-black dark:hover:text-white'}`}>Code</button>
-                    <button onClick={() => setWorkspaceView('preview')} className={`px-3 py-1 text-sm rounded-full transition-colors ${workspaceView === 'preview' ? 'bg-zinc-300 dark:bg-zinc-700 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-300/50 dark:hover:bg-zinc-800/50 hover:text-black dark:hover:text-white'}`}>Preview</button>
-                </div>
-
-                {workspaceView === 'preview' && (
-                  <>
-                    <div className="hidden md:flex items-center gap-1 bg-zinc-200 dark:bg-zinc-800 p-1 rounded-full">
-                    <button
-                        onClick={() => { setIsSelectorModeActive(prev => !prev); }}
-                        title="Select element to edit"
-                        className={`p-1.5 rounded-full transition-colors ${
-                            isSelectorModeActive
-                                ? 'bg-purple-500 text-white'
-                                : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-300/50 dark:hover:bg-zinc-700/50'
-                        }`}
-                        >
-                        <ElementSelectorIcon />
-                    </button>
-                    <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700 mx-1"></div>
-                    {(['desktop', 'tablet', 'mobile'] as PreviewDevice[]).map(device => (
-                        <button key={device} onClick={() => setPreviewDevice(device)} title={device.charAt(0).toUpperCase() + device.slice(1)} className={`p-1.5 rounded-full transition-colors ${previewDevice === device ? 'bg-zinc-300 dark:bg-zinc-700 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-300/50 dark:hover:bg-zinc-800/50 hover:text-black dark:hover:text-white'}`}>
-                        {device === 'desktop' && <DesktopIcon />}
-                        {device === 'tablet' && <TabletIcon />}
-                        {device === 'mobile' && <MobileIcon />}
-                        </button>
-                    ))}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={handleRefresh} disabled={files.length === 0} title="Refresh Preview" className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed">
-                        <RefreshIcon />
-                      </button>
-                      <button onClick={handleOpenInNewTab} disabled={files.length === 0} title="Open in New Tab" className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed">
-                        <ExternalLinkIcon />
-                      </button>
-                    </div>
-                  </>
-                )}
-            </div>
-
-            {workspaceView === 'code' ? (
-            <div className="flex flex-col flex-grow min-h-0">
-                <div className="flex-shrink-0 flex justify-between items-center border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/50">
-                <div className="flex items-center overflow-x-auto custom-scrollbar">
-                    {files.map(file => (
-                    <button
-                        key={file.name}
-                        onClick={() => {
-                        if (isTyping) return;
-                        setActiveFile(file.name)
-                        }}
-                        className={`flex-shrink-0 px-4 py-2 text-sm font-medium transition-colors ${activeFile === file.name ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'} ${isTyping ? 'cursor-not-allowed' : ''}`}
-                    >
-                        {file.name}
-                    </button>
-                    ))}
-                </div>
-                {activeFile && (
-                    <div className="px-4 text-sm text-gray-400 dark:text-gray-500 font-mono flex-shrink-0">
-                    Lines: {lineCount}
-                    </div>
-                )}
-                </div>
-                <div className="flex-grow overflow-auto relative bg-white dark:bg-black">
-                {activeFile && (
-                    <button
-                    onClick={handleCopyCode}
-                    disabled={!activeFileContent || isCopied}
-                    className="absolute top-4 right-4 z-10 flex items-center gap-2 px-3 py-1.5 text-sm rounded-full transition-colors bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-gray-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white disabled:opacity-70 disabled:cursor-default"
-                    title={isCopied ? 'Copied!' : `Copy ${activeFile}`}
-                    >
-                    {isCopied ? <CheckIcon /> : <CopyIcon />}
-                    <span>{isCopied ? 'Copied!' : 'Copy'}</span>
-                    </button>
-                )}
-                <pre ref={scrollableCodeContainerRef} className="absolute inset-0 p-4 text-sm text-gray-700 dark:text-gray-300 font-mono overflow-auto custom-scrollbar whitespace-pre-wrap break-words">
-                    <code ref={codeRef} className={`language-${getFileLanguage(activeFile)}`}>
-                    {/* Content is managed by useEffect with innerHTML */}
-                    </code>
-                </pre>
-                </div>
-            </div>
-            ) : (
-            <div className="flex-grow p-4 flex flex-col justify-center items-center overflow-auto custom-scrollbar bg-zinc-100/50 dark:bg-zinc-900/50">
-                {files.length === 0 ? (
-                <div className="text-center text-gray-400 dark:text-gray-500">
-                    <h3 className="text-xl font-semibold text-zinc-800 dark:text-gray-400">Preview will appear here</h3>
-                    <p className="mt-1">Once code is generated, you'll see the live website.</p>
-                </div>
-                ) : (
-                <div className={`transition-all duration-300 ease-in-out ${deviceWidths[previewDevice]} overflow-hidden`}>
-                    <iframe
-                    key={previewKey}
-                    ref={previewIframeRef}
-                    srcDoc={iframeSrcDoc}
-                    title="Website Preview"
-                    className="w-full h-full border-0 bg-white"
-                    sandbox="allow-scripts allow-same-origin"
-                    />
-                </div>
-                )}
-            </div>
-            )}
-        </div>
+    <div className="h-full flex flex-col">
+      <div className="lg:hidden h-full">
+        <DesktopOnlyMessage />
       </div>
-      {isProjectsModalOpen && (
-        <ProjectsModal
-            isOpen={isProjectsModalOpen}
-            onClose={() => setIsProjectsModalOpen(false)}
-            projects={projects}
-            onLoad={handleLoadProject}
-            onDelete={onDeleteProject}
-            onRename={onRenameProject}
-        />
-      )}
-      {isExportModalOpen && (
-        <ExportModal
-          isOpen={isExportModalOpen}
-          onClose={() => setIsExportModalOpen(false)}
-          files={files}
-          iframePreviewRef={previewIframeRef}
-        />
-      )}
-      {isSaveModalOpen && (
-        <SaveProjectModal
-            isOpen={isSaveModalOpen}
-            onClose={() => setIsSaveModalOpen(false)}
-            onSave={handleSaveProject}
-        />
-      )}
+      <div className="h-full hidden lg:flex lg:flex-col p-4 gap-4">
+        <header className="flex-shrink-0 flex items-center justify-between bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-xl border border-zinc-200 dark:border-zinc-800 py-2 px-3">
+          <div className="flex items-center gap-2">
+              <button
+                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors"
+                  aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              >
+                  {isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </button>
+              <h1 className="text-base font-bold">Developer Studio</h1>
+          </div>
+          <div className="flex items-center gap-3">
+              {showSaveNotification && (
+                  <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 animate-fade-in-down">
+                      <CheckCircleIcon />
+                      <span>Saved</span>
+                  </div>
+              )}
+              <div className="flex items-center gap-2">
+                  <button
+                      onClick={handleNewProject}
+                      title="New Project"
+                      className="text-xs rounded-full transition-colors px-3 py-1.5 font-semibold bg-zinc-800 text-white dark:bg-white dark:text-black hover:bg-zinc-700 dark:hover:bg-zinc-200"
+                  >
+                      New
+                  </button>
+                  <HeaderButton onClick={() => setIsProjectsModalOpen(true)} title="My Projects" iconOnly>
+                      <ProjectsIcon />
+                  </HeaderButton>
+                  <HeaderButton onClick={() => setIsSaveModalOpen(true)} disabled={files.length === 0 || !!currentProjectId} title={currentProjectId ? "Project is auto-saved" : "Save Project"}>
+                      <CloudIcon />
+                  </HeaderButton>
+                  <HeaderButton onClick={() => setIsExportModalOpen(true)} disabled={files.length === 0} title="Export Project" iconOnly>
+                      <DownloadIcon />
+                  </HeaderButton>
+              </div>
+              <div className="flex items-center gap-2">
+                  {!customApiKey && (
+                    <button onClick={() => onOpenSettings('account')} className="flex items-center gap-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 px-3 py-1.5 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-900/50">
+                      <KeyRound size={16} />
+                      <span>Add API Key</span>
+                    </button>
+                  )}
+                  <ThemeToggleButton theme={theme} setTheme={setTheme} />
+                  <SearchButton onClick={onToggleCommandPalette} />
+                  <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
+                  <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
+              </div>
+          </div>
+        </header>
+
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-10 gap-4 min-h-0">
+          {/* Left Panel: Chat */}
+          <div className="flex flex-col bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-xl border border-zinc-200 dark:border-zinc-800 lg:col-span-3 min-h-0">
+              <div className="flex-grow p-4 overflow-y-auto custom-scrollbar">
+                  {conversation.length === 0 && !loading ? (
+                      <div className="flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400 h-full">
+                      <div className="w-16 h-16 text-gray-400 dark:text-gray-600 mb-4">
+                          <CodeIcon />
+                      </div>
+                      <h2 className="text-2xl font-semibold text-zinc-800 dark:text-gray-300 mb-2">Developer Studio</h2>
+                      <p className="max-w-md">Describe the website you want to build, or attach a design to get started.</p>
+                      </div>
+                  ) : (
+                      <div className="space-y-6">
+                      {conversation.map((turn, index) => (
+                          <div key={index} className={`flex gap-3 items-start ${turn.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          {turn.role === 'model' && <AIIcon />}
+                          <div className={`px-4 py-3 rounded-2xl max-w-md ${
+                              turn.role === 'user' 
+                              ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-gray-200' 
+                              : 'bg-zinc-100/30 dark:bg-zinc-800/30 backdrop-blur-lg border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-gray-300 shadow-lg'
+                          }`}>
+                              {turn.sentImages && turn.sentImages.length > 0 && (
+                              <div className={`flex flex-wrap gap-2 ${turn.text ? 'mb-2' : ''}`}>
+                                  {turn.sentImages.map((image, index) => (
+                                  <img
+                                      key={index}
+                                      src={image.url}
+                                      alt={image.name}
+                                      className={`rounded-lg object-cover ${turn.sentImages.length === 1 ? 'max-h-32' : 'h-16 w-16'}`}
+                                  />
+                                  ))}
+                              </div>
+                              )}
+                              {turn.text && <p className="whitespace-pre-wrap">{turn.text}</p>}
+                          </div>
+                          {turn.role === 'user' && <UserIcon />}
+                          </div>
+                      ))}
+                      {loading && (
+                          <div className="flex justify-start items-start gap-3">
+                              <AIIcon />
+                              <div className="px-4 py-3 rounded-2xl bg-zinc-100/30 dark:bg-zinc-800/30 backdrop-blur-lg border border-zinc-200 dark:border-zinc-700 shadow-lg">
+                                  <GeneratingAnimation />
+                              </div>
+                          </div>
+                      )}
+                      {error && <div className="flex justify-start items-start gap-3"><AIIcon /><p className="text-red-500 dark:text-red-400 p-2 bg-red-100 dark:bg-red-900/20 rounded-lg max-w-md">{error}</p></div>}
+                      </div>
+                  )}
+                  <div ref={chatEndRef} />
+              </div>
+              <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+                   {selectedElementSelector && (
+                      <div className="mb-3 flex items-center justify-between text-sm bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 px-3 py-1.5 rounded-lg">
+                          <span className="font-mono truncate" title={selectedElementSelector}>Editing: {selectedElementSelector}</span>
+                          <button onClick={() => {
+                              setSelectedElementSelector(null);
+                          }} className="p-1 -mr-1 rounded-full hover:bg-purple-200 dark:hover:bg-purple-900/50">
+                              <CloseIcon />
+                          </button>
+                      </div>
+                  )}
+                  <div className="flex items-center gap-4 mb-3">
+                      <div className="relative" ref={suggestionsRef}>
+                          <button
+                              onClick={() => setIsSuggestionsOpen(p => !p)}
+                              disabled={loading}
+                              className="flex items-center gap-2 bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-full text-left text-sm text-zinc-700 dark:text-gray-300 hover:border-zinc-300 dark:hover:border-zinc-600 hover:text-black dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                              <LightbulbIcon />
+                              <span>Try an example...</span>
+                          </button>
+
+                          {isSuggestionsOpen && (
+                              <div className="absolute bottom-full mb-2 w-80 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-lg z-10 py-2">
+                                  <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                                      {suggestionPrompts.map((p, i) => (
+                                          <button
+                                              key={i}
+                                              onClick={() => {
+                                                  promptInputRef.current?.setPromptText(p.prompt);
+                                                  setIsSuggestionsOpen(false);
+                                              }}
+                                              className="w-full text-left px-4 py-3 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+                                          >
+                                              <p className="font-semibold text-zinc-800 dark:text-gray-200">{p.title}</p>
+                                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{p.prompt}</p>
+                                          </button>
+                                      ))}
+                                  </div>
+                              </div>
+                          )}
+                      </div>
+                  </div>
+                  <PromptInput
+                      ref={promptInputRef}
+                      onGenerate={handleSubmit}
+                      isLoading={loading}
+                      placeholder="Describe your website..."
+                  />
+              </div>
+          </div>
+
+          {/* Right Panel: Code & Preview */}
+          <div className="flex flex-col bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden lg:col-span-7">
+              <div className="flex-shrink-0 flex items-center justify-between p-2 border-b border-zinc-200 dark:border-zinc-800 gap-2">
+                  <div className="bg-zinc-200 dark:bg-zinc-800 p-1 rounded-full flex items-center">
+                      <button onClick={() => setWorkspaceView('code')} className={`px-3 py-1 text-sm rounded-full transition-colors ${workspaceView === 'code' ? 'bg-zinc-300 dark:bg-zinc-700 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-300/50 dark:hover:bg-zinc-800/50 hover:text-black dark:hover:text-white'}`}>Code</button>
+                      <button onClick={() => setWorkspaceView('preview')} className={`px-3 py-1 text-sm rounded-full transition-colors ${workspaceView === 'preview' ? 'bg-zinc-300 dark:bg-zinc-700 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-300/50 dark:hover:bg-zinc-800/50 hover:text-black dark:hover:text-white'}`}>Preview</button>
+                  </div>
+
+                  {workspaceView === 'preview' && (
+                    <>
+                      <div className="hidden md:flex items-center gap-1 bg-zinc-200 dark:bg-zinc-800 p-1 rounded-full">
+                      <button
+                          onClick={() => { setIsSelectorModeActive(prev => !prev); }}
+                          title="Select element to edit"
+                          className={`p-1.5 rounded-full transition-colors ${
+                              isSelectorModeActive
+                                  ? 'bg-purple-500 text-white'
+                                  : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-300/50 dark:hover:bg-zinc-700/50'
+                          }`}
+                          >
+                          <ElementSelectorIcon />
+                      </button>
+                      <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700 mx-1"></div>
+                      {(['desktop', 'tablet', 'mobile'] as PreviewDevice[]).map(device => (
+                          <button key={device} onClick={() => setPreviewDevice(device)} title={device.charAt(0).toUpperCase() + device.slice(1)} className={`p-1.5 rounded-full transition-colors ${previewDevice === device ? 'bg-zinc-300 dark:bg-zinc-700 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-300/50 dark:hover:bg-zinc-800/50 hover:text-black dark:hover:text-white'}`}>
+                          {device === 'desktop' && <DesktopIcon />}
+                          {device === 'tablet' && <TabletIcon />}
+                          {device === 'mobile' && <MobileIcon />}
+                          </button>
+                      ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={handleRefresh} disabled={files.length === 0} title="Refresh Preview" className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed">
+                          <RefreshIcon />
+                        </button>
+                        <button onClick={handleOpenInNewTab} disabled={files.length === 0} title="Open in New Tab" className="p-2 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed">
+                          <ExternalLinkIcon />
+                        </button>
+                      </div>
+                    </>
+                  )}
+              </div>
+
+              {workspaceView === 'code' ? (
+              <div className="flex flex-col flex-grow min-h-0">
+                  <div className="flex-shrink-0 flex justify-between items-center border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/50">
+                  <div className="flex items-center overflow-x-auto custom-scrollbar">
+                      {files.map(file => (
+                      <button
+                          key={file.name}
+                          onClick={() => {
+                          if (isTyping) return;
+                          setActiveFile(file.name)
+                          }}
+                          className={`flex-shrink-0 px-4 py-2 text-sm font-medium transition-colors ${activeFile === file.name ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'} ${isTyping ? 'cursor-not-allowed' : ''}`}
+                      >
+                          {file.name}
+                      </button>
+                      ))}
+                  </div>
+                  {activeFile && (
+                      <div className="px-4 text-sm text-gray-400 dark:text-gray-500 font-mono flex-shrink-0">
+                      Lines: {lineCount}
+                      </div>
+                  )}
+                  </div>
+                  <div className="flex-grow overflow-auto relative bg-white dark:bg-black">
+                  {activeFile && (
+                      <button
+                      onClick={handleCopyCode}
+                      disabled={!activeFileContent || isCopied}
+                      className="absolute top-4 right-4 z-10 flex items-center gap-2 px-3 py-1.5 text-sm rounded-full transition-colors bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-gray-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white disabled:opacity-70 disabled:cursor-default"
+                      title={isCopied ? 'Copied!' : `Copy ${activeFile}`}
+                      >
+                      {isCopied ? <CheckIcon /> : <CopyIcon />}
+                      <span>{isCopied ? 'Copied!' : 'Copy'}</span>
+                      </button>
+                  )}
+                  <pre ref={scrollableCodeContainerRef} className="absolute inset-0 p-4 text-sm text-gray-700 dark:text-gray-300 font-mono overflow-auto custom-scrollbar whitespace-pre-wrap break-words">
+                      <code ref={codeRef} className={`language-${getFileLanguage(activeFile)}`}>
+                      {/* Content is managed by useEffect with innerHTML */}
+                      </code>
+                  </pre>
+                  </div>
+              </div>
+              ) : (
+              <div className="flex-grow p-4 flex flex-col justify-center items-center overflow-auto custom-scrollbar bg-zinc-100/50 dark:bg-zinc-900/50">
+                  {files.length === 0 ? (
+                  <div className="text-center text-gray-400 dark:text-gray-500">
+                      <h3 className="text-xl font-semibold text-zinc-800 dark:text-gray-400">Preview will appear here</h3>
+                      <p className="mt-1">Once code is generated, you'll see the live website.</p>
+                  </div>
+                  ) : (
+                  <div className={`transition-all duration-300 ease-in-out ${deviceWidths[previewDevice]} overflow-hidden`}>
+                      <iframe
+                      key={previewKey}
+                      ref={previewIframeRef}
+                      srcDoc={iframeSrcDoc}
+                      title="Website Preview"
+                      className="w-full h-full border-0 bg-white"
+                      sandbox="allow-scripts allow-same-origin"
+                      />
+                  </div>
+                  )}
+              </div>
+              )}
+          </div>
+        </div>
+        {isProjectsModalOpen && (
+          <ProjectsModal
+              isOpen={isProjectsModalOpen}
+              onClose={() => setIsProjectsModalOpen(false)}
+              projects={projects}
+              onLoad={handleLoadProject}
+              onDelete={onDeleteProject}
+              onRename={onRenameProject}
+          />
+        )}
+        {isExportModalOpen && (
+          <ExportModal
+            isOpen={isExportModalOpen}
+            onClose={() => setIsExportModalOpen(false)}
+            files={files}
+            iframePreviewRef={previewIframeRef}
+          />
+        )}
+        {isSaveModalOpen && (
+          <SaveProjectModal
+              isOpen={isSaveModalOpen}
+              onClose={() => setIsSaveModalOpen(false)}
+              onSave={handleSaveProject}
+          />
+        )}
+      </div>
     </div>
   );
 };

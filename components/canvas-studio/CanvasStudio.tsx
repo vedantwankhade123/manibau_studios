@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
-import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search, Type, Pilcrow, Image as ImageIcon, Link as LinkIcon, MousePointerClick, Minus, Divide, Video, Star, Text, Map, Square, Download } from 'lucide-react';
+import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search, Type, Pilcrow, Image as ImageIcon, Link as LinkIcon, MousePointerClick, Minus, Divide, Video, Star, Text, Map, Square, Download, MonitorOff } from 'lucide-react';
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
@@ -94,6 +96,16 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
             throw new Error(`Unknown block type: ${type}`);
     }
 };
+
+const DesktopOnlyMessage: React.FC = () => (
+    <div className="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 p-8">
+        <MonitorOff size={48} className="text-gray-400 dark:text-gray-500 mb-4" />
+        <h2 className="text-xl font-semibold text-zinc-800 dark:text-gray-300 mb-2">Desktop Experience Recommended</h2>
+        <p className="max-w-sm">
+            The Canvas Studio is a powerful tool designed for larger screens. For the best experience, please switch to a desktop or laptop computer.
+        </p>
+    </div>
+);
 
 const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const { theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onLogout, onToggleCommandPalette, onToggleNotifications, unreadCount } = props;
@@ -368,66 +380,71 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
             <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
-                <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"><ChevronLeft /></button>
+                <div className="lg:hidden h-full">
+                    <DesktopOnlyMessage />
+                </div>
+                <div className="h-full hidden lg:flex lg:flex-col">
+                    <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"><ChevronLeft /></button>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-lg font-bold">Canvas Studio</h1>
+                                <span className="text-xs bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400 font-semibold px-1.5 py-0.5 rounded-full">BETA</span>
+                            </div>
+                            <div className="h-6 w-px bg-zinc-200 dark:bg-zinc-700"></div>
+                            <div className="flex items-center gap-2 text-sm">
+                                {!isLeftSidebarOpen && <button onClick={() => setIsLeftSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelLeftOpen size={18} /></button>}
+                                <button onClick={undo} disabled={!canUndo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Undo size={18} /></button>
+                                <button onClick={redo} disabled={!canRedo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Redo size={18} /></button>
+                            </div>
+                        </div>
+                        <div className="absolute left-1/2 -translate-x-1/2">
+                            <PageTabs 
+                                pages={pages} 
+                                activePageId={activePageId} 
+                                onSelectPage={setActivePageId} 
+                                onAddPage={addPage} 
+                                onDeletePage={deletePage} 
+                                onEditPage={setEditingPage}
+                            />
+                        </div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-lg font-bold">Canvas Studio</h1>
-                            <span className="text-xs bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400 font-semibold px-1.5 py-0.5 rounded-full">BETA</span>
+                            <button onClick={() => setIsExportModalOpen(true)} title="Export Page" className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"><Download size={18} /></button>
+                            <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
+                                <label className="text-xs font-medium text-zinc-500 px-2">BG</label>
+                                <input type="color" value={canvasBackgroundColor} onChange={(e) => setCanvasBackgroundColor(e.target.value)} className="w-6 h-6 p-0 border-none rounded bg-transparent cursor-pointer" />
+                            </div>
+                            <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
+                                <button onClick={() => setDevice('desktop')} className={`p-1.5 rounded ${device === 'desktop' ? 'bg-white dark:bg-zinc-700' : ''}`}><Monitor size={18}/></button>
+                                <button onClick={() => setDevice('tablet')} className={`p-1.5 rounded ${device === 'tablet' ? 'bg-white dark:bg-zinc-700' : ''}`}><Tablet size={18}/></button>
+                                <button onClick={() => setDevice('mobile')} className={`p-1.5 rounded ${device === 'mobile' ? 'bg-white dark:bg-zinc-700' : ''}`}><Smartphone size={18}/></button>
+                            </div>
+                            <SearchButton onClick={onToggleCommandPalette} />
+                            <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
+                            <ThemeToggleButton theme={theme} setTheme={setTheme} />
+                            <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
+                            {!isRightSidebarOpen && <button onClick={() => setIsRightSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelRightOpen size={18} /></button>}
                         </div>
-                        <div className="h-6 w-px bg-zinc-200 dark:bg-zinc-700"></div>
-                        <div className="flex items-center gap-2 text-sm">
-                            {!isLeftSidebarOpen && <button onClick={() => setIsLeftSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelLeftOpen size={18} /></button>}
-                            <button onClick={undo} disabled={!canUndo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Undo size={18} /></button>
-                            <button onClick={redo} disabled={!canRedo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Redo size={18} /></button>
+                    </header>
+                    <div className="flex-grow flex min-h-0">
+                        <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} onAddItem={handleAddBlockOnClick} />
+                        <div className="flex-1 flex flex-col min-w-0">
+                            <Canvas 
+                                ref={canvasRef}
+                                blocks={activeBlocks} 
+                                selectedBlockId={selectedBlockId} 
+                                onSelectBlock={setSelectedBlockId} 
+                                onDeselectAll={() => setSelectedBlockId(null)}
+                                device={device} 
+                                backgroundColor={canvasBackgroundColor}
+                                onResizeStart={handleResizeStart}
+                                onContextMenu={handleContextMenu}
+                                onNavigate={handleNavigate}
+                                canvasHeight={canvasHeight}
+                            />
                         </div>
+                        <CanvasRightSidebar blocks={activeBlocks} selectedBlock={selectedBlock} onSelectBlock={setSelectedBlockId} updateBlock={updateBlockContent} deleteBlock={deleteBlock} reorderBlock={reorderBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} pages={pages} />
                     </div>
-                    <div className="absolute left-1/2 -translate-x-1/2">
-                        <PageTabs 
-                            pages={pages} 
-                            activePageId={activePageId} 
-                            onSelectPage={setActivePageId} 
-                            onAddPage={addPage} 
-                            onDeletePage={deletePage} 
-                            onEditPage={setEditingPage}
-                        />
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button onClick={() => setIsExportModalOpen(true)} title="Export Page" className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"><Download size={18} /></button>
-                        <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
-                            <label className="text-xs font-medium text-zinc-500 px-2">BG</label>
-                            <input type="color" value={canvasBackgroundColor} onChange={(e) => setCanvasBackgroundColor(e.target.value)} className="w-6 h-6 p-0 border-none rounded bg-transparent cursor-pointer" />
-                        </div>
-                        <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
-                            <button onClick={() => setDevice('desktop')} className={`p-1.5 rounded ${device === 'desktop' ? 'bg-white dark:bg-zinc-700' : ''}`}><Monitor size={18}/></button>
-                            <button onClick={() => setDevice('tablet')} className={`p-1.5 rounded ${device === 'tablet' ? 'bg-white dark:bg-zinc-700' : ''}`}><Tablet size={18}/></button>
-                            <button onClick={() => setDevice('mobile')} className={`p-1.5 rounded ${device === 'mobile' ? 'bg-white dark:bg-zinc-700' : ''}`}><Smartphone size={18}/></button>
-                        </div>
-                        <SearchButton onClick={onToggleCommandPalette} />
-                        <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
-                        <ThemeToggleButton theme={theme} setTheme={setTheme} />
-                        <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
-                        {!isRightSidebarOpen && <button onClick={() => setIsRightSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelRightOpen size={18} /></button>}
-                    </div>
-                </header>
-                <div className="flex-grow flex min-h-0">
-                    <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} onAddItem={handleAddBlockOnClick} />
-                    <div className="flex-1 flex flex-col min-w-0">
-                        <Canvas 
-                            ref={canvasRef}
-                            blocks={activeBlocks} 
-                            selectedBlockId={selectedBlockId} 
-                            onSelectBlock={setSelectedBlockId} 
-                            onDeselectAll={() => setSelectedBlockId(null)}
-                            device={device} 
-                            backgroundColor={canvasBackgroundColor}
-                            onResizeStart={handleResizeStart}
-                            onContextMenu={handleContextMenu}
-                            onNavigate={handleNavigate}
-                            canvasHeight={canvasHeight}
-                        />
-                    </div>
-                    <CanvasRightSidebar blocks={activeBlocks} selectedBlock={selectedBlock} onSelectBlock={setSelectedBlockId} updateBlock={updateBlockContent} deleteBlock={deleteBlock} reorderBlock={reorderBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} pages={pages} />
                 </div>
                 {contextMenu && (
                     <ContextMenu

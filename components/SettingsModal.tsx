@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { Theme, FontSize } from '../App';
 import UserProfileCard from './UserProfileCard';
@@ -101,7 +103,7 @@ const GeneralSettingsContent: React.FC<{ theme: Theme; setTheme: (theme: Theme) 
             <h3 className="text-2xl font-bold mb-6">General Settings</h3>
             <div className="space-y-8">
                 <SettingsSection title="Theme" description="Choose the appearance of the application.">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {(['light', 'dark'] as Theme[]).map(t => (
                     <label key={t} className={`relative flex items-center gap-3 p-4 border rounded-2xl cursor-pointer transition-all ${theme === t ? 'border-zinc-500 dark:border-zinc-600 ring-2 ring-zinc-500/50 dark:ring-zinc-700' : 'border-zinc-200 dark:border-zinc-700'}`}>
                         <input type="radio" name="theme" value={t} checked={theme === t} onChange={() => setTheme(t)} className="absolute opacity-0" />
@@ -416,23 +418,23 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose} aria-modal="true" role="dialog">
-      <div className="bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-black rounded-3xl border border-zinc-200 dark:border-zinc-800 w-full max-w-5xl h-[80vh] shadow-2xl flex" onClick={(e) => e.stopPropagation()}>
-        <div className="w-1/4 border-r border-zinc-200 dark:border-zinc-800 p-6 flex flex-col">
-          <h2 className="text-xl font-bold mb-8">Settings</h2>
-          <nav className="flex flex-col gap-2">
+      <div className="bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-black rounded-3xl border border-zinc-200 dark:border-zinc-800 w-full max-w-5xl h-[80vh] shadow-2xl flex flex-col md:flex-row" onClick={(e) => e.stopPropagation()}>
+        <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-zinc-200 dark:border-zinc-800 p-4 md:p-6 flex flex-col">
+          <h2 className="text-xl font-bold mb-4 md:mb-8">Settings</h2>
+          <nav className="flex flex-row md:flex-col gap-1 md:gap-2 overflow-x-auto pb-2 md:pb-0">
             {SETTINGS_CONFIG.map(item => (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-3 w-full text-left px-4 py-2 rounded-2xl text-lg transition-colors ${activeTab === item.id ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'}`}
+                className={`flex items-center gap-3 w-full text-left px-3 py-2 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-sm md:text-lg transition-colors flex-shrink-0 ${activeTab === item.id ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'}`}
               >
                 {item.icon}
-                <span>{item.label}</span>
+                <span className="hidden md:inline">{item.label}</span>
               </button>
             ))}
           </nav>
         </div>
-        <div className="w-3/4 p-8 overflow-y-auto custom-scrollbar relative">
+        <div className="w-full md:w-3/4 p-6 md:p-8 overflow-y-auto custom-scrollbar relative">
           <button onClick={onClose} className="absolute top-6 right-6 p-1 rounded-full text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors" aria-label="Close">
             <CloseIcon />
           </button>
