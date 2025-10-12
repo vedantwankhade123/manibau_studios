@@ -31,6 +31,7 @@ const AppContainer: React.FC = () => {
   const [showStudio, setShowStudio] = useState(false);
   const [activeTool, setActiveTool] = useState<Tool>(Tool.DASHBOARD);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>('general');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -298,16 +299,17 @@ const AppContainer: React.FC = () => {
   const handleSetActiveTool = (tool: Tool) => {
     setLoadedProject(null);
     setActiveTool(tool);
+    setIsMobileMenuOpen(false);
   };
 
   useEffect(() => {
-    if (window.innerWidth >= 768) {
+    if (window.innerWidth >= 1024) {
         setIsSidebarCollapsed(false);
     } else {
         setIsSidebarCollapsed(true);
     }
     const handleResize = () => {
-      if (window.innerWidth < 768) setIsSidebarCollapsed(true);
+      if (window.innerWidth < 1024) setIsSidebarCollapsed(true);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -351,6 +353,7 @@ const AppContainer: React.FC = () => {
         setTheme,
         isSidebarCollapsed,
         setIsSidebarCollapsed,
+        setIsMobileMenuOpen,
         onOpenSettings: handleOpenSettings,
         onSaveApiKey: handleSaveApiKey,
         onLogout: () => setIsLogoutModalOpen(true),
@@ -368,15 +371,15 @@ const AppContainer: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-white dark:bg-black text-zinc-900 dark:text-gray-200 font-sans relative">
+    <div className="h-screen bg-white dark:bg-black text-zinc-900 dark:text-gray-200 font-sans relative overflow-hidden">
       <main className="absolute inset-0 h-full w-full bg-gradient-to-br from-gray-50 dark:from-zinc-900 to-white dark:to-black">
-        <div className={`h-full w-full transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'pl-24' : 'pl-80'}`}>
+        <div className={`h-full w-full transition-all duration-300 ease-in-out lg:${isSidebarCollapsed ? 'pl-24' : 'pl-80'}`}>
           <div className="h-full flex flex-col">
             <div className="flex-grow h-0">{renderTool()}</div>
           </div>
         </div>
       </main>
-      <Sidebar activeTool={activeTool} setActiveTool={handleSetActiveTool} isCollapsed={isSidebarCollapsed} onLogout={() => setIsLogoutModalOpen(true)} onOpenSettings={() => handleOpenSettings()} />
+      <Sidebar activeTool={activeTool} setActiveTool={handleSetActiveTool} isCollapsed={isSidebarCollapsed} onLogout={() => setIsLogoutModalOpen(true)} onOpenSettings={() => handleOpenSettings()} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
       <NotificationPanel isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} notifications={notifications} onMarkAllAsRead={handleMarkAllAsRead} onNavigate={(tool) => setActiveTool(tool)} />
       <SettingsModal 
         isOpen={isSettingsOpen} 

@@ -5,6 +5,7 @@ import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
 import UserProfilePopover from './UserProfilePopover';
 import { PartyPopper, Video, KeyRound, Sparkles, LayoutTemplate } from 'lucide-react';
+import MenuButton from './MenuButton';
 
 interface WebsiteFile {
   name: string;
@@ -74,12 +75,13 @@ interface DashboardProps {
   setTheme: (theme: Theme) => void;
   isSidebarCollapsed: boolean;
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: 'account') => void;
   onSaveApiKey: (apiKey: string) => Promise<void>;
   onLogout: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onLoadProject, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onSaveApiKey, onLogout }) => {
+const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onLoadProject, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onSaveApiKey, onLogout }) => {
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -137,9 +139,10 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-2">
+            <MenuButton onClick={() => setIsMobileMenuOpen(true)} />
             <button
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors"
+                className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors hidden lg:block"
                 aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
                 {isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}

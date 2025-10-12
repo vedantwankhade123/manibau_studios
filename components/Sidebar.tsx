@@ -58,9 +58,11 @@ interface SidebarProps {
   isCollapsed: boolean;
   onLogout: () => void;
   onOpenSettings: () => void;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapsed, onLogout, onOpenSettings }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapsed, onLogout, onOpenSettings, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const navItems = [
     { id: Tool.DASHBOARD, label: 'Dashboard', icon: <DashboardIcon /> },
     { id: Tool.CHAT_WITH_AI, label: 'AI Studio', icon: <Sparkles /> },
@@ -75,67 +77,78 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapse
   const baseClasses = "flex items-center w-full text-left py-2 font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black";
   const activeClasses = "bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-white shadow-lg rounded-full";
   const inactiveClasses = "text-gray-500 dark:text-gray-400 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 hover:text-black dark:hover:text-white rounded-lg";
-  const navItemPadding = isCollapsed ? 'justify-center' : 'px-3 gap-2';
+  const navItemPadding = isCollapsed && !isMobileMenuOpen ? 'justify-center' : 'px-3 gap-2';
 
   return (
-    <aside className={`fixed top-0 left-0 bottom-0 z-30 bg-white dark:bg-zinc-900 flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'w-24' : 'w-80'}`}>
-      <div className="p-4 flex flex-col h-full overflow-y-auto custom-scrollbar">
-        <div className="flex items-center mb-6 h-14">
-            <div className={`flex items-center gap-3 transform transition-transform duration-300 ease-in-out ${isCollapsed ? 'translate-x-4' : 'translate-x-0'}`}>
-                <img src={logoUrl} alt="MANIBAU Studios Logo" className="h-8 w-8 flex-shrink-0 filter dark:invert-0 invert drop-shadow-lg animate-rotate-once" />
-                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-full opacity-100'}`}>
-                    <div className="whitespace-nowrap">
-                        <h1 className="text-xl font-bold text-black dark:text-white tracking-wider font-poppins">
-                            <span>MANIBAU</span>
-                            <span className="text-gray-500 dark:text-gray-400"> STUDIOS</span>
-                        </h1>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <>
+      <div
+        className={`fixed inset-0 bg-black/50 z-30 lg:hidden transition-opacity ${
+          isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+      <aside className={`fixed top-0 left-0 bottom-0 z-40 bg-white dark:bg-zinc-900 flex flex-col transition-all duration-300 ease-in-out 
+        lg:relative lg:z-30 lg:translate-x-0
+        ${isMobileMenuOpen ? 'translate-x-0 w-80' : '-translate-x-full w-80'}
+        lg:${isCollapsed ? 'w-24' : 'w-80'}`}>
+        <div className="p-4 flex flex-col h-full overflow-y-auto custom-scrollbar">
+          <div className="flex items-center mb-6 h-14">
+              <div className={`flex items-center gap-3 transform transition-transform duration-300 ease-in-out ${isCollapsed && !isMobileMenuOpen ? 'translate-x-4' : 'translate-x-0'}`}>
+                  <img src={logoUrl} alt="MANIBAU Studios Logo" className="h-8 w-8 flex-shrink-0 filter dark:invert-0 invert drop-shadow-lg animate-rotate-once" />
+                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed && !isMobileMenuOpen ? 'max-w-0 opacity-0' : 'max-w-full opacity-100'}`}>
+                      <div className="whitespace-nowrap">
+                          <h1 className="text-xl font-bold text-black dark:text-white tracking-wider font-poppins">
+                              <span>MANIBAU</span>
+                              <span className="text-gray-500 dark:text-gray-400"> STUDIOS</span>
+                          </h1>
+                      </div>
+                  </div>
+              </div>
+          </div>
 
-        <nav className="flex flex-col gap-3 flex-grow">
-          {navItems.map(item => (
+          <nav className="flex flex-col gap-3 flex-grow">
+            {navItems.map(item => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTool(item.id)}
+                className={`${baseClasses} ${activeTool === item.id ? activeClasses : inactiveClasses} ${navItemPadding}`}
+                aria-current={activeTool === item.id ? 'page' : undefined}
+                title={item.label}
+              >
+                <div className="flex-shrink-0">{item.icon}</div>
+                <div className={`overflow-hidden transition-all duration-200 ease-in-out flex items-center gap-2 ${isCollapsed && !isMobileMenuOpen ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
+                    <span className="whitespace-nowrap">{item.label}</span>
+                    {(item as any).beta && <span className="text-xs bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400 font-semibold px-1.5 py-0.5 rounded-full">BETA</span>}
+                </div>
+              </button>
+            ))}
+          </nav>
+
+          <div className="flex-shrink-0 flex flex-col gap-3">
             <button
-              key={item.id}
-              onClick={() => setActiveTool(item.id)}
-              className={`${baseClasses} ${activeTool === item.id ? activeClasses : inactiveClasses} ${navItemPadding}`}
-              aria-current={activeTool === item.id ? 'page' : undefined}
-              title={item.label}
+              onClick={onOpenSettings}
+              className={`${baseClasses} ${inactiveClasses} ${navItemPadding}`}
+              title="Settings"
             >
-              <div className="flex-shrink-0">{item.icon}</div>
-              <div className={`overflow-hidden transition-all duration-200 ease-in-out flex items-center gap-2 ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
-                  <span className="whitespace-nowrap">{item.label}</span>
-                  {(item as any).beta && <span className="text-xs bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400 font-semibold px-1.5 py-0.5 rounded-full">BETA</span>}
+              <div className="flex-shrink-0"><SettingsIcon /></div>
+              <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isCollapsed && !isMobileMenuOpen ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
+                  <span className="whitespace-nowrap">Settings</span>
               </div>
             </button>
-          ))}
-        </nav>
-
-        <div className="flex-shrink-0 flex flex-col gap-3">
-          <button
-            onClick={onOpenSettings}
-            className={`${baseClasses} ${inactiveClasses} ${navItemPadding}`}
-            title="Settings"
-          >
-            <div className="flex-shrink-0"><SettingsIcon /></div>
-            <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
-                <span className="whitespace-nowrap">Settings</span>
-            </div>
-          </button>
-          <button
-            onClick={onLogout}
-            className={`${baseClasses} ${inactiveClasses} ${navItemPadding}`}
-            title="Logout"
-          >
-            <div className="flex-shrink-0"><LogoutIcon /></div>
-            <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
-                <span className="whitespace-nowrap">Logout</span>
-            </div>
-          </button>
+            <button
+              onClick={onLogout}
+              className={`${baseClasses} ${inactiveClasses} ${navItemPadding}`}
+              title="Logout"
+            >
+              <div className="flex-shrink-0"><LogoutIcon /></div>
+              <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isCollapsed && !isMobileMenuOpen ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
+                  <span className="whitespace-nowrap">Logout</span>
+              </div>
+            </button>
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 
