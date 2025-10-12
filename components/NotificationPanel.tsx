@@ -44,9 +44,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose, 
     };
 
     return (
-        <div className="fixed inset-0 z-40" onClick={onClose}>
+        <div className="fixed inset-0 z-40 p-4 pt-20 flex justify-center md:justify-end" onClick={onClose}>
             <div
-                className="absolute top-20 right-4 md:right-8 w-full max-w-md bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-down"
+                className="w-full max-w-md bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-down h-fit"
                 onClick={e => e.stopPropagation()}
             >
                 <div className="p-2 border-b border-zinc-200 dark:border-zinc-800">
