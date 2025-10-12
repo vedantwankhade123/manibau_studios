@@ -1,15 +1,17 @@
 import React from 'react';
-import { HeadingBlock } from '../types';
+import { HeadingBlock, Page } from '../types';
 import SegmentedControl from '../ui/SegmentedControl';
 import ColorInput from '../ui/ColorInput';
 import NumberInput from '../ui/NumberInput';
+import LinkSettings from '../ui/LinkSettings';
 
 interface HeadingSettingsProps {
     block: HeadingBlock;
     updateBlock: (id: string, content: Partial<HeadingBlock['content']>) => void;
+    pages: Page[];
 }
 
-const HeadingSettings: React.FC<HeadingSettingsProps> = ({ block, updateBlock }) => {
+const HeadingSettings: React.FC<HeadingSettingsProps> = ({ block, updateBlock, pages }) => {
     return (
         <div className="space-y-4">
             <div>
@@ -49,6 +51,11 @@ const HeadingSettings: React.FC<HeadingSettingsProps> = ({ block, updateBlock })
                 unit="px"
                 min={100}
                 max={1200}
+            />
+            <LinkSettings
+                link={block.content.link || { type: 'url', value: '' }}
+                onLinkChange={(link) => updateBlock(block.id, { link })}
+                pages={pages}
             />
         </div>
     );

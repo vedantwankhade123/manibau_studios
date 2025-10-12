@@ -3,11 +3,11 @@ import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
-import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search, Type, Pilcrow, Image as ImageIcon, Link as LinkIcon, MousePointerClick, Minus, Divide, Video, Star, Text, Map } from 'lucide-react';
+import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search, Type, Pilcrow, Image as ImageIcon, Link as LinkIcon, MousePointerClick, Minus, Divide, Video, Star, Text, Map, Square } from 'lucide-react';
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
-import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { BlockType, CanvasBlock, Page } from './types';
 import PageTabs from './ui/PageTabs';
 import { useHistory } from './hooks/useHistory';
@@ -25,6 +25,7 @@ import VideoBlock from './blocks/VideoBlock';
 import IconBlock from './blocks/IconBlock';
 import TextBlock from './blocks/TextBlock';
 import MapBlock from './blocks/MapBlock';
+import ShapeBlock from './blocks/ShapeBlock';
 
 interface CanvasStudioProps {
   onToggleNotifications: () => void;
@@ -66,7 +67,7 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
         case 'Button':
             return { id, type, x: 50, y: 50, width: 200, height: 80, content: { text: 'Click Me', link: { type: 'url', value: '#' }, backgroundColor: '#2563eb', textColor: '#ffffff' } };
         case 'Image':
-            return { id, type, x: 50, y: 50, width: 500, height: 300, content: { src: 'https://via.placeholder.com/500x300', alt: 'Placeholder', width: 100 } };
+            return { id, type, x: 50, y: 50, width: 500, height: 300, content: { src: 'https://via.placeholder.com/500x300', alt: 'Placeholder', width: 100, borderRadius: 8 } };
         case 'Social':
             return { id, type, x: 50, y: 50, width: 200, height: 80, content: { instagram: '#', facebook: '#', linkedin: '#' } };
         case 'Spacer':
@@ -74,13 +75,15 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
         case 'Divider':
             return { id, type, x: 50, y: 50, width: 500, height: 40, content: { thickness: 1, color: '#e5e7eb', marginY: 16 } };
         case 'Video':
-            return { id, type, x: 50, y: 50, width: 500, height: 300, content: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', aspectRatio: '16/9', width: 100 } };
+            return { id, type, x: 50, y: 50, width: 500, height: 300, content: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', aspectRatio: '16/9', width: 100, borderRadius: 8 } };
         case 'Icon':
             return { id, type, x: 50, y: 50, width: 100, height: 100, content: { iconName: 'Smile', size: 48, color: '#18181b' } };
         case 'Text':
             return { id, type, x: 50, y: 50, width: 300, height: 150, content: { text: 'This is a text box. You can add more content here.', fontSize: '16px', textAlign: 'left', color: '#18181b', backgroundColor: 'transparent', padding: 16, borderRadius: 8 } };
         case 'Map':
             return { id, type, x: 50, y: 50, width: 500, height: 400, content: { address: 'New York, NY', zoom: 13 } };
+        case 'Shape':
+            return { id, type, x: 50, y: 50, width: 200, height: 200, content: { shapeType: 'rectangle', backgroundColor: '#3b82f6', borderColor: '#1e40af', borderWidth: 0, borderRadius: 8 } };
         default:
             throw new Error(`Unknown block type: ${type}`);
     }
@@ -105,6 +108,14 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const [activeDragItem, setActiveDragItem] = useState<CanvasBlock | { type: BlockType } | null>(null);
     
     const debounceTimer = useRef<number | null>(null);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        })
+    );
 
     const activePage = pages.find(p => p.id === activePageId);
     const activeBlocks = activePage?.blocks || [];
@@ -300,6 +311,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
             case 'Icon': return <IconBlock block={block} />;
             case 'Text': return <TextBlock block={block} />;
             case 'Map': return <MapBlock block={block} />;
+            case 'Shape': return <ShapeBlock block={block} />;
             default: return <div>Unknown block type</div>;
         }
     };
@@ -316,10 +328,11 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         'Button': { icon: <MousePointerClick size={20} />, label: 'Button' },
         'Social': { icon: <LinkIcon size={20} />, label: 'Social Links' },
         'Map': { icon: <Map size={20} />, label: 'Map' },
+        'Shape': { icon: <Square size={20} />, label: 'Shape' },
     };
 
     return (
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
             <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
                 <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <div className="flex items-center gap-2 text-sm">

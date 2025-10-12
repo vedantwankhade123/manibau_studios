@@ -12,6 +12,7 @@ import VideoSettings from './settings/VideoSettings';
 import IconSettings from './settings/IconSettings';
 import TextSettings from './settings/TextSettings';
 import MapSettings from './settings/MapSettings';
+import ShapeSettings from './settings/ShapeSettings';
 import LayersPanel from './LayersPanel';
 
 interface CanvasRightSidebarProps {
@@ -34,11 +35,11 @@ const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ blocks, selecte
 
         switch (selectedBlock.type) {
             case 'Heading':
-                return <HeadingSettings block={selectedBlock} updateBlock={updateBlock} />;
+                return <HeadingSettings block={selectedBlock} updateBlock={updateBlock} pages={pages} />;
             case 'Paragraph':
-                return <ParagraphSettings block={selectedBlock} updateBlock={updateBlock} />;
+                return <ParagraphSettings block={selectedBlock} updateBlock={updateBlock} pages={pages} />;
             case 'Image':
-                return <ImageSettings block={selectedBlock} updateBlock={updateBlock} />;
+                return <ImageSettings block={selectedBlock} updateBlock={updateBlock} pages={pages} />;
             case 'Button':
                 return <ButtonSettings block={selectedBlock} updateBlock={updateBlock} pages={pages} />;
             case 'Social':
@@ -48,13 +49,15 @@ const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ blocks, selecte
             case 'Divider':
                 return <DividerSettings block={selectedBlock} updateBlock={updateBlock} />;
             case 'Video':
-                return <VideoSettings block={selectedBlock} updateBlock={updateBlock} />;
+                return <VideoSettings block={selectedBlock} updateBlock={updateBlock} pages={pages} />;
             case 'Icon':
                 return <IconSettings block={selectedBlock} updateBlock={updateBlock} />;
             case 'Text':
                 return <TextSettings block={selectedBlock} updateBlock={updateBlock} />;
             case 'Map':
                 return <MapSettings block={selectedBlock} updateBlock={updateBlock} />;
+            case 'Shape':
+                return <ShapeSettings block={selectedBlock} updateBlock={updateBlock} />;
             default:
                 return <p>No settings available for this block type.</p>;
         }

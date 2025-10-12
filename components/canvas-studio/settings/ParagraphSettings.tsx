@@ -1,15 +1,17 @@
 import React from 'react';
-import { ParagraphBlock } from '../types';
+import { ParagraphBlock, Page } from '../types';
 import SegmentedControl from '../ui/SegmentedControl';
 import ColorInput from '../ui/ColorInput';
 import NumberInput from '../ui/NumberInput';
+import LinkSettings from '../ui/LinkSettings';
 
 interface ParagraphSettingsProps {
     block: ParagraphBlock;
     updateBlock: (id: string, content: Partial<ParagraphBlock['content']>) => void;
+    pages: Page[];
 }
 
-const ParagraphSettings: React.FC<ParagraphSettingsProps> = ({ block, updateBlock }) => {
+const ParagraphSettings: React.FC<ParagraphSettingsProps> = ({ block, updateBlock, pages }) => {
     return (
         <div className="space-y-4">
             <div>
@@ -50,6 +52,11 @@ const ParagraphSettings: React.FC<ParagraphSettingsProps> = ({ block, updateBloc
                 unit="px"
                 min={100}
                 max={1200}
+            />
+            <LinkSettings
+                link={block.content.link || { type: 'url', value: '' }}
+                onLinkChange={(link) => updateBlock(block.id, { link })}
+                pages={pages}
             />
         </div>
     );

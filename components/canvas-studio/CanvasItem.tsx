@@ -14,6 +14,7 @@ import VideoBlock from './blocks/VideoBlock';
 import IconBlock from './blocks/IconBlock';
 import TextBlock from './blocks/TextBlock';
 import MapBlock from './blocks/MapBlock';
+import ShapeBlock from './blocks/ShapeBlock';
 
 interface CanvasItemProps {
     block: CanvasBlock;
@@ -67,17 +68,18 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
 
     const renderBlock = () => {
         switch (block.type) {
-            case 'Heading': return <HeadingBlock block={block} />;
-            case 'Paragraph': return <ParagraphBlock block={block} />;
-            case 'Image': return <ImageBlock block={block} />;
+            case 'Heading': return <HeadingBlock block={block} onNavigate={onNavigate} />;
+            case 'Paragraph': return <ParagraphBlock block={block} onNavigate={onNavigate} />;
+            case 'Image': return <ImageBlock block={block} onNavigate={onNavigate} />;
             case 'Button': return <ButtonBlock block={block} onNavigate={onNavigate} />;
             case 'Social': return <SocialBlock block={block} />;
             case 'Spacer': return <SpacerBlock block={block} />;
             case 'Divider': return <DividerBlock block={block} />;
-            case 'Video': return <VideoBlock block={block} />;
+            case 'Video': return <VideoBlock block={block} onNavigate={onNavigate} />;
             case 'Icon': return <IconBlock block={block} />;
             case 'Text': return <TextBlock block={block} />;
             case 'Map': return <MapBlock block={block} />;
+            case 'Shape': return <ShapeBlock block={block} />;
             default: return <div>Unknown block type</div>;
         }
     };

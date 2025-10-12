@@ -13,9 +13,6 @@ const ToolboxItem: React.FC<ToolboxItemProps> = ({ type, icon, label, onAddItem 
     const { attributes, listeners, setNodeRef } = useDraggable({
         id: `toolbox-item-${type}`,
         data: { type },
-        activationConstraint: {
-            distance: 8, // User must drag more than 8px to start a drag
-        },
     });
 
     return (

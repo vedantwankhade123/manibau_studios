@@ -1,13 +1,15 @@
 import React from 'react';
-import { ImageBlock } from '../types';
+import { ImageBlock, Page } from '../types';
 import NumberInput from '../ui/NumberInput';
+import LinkSettings from '../ui/LinkSettings';
 
 interface ImageSettingsProps {
     block: ImageBlock;
     updateBlock: (id: string, content: Partial<ImageBlock['content']>) => void;
+    pages: Page[];
 }
 
-const ImageSettings: React.FC<ImageSettingsProps> = ({ block, updateBlock }) => {
+const ImageSettings: React.FC<ImageSettingsProps> = ({ block, updateBlock, pages }) => {
     return (
         <div className="space-y-4">
             <div>
@@ -35,6 +37,19 @@ const ImageSettings: React.FC<ImageSettingsProps> = ({ block, updateBlock }) => 
                 unit="%"
                 min={10}
                 max={100}
+            />
+            <NumberInput
+                label="Border Radius"
+                value={block.content.borderRadius}
+                onChange={(value) => updateBlock(block.id, { borderRadius: value })}
+                unit="px"
+                min={0}
+                max={200}
+            />
+            <LinkSettings
+                link={block.content.link || { type: 'url', value: '' }}
+                onLinkChange={(link) => updateBlock(block.id, { link })}
+                pages={pages}
             />
         </div>
     );

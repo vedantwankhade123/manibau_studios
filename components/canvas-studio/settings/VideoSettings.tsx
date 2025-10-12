@@ -1,14 +1,16 @@
 import React from 'react';
-import { VideoBlock } from '../types';
+import { VideoBlock, Page } from '../types';
 import SegmentedControl from '../ui/SegmentedControl';
 import NumberInput from '../ui/NumberInput';
+import LinkSettings from '../ui/LinkSettings';
 
 interface VideoSettingsProps {
     block: VideoBlock;
     updateBlock: (id: string, content: Partial<VideoBlock['content']>) => void;
+    pages: Page[];
 }
 
-const VideoSettings: React.FC<VideoSettingsProps> = ({ block, updateBlock }) => {
+const VideoSettings: React.FC<VideoSettingsProps> = ({ block, updateBlock, pages }) => {
     return (
         <div className="space-y-4">
             <div>
@@ -36,6 +38,19 @@ const VideoSettings: React.FC<VideoSettingsProps> = ({ block, updateBlock }) => 
                 unit="%"
                 min={10}
                 max={100}
+            />
+            <NumberInput
+                label="Border Radius"
+                value={block.content.borderRadius}
+                onChange={(value) => updateBlock(block.id, { borderRadius: value })}
+                unit="px"
+                min={0}
+                max={50}
+            />
+            <LinkSettings
+                link={block.content.link || { type: 'url', value: '' }}
+                onLinkChange={(link) => updateBlock(block.id, { link })}
+                pages={pages}
             />
         </div>
     );

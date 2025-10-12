@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Type, Pilcrow, Image as ImageIcon, Link, MousePointerClick, Minus, Divide, Video, Star, PanelLeftClose, Text, Map } from 'lucide-react';
+import { ChevronDown, Type, Pilcrow, Image as ImageIcon, Link, MousePointerClick, Minus, Divide, Video, Star, PanelLeftClose, Text, Map, Square } from 'lucide-react';
 import ToolboxItem from './ToolboxItem';
 import { BlockType } from './types';
 
@@ -47,6 +47,9 @@ const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onTo
             { type: 'Image' as BlockType, icon: <ImageIcon size={20} />, label: 'Image' },
             { type: 'Video' as BlockType, icon: <Video size={20} />, label: 'Video' },
             { type: 'Icon' as BlockType, icon: <Star size={20} />, label: 'Icon' },
+        ]},
+        { title: 'Shapes', items: [
+            { type: 'Shape' as BlockType, icon: <Square size={20} />, label: 'Shape' },
         ]},
         { title: 'Actions', items: [
             { type: 'Button' as BlockType, icon: <MousePointerClick size={20} />, label: 'Button' },

@@ -1,4 +1,4 @@
-export type BlockType = 'Heading' | 'Paragraph' | 'Button' | 'Image' | 'Social' | 'Spacer' | 'Divider' | 'Video' | 'Icon' | 'Text' | 'Map';
+export type BlockType = 'Heading' | 'Paragraph' | 'Button' | 'Image' | 'Social' | 'Spacer' | 'Divider' | 'Video' | 'Icon' | 'Text' | 'Map' | 'Shape';
 
 export interface Block {
     id: string;
@@ -18,6 +18,10 @@ export interface HeadingBlock extends Block {
         textAlign: 'left' | 'center' | 'right';
         color: string;
         maxWidth?: number;
+        link?: {
+            type: 'url' | 'page';
+            value: string;
+        };
     };
 }
 
@@ -29,6 +33,10 @@ export interface ParagraphBlock extends Block {
         textAlign: 'left' | 'center' | 'right';
         color: string;
         maxWidth?: number;
+        link?: {
+            type: 'url' | 'page';
+            value: string;
+        };
     };
 }
 
@@ -51,6 +59,11 @@ export interface ImageBlock extends Block {
         src: string;
         alt: string;
         width: number;
+        borderRadius: number;
+        link?: {
+            type: 'url' | 'page';
+            value: string;
+        };
     };
 }
 
@@ -85,6 +98,11 @@ export interface VideoBlock extends Block {
         url: string;
         aspectRatio: '16/9' | '4/3' | '1/1';
         width: number;
+        borderRadius: number;
+        link?: {
+            type: 'url' | 'page';
+            value: string;
+        };
     };
 }
 
@@ -118,7 +136,18 @@ export interface MapBlock extends Block {
     };
 }
 
-export type CanvasBlock = HeadingBlock | ParagraphBlock | ButtonBlock | ImageBlock | SocialBlock | SpacerBlock | DividerBlock | VideoBlock | IconBlock | TextBlock | MapBlock;
+export interface ShapeBlock extends Block {
+    type: 'Shape';
+    content: {
+        shapeType: 'rectangle' | 'circle';
+        backgroundColor: string;
+        borderColor: string;
+        borderWidth: number;
+        borderRadius: number;
+    };
+}
+
+export type CanvasBlock = HeadingBlock | ParagraphBlock | ButtonBlock | ImageBlock | SocialBlock | SpacerBlock | DividerBlock | VideoBlock | IconBlock | TextBlock | MapBlock | ShapeBlock;
 
 export interface Page {
   id: string;

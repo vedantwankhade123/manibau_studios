@@ -3,10 +3,11 @@ import { ParagraphBlock as ParagraphBlockType } from '../types';
 
 interface ParagraphBlockProps {
     block: ParagraphBlockType;
+    onNavigate?: (pageId: string) => void;
 }
 
-const ParagraphBlock: React.FC<ParagraphBlockProps> = ({ block }) => {
-    const { text, fontSize, textAlign, color, maxWidth } = block.content;
+const ParagraphBlock: React.FC<ParagraphBlockProps> = ({ block, onNavigate }) => {
+    const { text, fontSize, textAlign, color, maxWidth, link } = block.content;
     
     const wrapperStyle: React.CSSProperties = {
         maxWidth: maxWidth ? `${maxWidth}px` : 'none',
@@ -22,7 +23,7 @@ const ParagraphBlock: React.FC<ParagraphBlockProps> = ({ block }) => {
         wrapperStyle.marginRight = 'auto';
     }
 
-    return (
+    const paragraphElement = (
         <div className="p-4">
             <div style={wrapperStyle}>
                 <p
@@ -38,6 +39,15 @@ const ParagraphBlock: React.FC<ParagraphBlockProps> = ({ block }) => {
             </div>
         </div>
     );
+
+    if (link) {
+        if (link.type === 'page') {
+            return <button onClick={() => onNavigate && onNavigate(link.value)} className="w-full h-full">{paragraphElement}</button>;
+        }
+        return <a href={link.value} target="_blank" rel="noopener noreferrer" className="w-full h-full" onClick={(e) => e.preventDefault()}>{paragraphElement}</a>;
+    }
+
+    return paragraphElement;
 };
 
 export default ParagraphBlock;
