@@ -3,15 +3,28 @@ import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
-import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search } from 'lucide-react';
+import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search, Type, Pilcrow, Image as ImageIcon, Link as LinkIcon, MousePointerClick, Minus, Divide, Video, Star, Text, Map } from 'lucide-react';
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
-import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
 import { BlockType, CanvasBlock, Page } from './types';
 import PageTabs from './ui/PageTabs';
 import { useHistory } from './hooks/useHistory';
 import ContextMenu from './ContextMenu';
+
+// Block component imports for drag overlay
+import HeadingBlock from './blocks/HeadingBlock';
+import ParagraphBlock from './blocks/ParagraphBlock';
+import ImageBlock from './blocks/ImageBlock';
+import ButtonBlock from './blocks/ButtonBlock';
+import SocialBlock from './blocks/SocialBlock';
+import SpacerBlock from './blocks/SpacerBlock';
+import DividerBlock from './blocks/DividerBlock';
+import VideoBlock from './blocks/VideoBlock';
+import IconBlock from './blocks/IconBlock';
+import TextBlock from './blocks/TextBlock';
+import MapBlock from './blocks/MapBlock';
 
 interface CanvasStudioProps {
   onToggleNotifications: () => void;
@@ -89,6 +102,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const [resizingState, setResizingState] = useState<{ blockId: string; handle: string; initialX: number; initialY: number; initialWidth: number; initialHeight: number; initialBlockX: number; initialBlockY: number; } | null>(null);
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number; blockId: string; } | null>(null);
     const [dragStartCoords, setDragStartCoords] = useState<{ x: number; y: number } | null>(null);
+    const [activeDragItem, setActiveDragItem] = useState<CanvasBlock | { type: BlockType } | null>(null);
     
     const debounceTimer = useRef<number | null>(null);
 
@@ -108,10 +122,21 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     };
 
     const handleDragStart = (event: DragStartEvent) => {
-        const { activatorEvent } = event;
+        const { active, activatorEvent } = event;
+        
         if (activatorEvent instanceof MouseEvent || activatorEvent instanceof PointerEvent || ('touches' in activatorEvent && (activatorEvent as TouchEvent).touches.length > 0)) {
             const eventCoord = 'touches' in activatorEvent ? (activatorEvent as TouchEvent).touches[0] : activatorEvent;
             setDragStartCoords({ x: eventCoord.clientX, y: eventCoord.clientY });
+        }
+
+        const type = active.data.current?.type as BlockType;
+        if (type) {
+            setActiveDragItem({ type });
+        } else {
+            const block = activeBlocks.find(b => b.id === active.id);
+            if (block) {
+                setActiveDragItem(block);
+            }
         }
     };
 
@@ -138,14 +163,12 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                 setPagesHistory(prev => prev.map(p => p.id === activePageId ? { ...p, blocks: [...p.blocks, newBlock] } : p));
                 setSelectedBlockId(newBlock.id);
             }
-            setDragStartCoords(null);
-            return;
-        }
-
-        if (!active.id.toString().startsWith('toolbox-item-')) {
+        } else if (!active.id.toString().startsWith('toolbox-item-')) {
             setPagesHistory(prev => prev.map(p => p.id === activePageId ? { ...p, blocks: p.blocks.map(b => b.id === active.id ? { ...b, x: b.x + delta.x, y: b.y + delta.y } : b) } : p));
         }
+        
         setDragStartCoords(null);
+        setActiveDragItem(null);
     };
 
     const updateBlockContent = useCallback((id: string, content: any) => {
@@ -264,6 +287,37 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
 
     const selectedBlock = activeBlocks.find(b => b.id === selectedBlockId) || null;
 
+    const renderBlockComponent = (block: CanvasBlock) => {
+        switch (block.type) {
+            case 'Heading': return <HeadingBlock block={block} />;
+            case 'Paragraph': return <ParagraphBlock block={block} />;
+            case 'Image': return <ImageBlock block={block} />;
+            case 'Button': return <ButtonBlock block={block} />;
+            case 'Social': return <SocialBlock block={block} />;
+            case 'Spacer': return <SpacerBlock block={block} />;
+            case 'Divider': return <DividerBlock block={block} />;
+            case 'Video': return <VideoBlock block={block} />;
+            case 'Icon': return <IconBlock block={block} />;
+            case 'Text': return <TextBlock block={block} />;
+            case 'Map': return <MapBlock block={block} />;
+            default: return <div>Unknown block type</div>;
+        }
+    };
+
+    const toolboxItems = {
+        'Heading': { icon: <Type size={20} />, label: 'Heading' },
+        'Paragraph': { icon: <Pilcrow size={20} />, label: 'Paragraph' },
+        'Text': { icon: <Text size={20} />, label: 'Text Box' },
+        'Spacer': { icon: <Minus size={20} />, label: 'Spacer' },
+        'Divider': { icon: <Divide size={20} />, label: 'Divider' },
+        'Image': { icon: <ImageIcon size={20} />, label: 'Image' },
+        'Video': { icon: <Video size={20} />, label: 'Video' },
+        'Icon': { icon: <Star size={20} />, label: 'Icon' },
+        'Button': { icon: <MousePointerClick size={20} />, label: 'Button' },
+        'Social': { icon: <LinkIcon size={20} />, label: 'Social Links' },
+        'Map': { icon: <Map size={20} />, label: 'Map' },
+    };
+
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
@@ -320,6 +374,25 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                     />
                 )}
             </div>
+            <DragOverlay>
+                {activeDragItem ? (
+                    'width' in activeDragItem ? (
+                        <div style={{ width: activeDragItem.width, height: activeDragItem.height, opacity: 0.8, pointerEvents: 'none' }}>
+                            {renderBlockComponent(activeDragItem)}
+                        </div>
+                    ) : (
+                        (() => {
+                            const item = toolboxItems[activeDragItem.type as keyof typeof toolboxItems];
+                            return (
+                                <div className="w-24 h-24 flex flex-col items-center justify-center gap-1 p-1 bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 rounded-lg shadow-lg">
+                                    {item.icon}
+                                    <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
+                                </div>
+                            );
+                        })()
+                    )
+                ) : null}
+            </DragOverlay>
         </DndContext>
     );
 };
