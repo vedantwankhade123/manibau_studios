@@ -82,11 +82,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ onViewTerms, onViewPrivacy }) => {
       </p>
 
       <div className="space-y-4 mb-6">
-        <button onClick={() => handleOAuthSignIn('google')} className="w-full flex items-center justify-center gap-3 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white font-semibold py-3 px-4 rounded-full transition-colors">
+        <button 
+            onClick={() => handleOAuthSignIn('google')} 
+            disabled 
+            className="w-full flex items-center justify-center gap-3 bg-zinc-800 border border-zinc-700 text-white font-semibold py-3 px-4 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
             <GoogleIcon />
             Continue with Google
         </button>
-        <button onClick={() => handleOAuthSignIn('github')} className="w-full flex items-center justify-center gap-3 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white font-semibold py-3 px-4 rounded-full transition-colors">
+        <button 
+            onClick={() => handleOAuthSignIn('github')} 
+            disabled 
+            className="w-full flex items-center justify-center gap-3 bg-zinc-800 border border-zinc-700 text-white font-semibold py-3 px-4 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
             <Github size={20} />
             Continue with GitHub
         </button>
