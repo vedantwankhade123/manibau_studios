@@ -3,7 +3,7 @@ import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
-import { ChevronLeft, ChevronRight, Undo, Redo, Monitor, Tablet, Smartphone } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen } from 'lucide-react';
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
@@ -27,14 +27,24 @@ interface CanvasStudioProps {
 const createNewBlock = (type: BlockType): CanvasBlock => {
     const id = `${type}-${Date.now()}`;
     switch (type) {
-        case 'Text':
-            return { id, type, content: { text: 'Your Heading Here', fontSize: '24px', fontWeight: 'bold', textAlign: 'center' } };
+        case 'Heading':
+            return { id, type, content: { text: 'Your Heading Here', level: 'h2', textAlign: 'center', color: '#18181b' } };
+        case 'Paragraph':
+            return { id, type, content: { text: 'This is a paragraph. You can edit this text in the properties panel on the right.', fontSize: '16px', textAlign: 'left', color: '#3f3f46' } };
         case 'Button':
             return { id, type, content: { text: 'Click Me', url: '#', backgroundColor: '#2563eb', textColor: '#ffffff' } };
         case 'Image':
             return { id, type, content: { src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800', alt: 'Team working' } };
         case 'Social':
             return { id, type, content: { instagram: '#', facebook: '#', linkedin: '#' } };
+        case 'Spacer':
+            return { id, type, content: { height: 50 } };
+        case 'Divider':
+            return { id, type, content: { thickness: 1, color: '#e5e7eb', marginY: 16 } };
+        case 'Video':
+            return { id, type, content: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', aspectRatio: '16/9' } };
+        case 'Icon':
+            return { id, type, content: { iconName: 'Smile', size: 48, color: '#18181b' } };
         default:
             throw new Error(`Unknown block type: ${type}`);
     }
@@ -45,19 +55,12 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const [blocks, setBlocks] = useState<CanvasBlock[]>([]);
     const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
     const [device, setDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-
-    const handleDragStart = (event: DragStartEvent) => {
-        // Logic for when a drag starts
-    };
-
-    const handleDragOver = (event: DragOverEvent) => {
-        // Logic for showing a placeholder while dragging over the canvas
-    };
+    const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
+    const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
 
-        // Handle dropping a new item from the toolbox
         if (active.id.toString().startsWith('toolbox-item-') && over?.id === 'canvas-droppable-area') {
             const type = active.data.current?.type as BlockType;
             if (type) {
@@ -68,7 +71,6 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
             return;
         }
 
-        // Handle reordering existing items
         if (over && active.id !== over.id) {
             const oldIndex = blocks.findIndex(b => b.id === active.id);
             const newIndex = blocks.findIndex(b => b.id === over.id);
@@ -92,7 +94,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const selectedBlock = blocks.find(b => b.id === selectedBlockId) || null;
 
     return (
-        <DndContext onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
+        <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
             <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
                 <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <div className="flex items-center gap-2 text-sm">
@@ -111,10 +113,15 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                 </header>
 
                 <div className="flex-grow flex min-h-0">
-                    <CanvasLeftSidebar />
+                    <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} />
                     <div className="flex-1 flex flex-col">
                         <div className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                             <div className="flex items-center gap-2">
+                                {!isLeftSidebarOpen && (
+                                    <button onClick={() => setIsLeftSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                                        <PanelLeftOpen size={18} />
+                                    </button>
+                                )}
                                 <button className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"><Undo size={18} /></button>
                                 <button className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"><Redo size={18} /></button>
                             </div>
@@ -127,11 +134,16 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                                 <button className="text-sm font-semibold px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">
                                     Publish
                                 </button>
+                                {!isRightSidebarOpen && (
+                                    <button onClick={() => setIsRightSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                                        <PanelRightOpen size={18} />
+                                    </button>
+                                )}
                             </div>
                         </div>
                         <Canvas blocks={blocks} selectedBlockId={selectedBlockId} onSelectBlock={setSelectedBlockId} device={device} />
                     </div>
-                    <CanvasRightSidebar selectedBlock={selectedBlock} updateBlock={updateBlockContent} deleteBlock={deleteBlock} />
+                    <CanvasRightSidebar selectedBlock={selectedBlock} updateBlock={updateBlockContent} deleteBlock={deleteBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} />
                 </div>
             </div>
         </DndContext>

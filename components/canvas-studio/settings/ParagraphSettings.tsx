@@ -1,13 +1,14 @@
 import React from 'react';
-import { TextBlock } from '../types';
+import { ParagraphBlock } from '../types';
 import SegmentedControl from '../ui/SegmentedControl';
+import ColorInput from '../ui/ColorInput';
 
-interface TextSettingsProps {
-    block: TextBlock;
-    updateBlock: (id: string, content: Partial<TextBlock['content']>) => void;
+interface ParagraphSettingsProps {
+    block: ParagraphBlock;
+    updateBlock: (id: string, content: Partial<ParagraphBlock['content']>) => void;
 }
 
-const TextSettings: React.FC<TextSettingsProps> = ({ block, updateBlock }) => {
+const ParagraphSettings: React.FC<ParagraphSettingsProps> = ({ block, updateBlock }) => {
     return (
         <div className="space-y-4">
             <div>
@@ -16,7 +17,7 @@ const TextSettings: React.FC<TextSettingsProps> = ({ block, updateBlock }) => {
                     value={block.content.text}
                     onChange={(e) => updateBlock(block.id, { text: e.target.value })}
                     className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={4}
+                    rows={6}
                 />
             </div>
             <div>
@@ -29,14 +30,6 @@ const TextSettings: React.FC<TextSettingsProps> = ({ block, updateBlock }) => {
                 />
             </div>
             <div>
-                <label className="text-sm font-medium mb-2 block">Font Weight</label>
-                <SegmentedControl
-                    options={['normal', 'bold']}
-                    selected={block.content.fontWeight}
-                    onSelect={(val) => updateBlock(block.id, { fontWeight: val })}
-                />
-            </div>
-            <div>
                 <label className="text-sm font-medium mb-2 block">Text Align</label>
                 <SegmentedControl
                     options={['left', 'center', 'right']}
@@ -44,8 +37,13 @@ const TextSettings: React.FC<TextSettingsProps> = ({ block, updateBlock }) => {
                     onSelect={(val) => updateBlock(block.id, { textAlign: val as 'left' | 'center' | 'right' })}
                 />
             </div>
+            <ColorInput
+                label="Color"
+                color={block.content.color}
+                onChange={(color) => updateBlock(block.id, { color })}
+            />
         </div>
     );
 };
 
-export default TextSettings;
+export default ParagraphSettings;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, ChevronDown, Type, Image as ImageIcon, Link, MousePointerClick } from 'lucide-react';
+import { Search, ChevronDown, Type, Pilcrow, Image as ImageIcon, Link, MousePointerClick, Minus, Divide, Video, Star, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import ToolboxItem from './ToolboxItem';
 import { BlockType } from './types';
 
@@ -15,27 +15,63 @@ const AccordionSection: React.FC<{ title: string; children: React.ReactNode; def
     </details>
 );
 
-const CanvasLeftSidebar = () => {
-    const toolboxItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
-        { type: 'Text', icon: <Type size={24} />, label: 'Text' },
+interface CanvasLeftSidebarProps {
+    isCollapsed: boolean;
+    onToggle: () => void;
+}
+
+const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onToggle }) => {
+    const typographyItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
+        { type: 'Heading', icon: <Type size={24} />, label: 'Heading' },
+        { type: 'Paragraph', icon: <Pilcrow size={24} />, label: 'Paragraph' },
+    ];
+    const layoutItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
+        { type: 'Spacer', icon: <Minus size={24} />, label: 'Spacer' },
+        { type: 'Divider', icon: <Divide size={24} />, label: 'Divider' },
+    ];
+    const mediaItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
         { type: 'Image', icon: <ImageIcon size={24} />, label: 'Image' },
+        { type: 'Video', icon: <Video size={24} />, label: 'Video' },
+        { type: 'Icon', icon: <Star size={24} />, label: 'Icon' },
+    ];
+    const actionItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
         { type: 'Button', icon: <MousePointerClick size={24} />, label: 'Button' },
         { type: 'Social', icon: <Link size={24} />, label: 'Social Links' },
     ];
 
     return (
-        <aside className="w-80 flex-shrink-0 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col">
-            <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
-                <h2 className="text-lg font-bold mb-4">Components</h2>
-                <div className="relative">
-                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
-                    <input type="text" placeholder="Search components..." className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
+        <aside className={`flex-shrink-0 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'w-0' : 'w-72'}`}>
+            <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                <h2 className="text-lg font-bold">Components</h2>
+                <button onClick={onToggle} className="p-1 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">
+                    <PanelLeftClose size={20} />
+                </button>
             </div>
             <div className="flex-grow p-2 overflow-y-auto custom-scrollbar">
-                <AccordionSection title="Basic Blocks" defaultOpen>
+                <AccordionSection title="Typography" defaultOpen>
                     <div className="grid grid-cols-2 gap-2">
-                        {toolboxItems.map(item => (
+                        {typographyItems.map(item => (
+                            <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
+                        ))}
+                    </div>
+                </AccordionSection>
+                <AccordionSection title="Layout">
+                    <div className="grid grid-cols-2 gap-2">
+                        {layoutItems.map(item => (
+                            <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
+                        ))}
+                    </div>
+                </AccordionSection>
+                <AccordionSection title="Media">
+                    <div className="grid grid-cols-2 gap-2">
+                        {mediaItems.map(item => (
+                            <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
+                        ))}
+                    </div>
+                </AccordionSection>
+                 <AccordionSection title="Actions">
+                    <div className="grid grid-cols-2 gap-2">
+                        {actionItems.map(item => (
                             <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
                         ))}
                     </div>

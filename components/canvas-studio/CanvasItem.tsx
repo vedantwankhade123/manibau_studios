@@ -3,10 +3,15 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
 import { CanvasBlock } from './types';
-import TextBlock from './blocks/TextBlock';
 import ImageBlock from './blocks/ImageBlock';
 import ButtonBlock from './blocks/ButtonBlock';
 import SocialBlock from './blocks/SocialBlock';
+import HeadingBlock from './blocks/HeadingBlock';
+import ParagraphBlock from './blocks/ParagraphBlock';
+import SpacerBlock from './blocks/SpacerBlock';
+import DividerBlock from './blocks/DividerBlock';
+import VideoBlock from './blocks/VideoBlock';
+import IconBlock from './blocks/IconBlock';
 
 interface CanvasItemProps {
     block: CanvasBlock;
@@ -30,14 +35,24 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick }) =
 
     const renderBlock = () => {
         switch (block.type) {
-            case 'Text':
-                return <TextBlock block={block} />;
+            case 'Heading':
+                return <HeadingBlock block={block} />;
+            case 'Paragraph':
+                return <ParagraphBlock block={block} />;
             case 'Image':
                 return <ImageBlock block={block} />;
             case 'Button':
                 return <ButtonBlock block={block} />;
             case 'Social':
                 return <SocialBlock block={block} />;
+            case 'Spacer':
+                return <SpacerBlock block={block} />;
+            case 'Divider':
+                return <DividerBlock block={block} />;
+            case 'Video':
+                return <VideoBlock block={block} />;
+            case 'Icon':
+                return <IconBlock block={block} />;
             default:
                 return <div>Unknown block type</div>;
         }
