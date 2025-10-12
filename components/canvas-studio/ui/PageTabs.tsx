@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, X } from 'lucide-react';
 import { Page } from '../types';
 
@@ -8,24 +8,55 @@ interface PageTabsProps {
     onSelectPage: (id: string) => void;
     onAddPage: () => void;
     onDeletePage: (id: string) => void;
+    onRenamePage: (id: string, newName: string) => void;
 }
 
-const PageTabs: React.FC<PageTabsProps> = ({ pages, activePageId, onSelectPage, onAddPage, onDeletePage }) => {
+const PageTabs: React.FC<PageTabsProps> = ({ pages, activePageId, onSelectPage, onAddPage, onDeletePage, onRenamePage }) => {
+    const [renamingPageId, setRenamingPageId] = useState<string | null>(null);
+    const [renameValue, setRenameValue] = useState('');
+
+    useEffect(() => {
+        if (renamingPageId) {
+            const page = pages.find(p => p.id === renamingPageId);
+            setRenameValue(page?.name || '');
+        }
+    }, [renamingPageId, pages]);
+
+    const handleRename = () => {
+        if (renamingPageId && renameValue.trim()) {
+            onRenamePage(renamingPageId, renameValue.trim());
+        }
+        setRenamingPageId(null);
+    };
+
     return (
         <div className="flex items-center gap-2">
             <div className="flex items-center bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
                 {pages.map(page => (
                     <div key={page.id} className="relative group">
-                        <button
-                            onClick={() => onSelectPage(page.id)}
-                            className={`px-3 py-1 text-sm rounded transition-colors ${
-                                activePageId === page.id
-                                    ? 'bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100 shadow-sm'
-                                    : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'
-                            }`}
-                        >
-                            {page.name}
-                        </button>
+                        {renamingPageId === page.id ? (
+                            <input
+                                type="text"
+                                value={renameValue}
+                                onChange={(e) => setRenameValue(e.target.value)}
+                                onBlur={handleRename}
+                                onKeyDown={(e) => e.key === 'Enter' && handleRename()}
+                                autoFocus
+                                className="px-3 py-1 text-sm bg-white dark:bg-zinc-700 rounded outline-none ring-2 ring-blue-500"
+                            />
+                        ) : (
+                            <button
+                                onClick={() => onSelectPage(page.id)}
+                                onDoubleClick={() => setRenamingPageId(page.id)}
+                                className={`px-3 py-1 text-sm rounded transition-colors ${
+                                    activePageId === page.id
+                                        ? 'bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100 shadow-sm'
+                                        : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'
+                                }`}
+                            >
+                                {page.name}
+                            </button>
+                        )}
                         {pages.length > 1 && (
                             <button
                                 onClick={(e) => {

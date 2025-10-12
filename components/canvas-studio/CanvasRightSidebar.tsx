@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trash2, PanelRightClose } from 'lucide-react';
-import { CanvasBlock } from './types';
+import { CanvasBlock, Page } from './types';
 import ImageSettings from './settings/ImageSettings';
 import ButtonSettings from './settings/ButtonSettings';
 import SocialSettings from './settings/SocialSettings';
@@ -23,9 +23,10 @@ interface CanvasRightSidebarProps {
     reorderBlock: (id: string, direction: 'front' | 'back' | 'forward' | 'backward') => void;
     isCollapsed: boolean;
     onToggle: () => void;
+    pages: Page[];
 }
 
-const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ blocks, selectedBlock, onSelectBlock, updateBlock, deleteBlock, reorderBlock, isCollapsed, onToggle }) => {
+const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ blocks, selectedBlock, onSelectBlock, updateBlock, deleteBlock, reorderBlock, isCollapsed, onToggle, pages }) => {
     const renderSettings = () => {
         if (!selectedBlock) {
             return <LayersPanel blocks={blocks} selectedBlockId={null} onSelectBlock={onSelectBlock} onReorderBlock={reorderBlock} onDeleteBlock={deleteBlock} />;
@@ -39,7 +40,7 @@ const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ blocks, selecte
             case 'Image':
                 return <ImageSettings block={selectedBlock} updateBlock={updateBlock} />;
             case 'Button':
-                return <ButtonSettings block={selectedBlock} updateBlock={updateBlock} />;
+                return <ButtonSettings block={selectedBlock} updateBlock={updateBlock} pages={pages} />;
             case 'Social':
                 return <SocialSettings block={selectedBlock} updateBlock={updateBlock} />;
             case 'Spacer':

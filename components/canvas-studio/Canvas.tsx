@@ -12,17 +12,19 @@ interface CanvasProps {
     backgroundColor: string;
     onResizeStart: (e: React.MouseEvent, blockId: string, handle: string) => void;
     onContextMenu: (e: React.MouseEvent, blockId: string) => void;
+    onNavigate: (pageId: string) => void;
+    canvasHeight: number;
 }
 
-const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock, onDeselectAll, device, backgroundColor, onResizeStart, onContextMenu }) => {
+const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock, onDeselectAll, device, backgroundColor, onResizeStart, onContextMenu, onNavigate, canvasHeight }) => {
     const { setNodeRef } = useDroppable({
         id: 'canvas-droppable-area',
     });
 
     const deviceStyles = {
-        desktop: { width: '100%', minHeight: '100%', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '0.5rem' },
-        tablet: { width: '768px', height: '1024px', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '0.75rem' },
-        mobile: { width: '375px', height: '667px', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '1rem' },
+        desktop: { width: '100%', height: `${canvasHeight}px`, boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '0.5rem' },
+        tablet: { width: '768px', height: `${canvasHeight}px`, boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '0.75rem' },
+        mobile: { width: '375px', height: `${canvasHeight}px`, boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '1rem' },
     };
 
     return (
@@ -45,6 +47,7 @@ const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock,
                             }}
                             onResizeStart={onResizeStart}
                             onContextMenu={onContextMenu}
+                            onNavigate={onNavigate}
                         />
                     ))
                 ) : (

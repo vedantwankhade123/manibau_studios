@@ -21,6 +21,7 @@ interface CanvasItemProps {
     onClick: (e: React.MouseEvent) => void;
     onResizeStart: (e: React.MouseEvent, blockId: string, handle: string) => void;
     onContextMenu: (e: React.MouseEvent, blockId: string) => void;
+    onNavigate: (pageId: string) => void;
 }
 
 const getHandleClasses = (handle: string) => {
@@ -37,7 +38,7 @@ const getHandleClasses = (handle: string) => {
     }
 };
 
-const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onResizeStart, onContextMenu }) => {
+const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onResizeStart, onContextMenu, onNavigate }) => {
     const {
         attributes,
         listeners,
@@ -69,7 +70,7 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
             case 'Heading': return <HeadingBlock block={block} />;
             case 'Paragraph': return <ParagraphBlock block={block} />;
             case 'Image': return <ImageBlock block={block} />;
-            case 'Button': return <ButtonBlock block={block} />;
+            case 'Button': return <ButtonBlock block={block} onNavigate={onNavigate} />;
             case 'Social': return <SocialBlock block={block} />;
             case 'Spacer': return <SpacerBlock block={block} />;
             case 'Divider': return <DividerBlock block={block} />;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
@@ -51,7 +51,7 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
         case 'Paragraph':
             return { id, type, x: 50, y: 50, width: 400, height: 120, content: { text: 'This is a paragraph...', fontSize: '16px', textAlign: 'left', color: '#3f3f46', maxWidth: 600 } };
         case 'Button':
-            return { id, type, x: 50, y: 50, width: 200, height: 80, content: { text: 'Click Me', url: '#', backgroundColor: '#2563eb', textColor: '#ffffff' } };
+            return { id, type, x: 50, y: 50, width: 200, height: 80, content: { text: 'Click Me', link: { type: 'url', value: '#' }, backgroundColor: '#2563eb', textColor: '#ffffff' } };
         case 'Image':
             return { id, type, x: 50, y: 50, width: 500, height: 300, content: { src: 'https://via.placeholder.com/500x300', alt: 'Placeholder', width: 100 } };
         case 'Social':
@@ -93,6 +93,12 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
 
     const activePage = pages.find(p => p.id === activePageId);
     const activeBlocks = activePage?.blocks || [];
+
+    const canvasHeight = useMemo(() => {
+        if (activeBlocks.length === 0) return 800; // Default height
+        const lowestPoint = Math.max(...activeBlocks.map(b => b.y + b.height));
+        return Math.max(lowestPoint + 100, 800); // Add padding and ensure min height
+    }, [activeBlocks]);
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over, delta } = event;
@@ -155,6 +161,18 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
             if (activePageId === id) setActivePageId(newPages[0]?.id || '');
             return newPages;
         });
+    };
+
+    const renamePage = (id: string, newName: string) => {
+        setPagesHistory(prev => prev.map(p => p.id === id ? { ...p, name: newName } : p));
+    };
+
+    const handleNavigate = (pageId: string) => {
+        if (pages.find(p => p.id === pageId)) {
+            setActivePageId(pageId);
+        } else {
+            console.warn(`Attempted to navigate to non-existent page ID: ${pageId}`);
+        }
     };
 
     const handleResizeStart = (e: React.MouseEvent, blockId: string, handle: string) => {
@@ -224,7 +242,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                         <button onClick={undo} disabled={!canUndo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Undo size={18} /></button>
                         <button onClick={redo} disabled={!canRedo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Redo size={18} /></button>
                     </div>
-                    <div className="absolute left-1/2 -translate-x-1/2"><PageTabs pages={pages} activePageId={activePageId} onSelectPage={setActivePageId} onAddPage={addPage} onDeletePage={deletePage} /></div>
+                    <div className="absolute left-1/2 -translate-x-1/2"><PageTabs pages={pages} activePageId={activePageId} onSelectPage={setActivePageId} onAddPage={addPage} onDeletePage={deletePage} onRenamePage={renamePage} /></div>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
                             <label className="text-xs font-medium text-zinc-500 px-2">BG</label>
@@ -254,9 +272,11 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                             backgroundColor={canvasBackgroundColor}
                             onResizeStart={handleResizeStart}
                             onContextMenu={handleContextMenu}
+                            onNavigate={handleNavigate}
+                            canvasHeight={canvasHeight}
                         />
                     </div>
-                    <CanvasRightSidebar blocks={activeBlocks} selectedBlock={selectedBlock} onSelectBlock={setSelectedBlockId} updateBlock={updateBlockContent} deleteBlock={deleteBlock} reorderBlock={reorderBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} />
+                    <CanvasRightSidebar blocks={activeBlocks} selectedBlock={selectedBlock} onSelectBlock={setSelectedBlockId} updateBlock={updateBlockContent} deleteBlock={deleteBlock} reorderBlock={reorderBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} pages={pages} />
                 </div>
                 {contextMenu && (
                     <ContextMenu

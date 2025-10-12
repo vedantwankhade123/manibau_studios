@@ -36,7 +36,10 @@ export interface ButtonBlock extends Block {
     type: 'Button';
     content: {
         text: string;
-        url: string;
+        link: {
+            type: 'url' | 'page';
+            value: string; // URL string or page ID
+        };
         backgroundColor: string;
         textColor: string;
     };
