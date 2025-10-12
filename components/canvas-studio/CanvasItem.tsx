@@ -16,7 +16,7 @@ import IconBlock from './blocks/IconBlock';
 interface CanvasItemProps {
     block: CanvasBlock;
     isSelected: boolean;
-    onClick: () => void;
+    onClick: (e: React.MouseEvent) => void;
     onResizeStart: (e: React.MouseEvent, blockId: string, handle: string) => void;
 }
 

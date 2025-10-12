@@ -165,6 +165,10 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
 
     const selectedBlock = activeBlocks.find(b => b.id === selectedBlockId) || null;
 
+    const handleDeselectAll = () => {
+        setSelectedBlockId(null);
+    };
+
     return (
         <DndContext onDragEnd={handleDragEnd}>
             <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
@@ -206,6 +210,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                             blocks={activeBlocks} 
                             selectedBlockId={selectedBlockId} 
                             onSelectBlock={setSelectedBlockId} 
+                            onDeselectAll={handleDeselectAll}
                             device={device} 
                             backgroundColor={canvasBackgroundColor}
                             onResizeStart={handleResizeStart}
