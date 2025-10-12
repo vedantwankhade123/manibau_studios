@@ -421,15 +421,19 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
       <div className="bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-black rounded-3xl border border-zinc-200 dark:border-zinc-800 w-full max-w-5xl h-[80vh] shadow-2xl flex flex-col md:flex-row" onClick={(e) => e.stopPropagation()}>
         <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-zinc-200 dark:border-zinc-800 p-4 md:p-6 flex flex-col">
           <h2 className="text-xl font-bold mb-4 md:mb-8">Settings</h2>
-          <nav className="flex flex-row md:flex-col gap-1 md:gap-2 overflow-x-auto pb-2 md:pb-0">
+          <nav className="grid grid-cols-5 gap-1 md:flex md:flex-col md:gap-2">
             {SETTINGS_CONFIG.map(item => (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-3 w-full text-left px-3 py-2 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-sm md:text-lg transition-colors flex-shrink-0 ${activeTab === item.id ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'}`}
+                className={`flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 w-full text-center md:text-left p-2 md:px-4 md:py-2 rounded-xl md:rounded-2xl transition-colors ${
+                  activeTab === item.id
+                    ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'
+                }`}
               >
                 {item.icon}
-                <span className="hidden md:inline">{item.label}</span>
+                <span className="text-[10px] leading-tight md:text-lg md:leading-normal">{item.label}</span>
               </button>
             ))}
           </nav>
