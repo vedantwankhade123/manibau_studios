@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { CanvasBlock } from './types';
 import CanvasItem from './CanvasItem';
@@ -16,7 +16,7 @@ interface CanvasProps {
     canvasHeight: number;
 }
 
-const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock, onDeselectAll, device, backgroundColor, onResizeStart, onContextMenu, onNavigate, canvasHeight }) => {
+const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ blocks, selectedBlockId, onSelectBlock, onDeselectAll, device, backgroundColor, onResizeStart, onContextMenu, onNavigate, canvasHeight }, ref) => {
     const { setNodeRef } = useDroppable({
         id: 'canvas-droppable-area',
     });
@@ -30,7 +30,7 @@ const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock,
     return (
         <div className="flex-1 bg-zinc-100 dark:bg-zinc-950 p-8 overflow-auto custom-scrollbar flex justify-center" onClick={onDeselectAll}>
             <div
-                ref={setNodeRef}
+                ref={ref}
                 className="mx-auto transition-all duration-300 ease-in-out relative"
                 style={{ ...deviceStyles[device], backgroundColor }}
                 onClick={(e) => e.stopPropagation()}
@@ -59,6 +59,6 @@ const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock,
             </div>
         </div>
     );
-};
+});
 
 export default Canvas;

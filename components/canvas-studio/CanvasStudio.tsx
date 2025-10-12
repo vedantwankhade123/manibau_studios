@@ -4,7 +4,7 @@ import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
-import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search, Type, Pilcrow, Image as ImageIcon, Link as LinkIcon, MousePointerClick, Minus, Divide, Video, Star, Text, Map, Square } from 'lucide-react';
+import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search, Type, Pilcrow, Image as ImageIcon, Link as LinkIcon, MousePointerClick, Minus, Divide, Video, Star, Text, Map, Square, Download } from 'lucide-react';
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
@@ -14,6 +14,8 @@ import PageTabs from './ui/PageTabs';
 import { useHistory } from './hooks/useHistory';
 import ContextMenu from './ContextMenu';
 import PageSettingsModal from './ui/PageSettingsModal';
+import ExportModal from './ui/ExportModal';
+import { generateHtmlForPage } from '@/components/canvas-studio/utils/exportUtils';
 
 // Block component imports for drag overlay
 import HeadingBlock from './blocks/HeadingBlock';
@@ -28,6 +30,8 @@ import IconBlock from './blocks/IconBlock';
 import TextBlock from './blocks/TextBlock';
 import MapBlock from './blocks/MapBlock';
 import ShapeBlock from './blocks/ShapeBlock';
+
+declare const html2canvas: any;
 
 interface CanvasStudioProps {
   onToggleNotifications: () => void;
@@ -109,7 +113,9 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const [dragStartCoords, setDragStartCoords] = useState<{ x: number; y: number } | null>(null);
     const [activeDragItem, setActiveDragItem] = useState<CanvasBlock | { type: BlockType } | null>(null);
     const [editingPage, setEditingPage] = useState<Page | null>(null);
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
     
+    const canvasRef = useRef<HTMLDivElement>(null);
     const debounceTimer = useRef<number | null>(null);
 
     const sensors = useSensors(
@@ -300,6 +306,44 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         setContextMenu({ x: e.clientX, y: e.clientY, blockId });
     };
 
+    const handleExportCode = async () => {
+        if (!activePage) return;
+        const htmlContent = generateHtmlForPage(activePage, canvasBackgroundColor, canvasHeight, device);
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${activePage.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleExportImage = async () => {
+        if (!canvasRef.current || typeof html2canvas === 'undefined') {
+            alert("Canvas is not available or screenshot library not loaded.");
+            return;
+        }
+        try {
+            const canvas = await html2canvas(canvasRef.current, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: canvasBackgroundColor,
+            });
+            const dataUrl = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = `${activePage?.name || 'canvas'}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error("Error capturing screenshot:", error);
+            alert("Failed to capture screenshot.");
+        }
+    };
+
     const selectedBlock = activeBlocks.find(b => b.id === selectedBlockId) || null;
 
     const renderBlockComponent = (block: CanvasBlock) => {
@@ -356,6 +400,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                         />
                     </div>
                     <div className="flex items-center gap-2">
+                        <button onClick={() => setIsExportModalOpen(true)} title="Export Page" className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"><Download size={18} /></button>
                         <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
                             <label className="text-xs font-medium text-zinc-500 px-2">BG</label>
                             <input type="color" value={canvasBackgroundColor} onChange={(e) => setCanvasBackgroundColor(e.target.value)} className="w-6 h-6 p-0 border-none rounded bg-transparent cursor-pointer" />
@@ -376,6 +421,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                     <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} onAddItem={handleAddBlockOnClick} />
                     <div className="flex-1 flex flex-col min-w-0">
                         <Canvas 
+                            ref={canvasRef}
                             blocks={activeBlocks} 
                             selectedBlockId={selectedBlockId} 
                             onSelectBlock={setSelectedBlockId} 
@@ -404,6 +450,15 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                         page={editingPage}
                         onClose={() => setEditingPage(null)}
                         onSave={handleUpdatePage}
+                    />,
+                    document.body
+                )}
+                {isExportModalOpen && createPortal(
+                    <ExportModal
+                        isOpen={isExportModalOpen}
+                        onClose={() => setIsExportModalOpen(false)}
+                        onExportCode={handleExportCode}
+                        onExportImage={handleExportImage}
                     />,
                     document.body
                 )}
