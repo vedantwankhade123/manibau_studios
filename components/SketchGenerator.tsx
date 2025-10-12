@@ -389,27 +389,29 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
         {/* Canvas Panel */}
         <div className={`p-4 flex flex-col items-center justify-start h-full overflow-y-auto custom-scrollbar transition-all duration-500 ease-in-out ${viewMode === 'canvas' ? 'w-full' : 'w-full md:w-1/2'}`}>
             <div className="w-full max-w-[440px] mb-4 flex flex-col gap-2">
-                <div className="flex items-center justify-center gap-2 px-2 py-1 bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-700">
+                <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 px-2 py-1 bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-700">
                     <div className="flex items-center gap-1">
                         <button onClick={() => handleModeChange('draw')} title="Brush" className={`p-1.5 rounded-full transition-colors ${mode === 'draw' ? 'bg-zinc-300 dark:bg-zinc-700' : 'hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}><PencilIcon/></button>
                         <button onClick={() => handleModeChange('erase')} title="Eraser" className={`p-1.5 rounded-full transition-colors ${mode === 'erase' ? 'bg-zinc-300 dark:bg-zinc-700' : 'hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}><EraserIcon/></button>
                     </div>
-                    <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700"></div>
+                    <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700 hidden sm:block"></div>
                     <div className="flex items-center gap-2">
                         <input type="color" value={brushColor} onChange={e => setBrushColor(e.target.value)} disabled={mode === 'erase'} className="w-6 h-6 p-0 border-none rounded-full bg-transparent cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" title="Brush color"/>
                         <div className="relative flex items-center justify-center w-6 h-6">
                             <div className="bg-zinc-400 dark:bg-zinc-600 rounded-full transition-all" style={{ width: brushSize / 2, height: brushSize / 2 }}></div>
                         </div>
-                        <input type="range" min="1" max="50" value={brushSize} onChange={e => setBrushSize(parseInt(e.target.value))} className="w-24" title="Brush size" />
+                        <input type="range" min="1" max="50" value={brushSize} onChange={e => setBrushSize(parseInt(e.target.value))} className="w-16 sm:w-24" title="Brush size" />
                     </div>
-                    <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700"></div>
+                    <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700 hidden sm:block"></div>
                     <div className="flex items-center gap-1">
                         <button onClick={undo} title="Undo" className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700"><UndoIcon/></button>
                         <button onClick={clearCanvas} title="Clear Canvas" className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700"><TrashIcon/></button>
                     </div>
-                    <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700"></div>
-                    <button onClick={() => setIsPromptModalOpen(true)} title="Add AI Prompt" className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700"><AiIcon/></button>
-                    <button onClick={() => setIsAspectRatioModalOpen(true)} title="Aspect Ratio" className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700"><AspectRatioIcon/></button>
+                    <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700 hidden sm:block"></div>
+                    <div className="flex items-center gap-1">
+                        <button onClick={() => setIsPromptModalOpen(true)} title="Add AI Prompt" className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700"><AiIcon/></button>
+                        <button onClick={() => setIsAspectRatioModalOpen(true)} title="Aspect Ratio" className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700"><AspectRatioIcon/></button>
+                    </div>
                 </div>
             </div>
             <canvas
