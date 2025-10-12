@@ -35,18 +35,18 @@ const AspectRatioModal: React.FC<AspectRatioModalProps> = ({ isOpen, onClose, cu
         className="bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-sm shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-4 border-b border-zinc-200 dark:border-zinc-800">
-          <h2 className="text-xl font-bold">Select Aspect Ratio</h2>
+        <div className="flex justify-between items-center p-3 sm:p-4 border-b border-zinc-200 dark:border-zinc-800">
+          <h2 className="text-lg sm:text-xl font-bold">Select Aspect Ratio</h2>
           <button onClick={onClose} className="p-1 rounded-full text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors" aria-label="Close">
             <CloseIcon />
           </button>
         </div>
-        <div className="p-4 grid grid-cols-2 gap-3">
+        <div className="p-3 sm:p-4 grid grid-cols-2 gap-2 sm:gap-3">
           {aspectRatios.map(ar => (
             <button
               key={ar.value}
               onClick={() => handleSelect(ar.value)}
-              className={`py-4 rounded-lg text-center font-semibold border transition-colors ${
+              className={`py-3 sm:py-4 rounded-lg text-center text-sm sm:text-base font-semibold border transition-colors ${
                 currentAspectRatio === ar.value
                   ? 'bg-zinc-700 border-zinc-600 text-white'
                   : 'bg-zinc-100 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-gray-300 hover:border-zinc-300 dark:hover:border-zinc-600'
