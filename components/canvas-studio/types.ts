@@ -13,6 +13,7 @@ export interface HeadingBlock extends Block {
         level: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
         textAlign: 'left' | 'center' | 'right';
         color: string;
+        maxWidth?: number;
     };
 }
 
@@ -23,6 +24,7 @@ export interface ParagraphBlock extends Block {
         fontSize: string;
         textAlign: 'left' | 'center' | 'right';
         color: string;
+        maxWidth?: number;
     };
 }
 
@@ -41,6 +43,7 @@ export interface ImageBlock extends Block {
     content: {
         src: string;
         alt: string;
+        width: number;
     };
 }
 
@@ -74,6 +77,7 @@ export interface VideoBlock extends Block {
     content: {
         url: string;
         aspectRatio: '16/9' | '4/3' | '1/1';
+        width: number;
     };
 }
 

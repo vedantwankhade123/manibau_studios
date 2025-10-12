@@ -2,6 +2,7 @@ import React from 'react';
 import { ParagraphBlock } from '../types';
 import SegmentedControl from '../ui/SegmentedControl';
 import ColorInput from '../ui/ColorInput';
+import NumberInput from '../ui/NumberInput';
 
 interface ParagraphSettingsProps {
     block: ParagraphBlock;
@@ -41,6 +42,14 @@ const ParagraphSettings: React.FC<ParagraphSettingsProps> = ({ block, updateBloc
                 label="Color"
                 color={block.content.color}
                 onChange={(color) => updateBlock(block.id, { color })}
+            />
+            <NumberInput
+                label="Max Width"
+                value={block.content.maxWidth || 800}
+                onChange={(value) => updateBlock(block.id, { maxWidth: value })}
+                unit="px"
+                min={100}
+                max={1200}
             />
         </div>
     );

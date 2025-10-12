@@ -6,10 +6,10 @@ interface ImageBlockProps {
 }
 
 const ImageBlock: React.FC<ImageBlockProps> = ({ block }) => {
-    const { src, alt } = block.content;
+    const { src, alt, width } = block.content;
     return (
-        <div className="p-2">
-            <img src={src} alt={alt} className="w-full h-auto rounded-md" />
+        <div className="p-2 flex justify-center">
+            <img src={src} alt={alt} className="h-auto rounded-md" style={{ width: `${width}%` }} />
         </div>
     );
 };

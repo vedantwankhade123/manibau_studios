@@ -1,6 +1,7 @@
 import React from 'react';
 import { VideoBlock } from '../types';
 import SegmentedControl from '../ui/SegmentedControl';
+import NumberInput from '../ui/NumberInput';
 
 interface VideoSettingsProps {
     block: VideoBlock;
@@ -28,6 +29,14 @@ const VideoSettings: React.FC<VideoSettingsProps> = ({ block, updateBlock }) => 
                     onSelect={(val) => updateBlock(block.id, { aspectRatio: val as VideoBlock['content']['aspectRatio'] })}
                 />
             </div>
+            <NumberInput
+                label="Width"
+                value={block.content.width}
+                onChange={(value) => updateBlock(block.id, { width: value })}
+                unit="%"
+                min={10}
+                max={100}
+            />
         </div>
     );
 };

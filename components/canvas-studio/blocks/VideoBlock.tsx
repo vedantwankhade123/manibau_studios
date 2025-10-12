@@ -6,7 +6,7 @@ interface VideoBlockProps {
 }
 
 const VideoBlock: React.FC<VideoBlockProps> = ({ block }) => {
-    const { url, aspectRatio } = block.content;
+    const { url, aspectRatio, width } = block.content;
 
     const getEmbedUrl = (videoUrl: string) => {
         try {
@@ -25,16 +25,18 @@ const VideoBlock: React.FC<VideoBlockProps> = ({ block }) => {
     };
 
     return (
-        <div className="p-2">
-            <div className="w-full overflow-hidden rounded-md" style={{ aspectRatio }}>
-                <iframe
-                    src={getEmbedUrl(url)}
-                    title="Embedded Video"
-                    className="w-full h-full"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                ></iframe>
+        <div className="p-2 flex justify-center">
+            <div className="overflow-hidden rounded-md" style={{ width: `${width}%` }}>
+                <div style={{ aspectRatio }}>
+                    <iframe
+                        src={getEmbedUrl(url)}
+                        title="Embedded Video"
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    ></iframe>
+                </div>
             </div>
         </div>
     );

@@ -2,6 +2,7 @@ import React from 'react';
 import { HeadingBlock } from '../types';
 import SegmentedControl from '../ui/SegmentedControl';
 import ColorInput from '../ui/ColorInput';
+import NumberInput from '../ui/NumberInput';
 
 interface HeadingSettingsProps {
     block: HeadingBlock;
@@ -40,6 +41,14 @@ const HeadingSettings: React.FC<HeadingSettingsProps> = ({ block, updateBlock })
                 label="Color"
                 color={block.content.color}
                 onChange={(color) => updateBlock(block.id, { color })}
+            />
+            <NumberInput
+                label="Max Width"
+                value={block.content.maxWidth || 1200}
+                onChange={(value) => updateBlock(block.id, { maxWidth: value })}
+                unit="px"
+                min={100}
+                max={1200}
             />
         </div>
     );

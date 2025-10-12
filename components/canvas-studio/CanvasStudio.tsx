@@ -29,13 +29,13 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
     const id = `${type}-${Date.now()}`;
     switch (type) {
         case 'Heading':
-            return { id, type, content: { text: 'Your Heading Here', level: 'h2', textAlign: 'center', color: '#18181b' } };
+            return { id, type, content: { text: 'Your Heading Here', level: 'h2', textAlign: 'center', color: '#18181b', maxWidth: 600 } };
         case 'Paragraph':
-            return { id, type, content: { text: 'This is a paragraph. You can edit this text in the properties panel on the right.', fontSize: '16px', textAlign: 'left', color: '#3f3f46' } };
+            return { id, type, content: { text: 'This is a paragraph. You can edit this text in the properties panel on the right.', fontSize: '16px', textAlign: 'left', color: '#3f3f46', maxWidth: 600 } };
         case 'Button':
             return { id, type, content: { text: 'Click Me', url: '#', backgroundColor: '#2563eb', textColor: '#ffffff' } };
         case 'Image':
-            return { id, type, content: { src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800', alt: 'Team working' } };
+            return { id, type, content: { src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800', alt: 'Team working', width: 100 } };
         case 'Social':
             return { id, type, content: { instagram: '#', facebook: '#', linkedin: '#' } };
         case 'Spacer':
@@ -43,7 +43,7 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
         case 'Divider':
             return { id, type, content: { thickness: 1, color: '#e5e7eb', marginY: 16 } };
         case 'Video':
-            return { id, type, content: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', aspectRatio: '16/9' } };
+            return { id, type, content: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', aspectRatio: '16/9', width: 100 } };
         case 'Icon':
             return { id, type, content: { iconName: 'Smile', size: 48, color: '#18181b' } };
         default:
@@ -61,6 +61,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const [device, setDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
     const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
     const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
+    const [canvasBackgroundColor, setCanvasBackgroundColor] = useState('#FFFFFF');
 
     const activePage = pages.find(p => p.id === activePageId);
     const activeBlocks = activePage?.blocks || [];
@@ -180,6 +181,10 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
+                                    <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 px-2">BG</label>
+                                    <input type="color" value={canvasBackgroundColor} onChange={(e) => setCanvasBackgroundColor(e.target.value)} className="w-6 h-6 p-0 border-none rounded bg-transparent cursor-pointer" title="Canvas background color" />
+                                </div>
+                                <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
                                     <button onClick={() => setDevice('desktop')} className={`p-1.5 rounded ${device === 'desktop' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Monitor size={18}/></button>
                                     <button onClick={() => setDevice('tablet')} className={`p-1.5 rounded ${device === 'tablet' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Tablet size={18}/></button>
                                     <button onClick={() => setDevice('mobile')} className={`p-1.5 rounded ${device === 'mobile' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Smartphone size={18}/></button>
@@ -194,7 +199,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                                 )}
                             </div>
                         </div>
-                        <Canvas blocks={activeBlocks} selectedBlockId={selectedBlockId} onSelectBlock={setSelectedBlockId} device={device} />
+                        <Canvas blocks={activeBlocks} selectedBlockId={selectedBlockId} onSelectBlock={setSelectedBlockId} device={device} backgroundColor={canvasBackgroundColor} />
                     </div>
                     <CanvasRightSidebar selectedBlock={selectedBlock} updateBlock={updateBlockContent} deleteBlock={deleteBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} />
                 </div>
