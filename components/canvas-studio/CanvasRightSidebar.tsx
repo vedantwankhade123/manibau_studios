@@ -68,7 +68,7 @@ const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ blocks, selecte
     }
 
     return (
-        <aside className={`flex-shrink-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'w-0' : 'w-72'}`}>
+        <aside className={`flex-shrink-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'w-0' : 'w-64'}`}>
             <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center">
                 <h2 className="text-base font-bold">{selectedBlock ? `${selectedBlock.type} Settings` : 'Layers & Properties'}</h2>
                 <button onClick={onToggle} className="p-1 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">
