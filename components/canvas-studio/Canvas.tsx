@@ -11,9 +11,10 @@ interface CanvasProps {
     device: 'desktop' | 'tablet' | 'mobile';
     backgroundColor: string;
     onResizeStart: (e: React.MouseEvent, blockId: string, handle: string) => void;
+    onContextMenu: (e: React.MouseEvent, blockId: string) => void;
 }
 
-const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock, onDeselectAll, device, backgroundColor, onResizeStart }) => {
+const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock, onDeselectAll, device, backgroundColor, onResizeStart, onContextMenu }) => {
     const { setNodeRef } = useDroppable({
         id: 'canvas-droppable-area',
     });
@@ -43,6 +44,7 @@ const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock,
                                 onSelectBlock(block.id);
                             }}
                             onResizeStart={onResizeStart}
+                            onContextMenu={onContextMenu}
                         />
                     ))
                 ) : (

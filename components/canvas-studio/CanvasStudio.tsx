@@ -3,7 +3,7 @@ import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
-import { ChevronLeft, ChevronRight, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search } from 'lucide-react';
+import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search } from 'lucide-react';
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
@@ -11,6 +11,7 @@ import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { BlockType, CanvasBlock, Page } from './types';
 import PageTabs from './ui/PageTabs';
 import { useHistory } from './hooks/useHistory';
+import ContextMenu from './ContextMenu';
 
 interface CanvasStudioProps {
   onToggleNotifications: () => void;
@@ -86,6 +87,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
     const [canvasBackgroundColor, setCanvasBackgroundColor] = useState('#FFFFFF');
     const [resizingState, setResizingState] = useState<{ blockId: string; handle: string; initialX: number; initialY: number; initialWidth: number; initialHeight: number; initialBlockX: number; initialBlockY: number; } | null>(null);
+    const [contextMenu, setContextMenu] = useState<{ x: number; y: number; blockId: string; } | null>(null);
     
     const debounceTimer = useRef<number | null>(null);
 
@@ -109,27 +111,36 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     };
 
     const updateBlockContent = useCallback((id: string, content: any) => {
-        // Update the current state in-place for immediate UI feedback without creating a new history entry.
         setPagesHistory(currentPages => currentPages.map(p => 
             p.id === activePageId 
                 ? { ...p, blocks: p.blocks.map(b => b.id === id ? { ...b, content: { ...b.content, ...content } } : b) } 
                 : p
-        ), true); // `true` for overwrite
+        ), true);
 
-        // Clear previous debounce timer to batch rapid changes.
-        if (debounceTimer.current) {
-            clearTimeout(debounceTimer.current);
-        }
-
-        // Set a new timer to commit this state as a new, single history entry after a pause in editing.
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
         debounceTimer.current = window.setTimeout(() => {
-            setPagesHistory(currentPages => [...currentPages]); // Create a new history entry by creating a new array reference.
+            setPagesHistory(currentPages => [...currentPages]);
         }, 800);
     }, [activePageId, setPagesHistory]);
 
     const deleteBlock = (id: string) => {
         setPagesHistory(prev => prev.map(p => p.id === activePageId ? { ...p, blocks: p.blocks.filter(b => b.id !== id) } : p));
         if (selectedBlockId === id) setSelectedBlockId(null);
+    };
+
+    const reorderBlock = (blockId: string, direction: 'front' | 'back' | 'forward' | 'backward') => {
+        setPagesHistory(prev => prev.map(p => {
+            if (p.id !== activePageId) return p;
+            const blocks = [...p.blocks];
+            const index = blocks.findIndex(b => b.id === blockId);
+            if (index === -1) return p;
+            const [item] = blocks.splice(index, 1);
+            if (direction === 'forward') blocks.splice(Math.min(index + 1, blocks.length), 0, item);
+            else if (direction === 'backward') blocks.splice(Math.max(index - 1, 0), 0, item);
+            else if (direction === 'front') blocks.push(item);
+            else if (direction === 'back') blocks.unshift(item);
+            return { ...p, blocks };
+        }));
     };
 
     const addPage = () => {
@@ -158,8 +169,6 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         const { blockId, handle, initialX, initialY, initialWidth, initialHeight, initialBlockX, initialBlockY } = resizingState;
         const deltaX = e.clientX - initialX;
         const deltaY = e.clientY - initialY;
-
-        // Update the current state in-place for real-time resize feedback.
         setPagesHistory(prevPages => prevPages.map(p => p.id === activePageId ? { ...p, blocks: p.blocks.map(b => {
             if (b.id === blockId) {
                 const newBlock = { ...b };
@@ -176,12 +185,11 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                 return newBlock;
             }
             return b;
-        })} : p), true); // `true` for overwrite
+        })} : p), true);
     }, [resizingState, activePageId, setPagesHistory]);
 
     const handleMouseUp = useCallback(() => {
         if (resizingState) {
-            // Commit the final resized state as a new history entry.
             setPagesHistory(currentPages => [...currentPages]);
             setResizingState(null);
         }
@@ -198,11 +206,13 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         };
     }, [resizingState, handleMouseMove, handleMouseUp]);
 
-    const selectedBlock = activeBlocks.find(b => b.id === selectedBlockId) || null;
-
-    const handleDeselectAll = () => {
-        setSelectedBlockId(null);
+    const handleContextMenu = (e: React.MouseEvent, blockId: string) => {
+        e.preventDefault();
+        setSelectedBlockId(blockId);
+        setContextMenu({ x: e.clientX, y: e.clientY, blockId });
     };
+
+    const selectedBlock = activeBlocks.find(b => b.id === selectedBlockId) || null;
 
     return (
         <DndContext onDragEnd={handleDragEnd}>
@@ -210,51 +220,53 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                 <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <div className="flex items-center gap-2 text-sm">
                         <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"><ChevronLeft /></button>
-                        <span className="font-semibold text-zinc-800 dark:text-zinc-200">Canvas Studio</span>
+                        {!isLeftSidebarOpen && <button onClick={() => setIsLeftSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelLeftOpen size={18} /></button>}
+                        <button onClick={undo} disabled={!canUndo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Undo size={18} /></button>
+                        <button onClick={redo} disabled={!canRedo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Redo size={18} /></button>
                     </div>
+                    <div className="absolute left-1/2 -translate-x-1/2"><PageTabs pages={pages} activePageId={activePageId} onSelectPage={setActivePageId} onAddPage={addPage} onDeletePage={deletePage} /></div>
                     <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
+                            <label className="text-xs font-medium text-zinc-500 px-2">BG</label>
+                            <input type="color" value={canvasBackgroundColor} onChange={(e) => setCanvasBackgroundColor(e.target.value)} className="w-6 h-6 p-0 border-none rounded bg-transparent cursor-pointer" />
+                        </div>
+                        <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
+                            <button onClick={() => setDevice('desktop')} className={`p-1.5 rounded ${device === 'desktop' ? 'bg-white dark:bg-zinc-700' : ''}`}><Monitor size={18}/></button>
+                            <button onClick={() => setDevice('tablet')} className={`p-1.5 rounded ${device === 'tablet' ? 'bg-white dark:bg-zinc-700' : ''}`}><Tablet size={18}/></button>
+                            <button onClick={() => setDevice('mobile')} className={`p-1.5 rounded ${device === 'mobile' ? 'bg-white dark:bg-zinc-700' : ''}`}><Smartphone size={18}/></button>
+                        </div>
                         <SearchButton onClick={onToggleCommandPalette} />
                         <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
                         <ThemeToggleButton theme={theme} setTheme={setTheme} />
                         <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
+                        {!isRightSidebarOpen && <button onClick={() => setIsRightSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelRightOpen size={18} /></button>}
                     </div>
                 </header>
                 <div className="flex-grow flex min-h-0">
                     <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} />
                     <div className="flex-1 flex flex-col min-w-0">
-                        <div className="relative flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-                            <div className="flex items-center gap-2">
-                                {!isLeftSidebarOpen && <button onClick={() => setIsLeftSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelLeftOpen size={18} /></button>}
-                                <button onClick={undo} disabled={!canUndo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Undo size={18} /></button>
-                                <button onClick={redo} disabled={!canRedo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Redo size={18} /></button>
-                            </div>
-                            <div className="absolute left-1/2 -translate-x-1/2"><PageTabs pages={pages} activePageId={activePageId} onSelectPage={setActivePageId} onAddPage={addPage} onDeletePage={deletePage} /></div>
-                            <div className="flex items-center gap-2">
-                                <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
-                                    <label className="text-xs font-medium text-zinc-500 px-2">BG</label>
-                                    <input type="color" value={canvasBackgroundColor} onChange={(e) => setCanvasBackgroundColor(e.target.value)} className="w-6 h-6 p-0 border-none rounded bg-transparent cursor-pointer" />
-                                </div>
-                                <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
-                                    <button onClick={() => setDevice('desktop')} className={`p-1.5 rounded ${device === 'desktop' ? 'bg-white dark:bg-zinc-700' : ''}`}><Monitor size={18}/></button>
-                                    <button onClick={() => setDevice('tablet')} className={`p-1.5 rounded ${device === 'tablet' ? 'bg-white dark:bg-zinc-700' : ''}`}><Tablet size={18}/></button>
-                                    <button onClick={() => setDevice('mobile')} className={`p-1.5 rounded ${device === 'mobile' ? 'bg-white dark:bg-zinc-700' : ''}`}><Smartphone size={18}/></button>
-                                </div>
-                                <button className="text-sm font-semibold px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Publish</button>
-                                {!isRightSidebarOpen && <button onClick={() => setIsRightSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelRightOpen size={18} /></button>}
-                            </div>
-                        </div>
                         <Canvas 
                             blocks={activeBlocks} 
                             selectedBlockId={selectedBlockId} 
                             onSelectBlock={setSelectedBlockId} 
-                            onDeselectAll={handleDeselectAll}
+                            onDeselectAll={() => setSelectedBlockId(null)}
                             device={device} 
                             backgroundColor={canvasBackgroundColor}
                             onResizeStart={handleResizeStart}
+                            onContextMenu={handleContextMenu}
                         />
                     </div>
-                    <CanvasRightSidebar selectedBlock={selectedBlock} updateBlock={updateBlockContent} deleteBlock={deleteBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} />
+                    <CanvasRightSidebar blocks={activeBlocks} selectedBlock={selectedBlock} onSelectBlock={setSelectedBlockId} updateBlock={updateBlockContent} deleteBlock={deleteBlock} reorderBlock={reorderBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} />
                 </div>
+                {contextMenu && (
+                    <ContextMenu
+                        x={contextMenu.x}
+                        y={contextMenu.y}
+                        onClose={() => setContextMenu(null)}
+                        onReorder={(direction) => reorderBlock(contextMenu.blockId, direction)}
+                        onDelete={() => deleteBlock(contextMenu.blockId)}
+                    />
+                )}
             </div>
         </DndContext>
     );

@@ -20,6 +20,7 @@ interface CanvasItemProps {
     isSelected: boolean;
     onClick: (e: React.MouseEvent) => void;
     onResizeStart: (e: React.MouseEvent, blockId: string, handle: string) => void;
+    onContextMenu: (e: React.MouseEvent, blockId: string) => void;
 }
 
 const getHandleClasses = (handle: string) => {
@@ -36,7 +37,7 @@ const getHandleClasses = (handle: string) => {
     }
 };
 
-const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onResizeStart }) => {
+const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onResizeStart, onContextMenu }) => {
     const {
         attributes,
         listeners,
@@ -55,17 +56,12 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
     };
 
     const handleMouseDownOnBlock = (e: React.MouseEvent) => {
-        // Check if it's the second mousedown of a double-click
         if (e.detail === 2) {
-            // Prevent default double-click behavior (e.g., text selection)
             e.preventDefault();
-            
-            // Manually invoke the mousedown listener from dnd-kit to start the drag
             if (listeners?.onMouseDown) {
                 listeners.onMouseDown(e as any);
             }
         }
-        // For single clicks, we let the event bubble up to the onClick handler for selection.
     };
 
     const renderBlock = () => {
@@ -93,6 +89,7 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
             style={style}
             onClick={onClick}
             onMouseDown={handleMouseDownOnBlock}
+            onContextMenu={(e) => onContextMenu(e, block.id)}
             className={`group border-2 ${isSelected ? 'border-blue-500' : 'border-transparent hover:border-blue-500/50'}`}
         >
             <div 

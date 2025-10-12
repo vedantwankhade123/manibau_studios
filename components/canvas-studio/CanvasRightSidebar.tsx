@@ -1,5 +1,5 @@
 import React from 'react';
-import { MoreHorizontal, Trash2, PanelRightClose } from 'lucide-react';
+import { Trash2, PanelRightClose } from 'lucide-react';
 import { CanvasBlock } from './types';
 import ImageSettings from './settings/ImageSettings';
 import ButtonSettings from './settings/ButtonSettings';
@@ -12,23 +12,23 @@ import VideoSettings from './settings/VideoSettings';
 import IconSettings from './settings/IconSettings';
 import TextSettings from './settings/TextSettings';
 import MapSettings from './settings/MapSettings';
+import LayersPanel from './LayersPanel';
 
 interface CanvasRightSidebarProps {
+    blocks: CanvasBlock[];
     selectedBlock: CanvasBlock | null;
+    onSelectBlock: (id: string) => void;
     updateBlock: (id: string, content: any) => void;
     deleteBlock: (id: string) => void;
+    reorderBlock: (id: string, direction: 'front' | 'back' | 'forward' | 'backward') => void;
     isCollapsed: boolean;
     onToggle: () => void;
 }
 
-const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ selectedBlock, updateBlock, deleteBlock, isCollapsed, onToggle }) => {
+const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ blocks, selectedBlock, onSelectBlock, updateBlock, deleteBlock, reorderBlock, isCollapsed, onToggle }) => {
     const renderSettings = () => {
         if (!selectedBlock) {
-            return (
-                <div className="text-center text-zinc-500 dark:text-zinc-400 p-8">
-                    <p>Select a block on the canvas to see its properties.</p>
-                </div>
-            );
+            return <LayersPanel blocks={blocks} selectedBlockId={null} onSelectBlock={onSelectBlock} onReorderBlock={reorderBlock} onDeleteBlock={deleteBlock} />;
         }
 
         switch (selectedBlock.type) {
@@ -60,13 +60,13 @@ const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ selectedBlock, 
     };
 
     if (isCollapsed) {
-        return null; // The toggle button is in the main CanvasStudio component now
+        return null;
     }
 
     return (
         <aside className={`flex-shrink-0 bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'w-0' : 'w-72'}`}>
             <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center">
-                <h2 className="text-base font-bold">{selectedBlock ? `${selectedBlock.type} Settings` : 'Properties'}</h2>
+                <h2 className="text-base font-bold">{selectedBlock ? `${selectedBlock.type} Settings` : 'Layers & Properties'}</h2>
                 <button onClick={onToggle} className="p-1 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">
                     <PanelRightClose size={20} />
                 </button>
