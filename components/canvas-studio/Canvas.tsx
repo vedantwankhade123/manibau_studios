@@ -36,10 +36,11 @@ const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock,
                 onClick={(e) => e.stopPropagation()}
             >
                 {blocks.length > 0 ? (
-                    blocks.map(block => (
+                    blocks.map((block, index) => (
                         <CanvasItem
                             key={block.id}
                             block={block}
+                            zIndex={index}
                             isSelected={selectedBlockId === block.id}
                             onClick={(e) => {
                                 e.stopPropagation();

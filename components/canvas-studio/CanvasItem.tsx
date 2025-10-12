@@ -19,6 +19,7 @@ import ShapeBlock from './blocks/ShapeBlock';
 interface CanvasItemProps {
     block: CanvasBlock;
     isSelected: boolean;
+    zIndex: number;
     onClick: (e: React.MouseEvent) => void;
     onResizeStart: (e: React.MouseEvent, blockId: string, handle: string) => void;
     onContextMenu: (e: React.MouseEvent, blockId: string) => void;
@@ -39,7 +40,7 @@ const getHandleClasses = (handle: string) => {
     }
 };
 
-const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onResizeStart, onContextMenu, onNavigate }) => {
+const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, zIndex, onClick, onResizeStart, onContextMenu, onNavigate }) => {
     const {
         attributes,
         listeners,
@@ -54,7 +55,7 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
         width: block.width,
         height: block.height,
         transform: CSS.Translate.toString(transform),
-        zIndex: isSelected ? 10 : 1,
+        zIndex: isSelected ? 1000 : zIndex,
     };
 
     const handleMouseDownOnBlock = (e: React.MouseEvent) => {
