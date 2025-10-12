@@ -139,7 +139,7 @@ export interface MapBlock extends Block {
 export interface ShapeBlock extends Block {
     type: 'Shape';
     content: {
-        shapeType: 'rectangle' | 'circle' | 'oval' | 'triangle' | 'star' | 'rhombus';
+        shapeType: 'rectangle' | 'circle' | 'ellipse' | 'triangle' | 'star' | 'rhombus' | 'arrow-right' | 'arrow-left' | 'arrow-up' | 'arrow-down';
         backgroundColor: string;
         borderColor: string;
         borderWidth: number;

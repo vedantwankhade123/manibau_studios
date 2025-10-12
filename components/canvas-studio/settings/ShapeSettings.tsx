@@ -9,9 +9,9 @@ interface ShapeSettingsProps {
 }
 
 const ShapeSettings: React.FC<ShapeSettingsProps> = ({ block, updateBlock }) => {
-    const shapeOptions = ['rectangle', 'circle', 'oval', 'triangle', 'star', 'rhombus'];
+    const shapeOptions = ['rectangle', 'circle', 'ellipse', 'triangle', 'star', 'rhombus', 'arrow-right', 'arrow-left', 'arrow-up', 'arrow-down'];
     const showBorderRadius = block.content.shapeType === 'rectangle';
-    const showBorderSettings = ['rectangle', 'circle', 'oval'].includes(block.content.shapeType);
+    const showBorderSettings = ['rectangle', 'circle', 'ellipse'].includes(block.content.shapeType);
 
     return (
         <div className="space-y-4">
@@ -23,7 +23,7 @@ const ShapeSettings: React.FC<ShapeSettingsProps> = ({ block, updateBlock }) => 
                     className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                     {shapeOptions.map(option => (
-                        <option key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
+                        <option key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1).replace('-', ' ')}</option>
                     ))}
                 </select>
             </div>

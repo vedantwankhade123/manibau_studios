@@ -23,7 +23,7 @@ const ShapeBlock: React.FC<ShapeBlockProps> = ({ block }) => {
             style.border = `${borderWidth}px solid ${borderColor}`;
             style.borderRadius = '50%';
             break;
-        case 'oval':
+        case 'ellipse':
             style.border = `${borderWidth}px solid ${borderColor}`;
             style.borderRadius = '50%';
             break;
@@ -35,6 +35,18 @@ const ShapeBlock: React.FC<ShapeBlockProps> = ({ block }) => {
             break;
         case 'rhombus':
             style.clipPath = 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)';
+            break;
+        case 'arrow-right':
+            style.clipPath = 'polygon(0% 35%, 75% 35%, 75% 15%, 100% 50%, 75% 85%, 75% 65%, 0% 65%)';
+            break;
+        case 'arrow-left':
+            style.clipPath = 'polygon(100% 35%, 25% 35%, 25% 15%, 0% 50%, 25% 85%, 25% 65%, 100% 65%)';
+            break;
+        case 'arrow-up':
+            style.clipPath = 'polygon(35% 100%, 35% 25%, 15% 25%, 50% 0%, 85% 25%, 65% 25%, 65% 100%)';
+            break;
+        case 'arrow-down':
+            style.clipPath = 'polygon(35% 0%, 35% 75%, 15% 75%, 50% 100%, 85% 75%, 65% 75%, 65% 0%)';
             break;
     }
 
