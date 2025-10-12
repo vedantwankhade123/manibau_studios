@@ -159,7 +159,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
 
                 <div className="flex-grow flex min-h-0">
                     <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} />
-                    <div className="flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col min-w-0">
                         <div className="relative flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                             <div className="flex items-center gap-2">
                                 {!isLeftSidebarOpen && (
