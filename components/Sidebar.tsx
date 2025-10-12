@@ -15,7 +15,6 @@ const GenerateIcon = () => (
   </svg>
 );
 
-// Fix: Add a VideoIcon component for the new Video Studio tool.
 const VideoIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -66,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapse
     { id: Tool.DASHBOARD, label: 'Dashboard', icon: <DashboardIcon /> },
     { id: Tool.CHAT_WITH_AI, label: 'AI Studio', icon: <Sparkles /> },
     { id: Tool.LIBRARY, label: 'Library', icon: <LibraryIcon /> },
-    { id: Tool.CANVAS_STUDIO, label: 'Canvas Studio', icon: <LayoutTemplate /> },
+    { id: Tool.CANVAS_STUDIO, label: 'Canvas Studio', icon: <LayoutTemplate />, beta: true },
     { id: Tool.GENERATE, label: 'Image Studio', icon: <GenerateIcon /> },
     { id: Tool.VIDEO_STUDIO, label: 'Video Studio', icon: <VideoIcon /> },
     { id: Tool.SKETCH_STUDIO, label: 'Sketch Studio', icon: <SketchIcon /> },
@@ -105,8 +104,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapse
               title={item.label}
             >
               <div className="flex-shrink-0">{item.icon}</div>
-              <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
+              <div className={`overflow-hidden transition-all duration-200 ease-in-out flex items-center gap-2 ${isCollapsed ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
                   <span className="whitespace-nowrap">{item.label}</span>
+                  {(item as any).beta && <span className="text-xs bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400 font-semibold px-1.5 py-0.5 rounded-full">BETA</span>}
               </div>
             </button>
           ))}

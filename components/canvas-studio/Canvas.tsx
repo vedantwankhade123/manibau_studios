@@ -21,6 +21,15 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ blocks, selectedBlockI
         id: 'canvas-droppable-area',
     });
 
+    const combinedRef = (node: HTMLDivElement | null) => {
+        setNodeRef(node);
+        if (typeof ref === 'function') {
+            ref(node);
+        } else if (ref) {
+            ref.current = node;
+        }
+    };
+
     const deviceStyles = {
         desktop: { width: '100%', height: `${canvasHeight}px`, boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '0.5rem' },
         tablet: { width: '768px', height: `${canvasHeight}px`, boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '0.75rem' },
@@ -30,7 +39,7 @@ const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ blocks, selectedBlockI
     return (
         <div className="flex-1 bg-zinc-100 dark:bg-zinc-950 p-8 overflow-auto custom-scrollbar flex justify-center" onClick={onDeselectAll}>
             <div
-                ref={ref}
+                ref={combinedRef}
                 className="mx-auto transition-all duration-300 ease-in-out relative"
                 style={{ ...deviceStyles[device], backgroundColor }}
                 onClick={(e) => e.stopPropagation()}
