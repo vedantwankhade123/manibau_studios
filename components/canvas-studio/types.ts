@@ -152,5 +152,6 @@ export type CanvasBlock = HeadingBlock | ParagraphBlock | ButtonBlock | ImageBlo
 export interface Page {
   id: string;
   name: string;
+  path?: string;
   blocks: CanvasBlock[];
 }

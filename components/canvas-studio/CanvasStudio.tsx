@@ -229,8 +229,8 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         });
     };
 
-    const renamePage = (id: string, newName: string) => {
-        setPagesHistory(prev => prev.map(p => p.id === id ? { ...p, name: newName } : p));
+    const handleUpdatePage = (id: string, newName: string, newPath: string) => {
+        setPagesHistory(prev => prev.map(p => p.id === id ? { ...p, name: newName, path: newPath } : p));
     };
 
     const handleNavigate = (pageId: string) => {
@@ -341,7 +341,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                         <button onClick={undo} disabled={!canUndo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Undo size={18} /></button>
                         <button onClick={redo} disabled={!canRedo} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 disabled:text-zinc-300 dark:disabled:text-zinc-600"><Redo size={18} /></button>
                     </div>
-                    <div className="absolute left-1/2 -translate-x-1/2"><PageTabs pages={pages} activePageId={activePageId} onSelectPage={setActivePageId} onAddPage={addPage} onDeletePage={deletePage} onRenamePage={renamePage} /></div>
+                    <div className="absolute left-1/2 -translate-x-1/2"><PageTabs pages={pages} activePageId={activePageId} onSelectPage={setActivePageId} onAddPage={addPage} onDeletePage={deletePage} onUpdatePage={handleUpdatePage} /></div>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
                             <label className="text-xs font-medium text-zinc-500 px-2">BG</label>
