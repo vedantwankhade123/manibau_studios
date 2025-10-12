@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
@@ -351,6 +352,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                             onSelectPage={setActivePageId} 
                             onAddPage={addPage} 
                             onDeletePage={deletePage} 
+                            onUpdatePage={handleUpdatePage}
                             onEditPage={setEditingPage}
                         />
                     </div>
@@ -398,11 +400,14 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                         onDelete={() => deleteBlock(contextMenu.blockId)}
                     />
                 )}
-                <PageSettingsModal 
-                    page={editingPage}
-                    onClose={() => setEditingPage(null)}
-                    onSave={handleUpdatePage}
-                />
+                {editingPage && createPortal(
+                    <PageSettingsModal 
+                        page={editingPage}
+                        onClose={() => setEditingPage(null)}
+                        onSave={handleUpdatePage}
+                    />,
+                    document.body
+                )}
             </div>
             <DragOverlay dropAnimation={null}>
                 {activeDragItem ? (
