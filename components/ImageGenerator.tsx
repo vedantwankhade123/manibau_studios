@@ -339,7 +339,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ setActiveTool, onToggle
         <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-4">
           <div className="flex justify-center mb-3">
             <div className="w-full md:w-auto bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 p-1 rounded-full flex items-center">
-                <div className="flex items-center gap-1 overflow-x-auto md:flex-wrap md:justify-center custom-scrollbar py-1 px-1">
+                <div className="flex items-center gap-1 overflow-x-auto md:flex-wrap md:justify-center hide-scrollbar py-1 px-1">
                 {aspectRatios.map(ar => (
                     <button
                     key={ar.value}

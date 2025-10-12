@@ -133,6 +133,14 @@
       .dark .custom-scrollbar:hover::-webkit-scrollbar-thumb {
          background-color: #52525b; /* zinc-600 */
       }
+      /* Hide scrollbar for specific elements */
+      .hide-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;  /* Chrome, Safari, and Opera */
+      }
       /* Blinking cursor for typing animation */
       .typing-cursor {
         display: inline-block;
