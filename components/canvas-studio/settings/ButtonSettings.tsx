@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ButtonBlock, Page } from '../types';
 import ColorInput from '../ui/ColorInput';
 import LinkSettings from '../ui/LinkSettings';
@@ -10,19 +10,6 @@ interface ButtonSettingsProps {
 }
 
 const ButtonSettings: React.FC<ButtonSettingsProps> = ({ block, updateBlock, pages }) => {
-    
-    useEffect(() => {
-        if (!block.content.link) {
-            updateBlock(block.id, {
-                link: { type: 'url', value: '#' }
-            });
-        }
-    }, [block.id, block.content, updateBlock]);
-
-    if (!block.content.link) {
-        return null;
-    }
-
     return (
         <div className="space-y-4">
             <div>
@@ -35,7 +22,7 @@ const ButtonSettings: React.FC<ButtonSettingsProps> = ({ block, updateBlock, pag
                 />
             </div>
             <LinkSettings
-                link={block.content.link}
+                link={block.content.link || { type: 'url', value: '#' }}
                 onLinkChange={(link) => updateBlock(block.id, { link })}
                 pages={pages}
             />

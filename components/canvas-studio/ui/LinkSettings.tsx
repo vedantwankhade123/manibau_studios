@@ -17,7 +17,7 @@ const LinkSettings: React.FC<LinkSettingsProps> = ({ link, onLinkChange, pages }
                 <SegmentedControl
                     options={['url', 'page']}
                     selected={link.type}
-                    onSelect={(val) => onLinkChange({ ...link, type: val as 'url' | 'page' })}
+                    onSelect={(val) => onLinkChange({ type: val as 'url' | 'page', value: '' })}
                 />
             </div>
             {link.type === 'url' ? (
