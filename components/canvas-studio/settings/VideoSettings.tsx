@@ -14,12 +14,12 @@ const VideoSettings: React.FC<VideoSettingsProps> = ({ block, updateBlock, pages
     return (
         <div className="space-y-4">
             <div>
-                <label className="text-sm font-medium mb-2 block">Video URL (YouTube)</label>
+                <label className="text-sm font-medium mb-2 block">Video URL (YouTube or direct link)</label>
                 <input
                     type="text"
                     value={block.content.url}
                     onChange={(e) => updateBlock(block.id, { url: e.target.value })}
-                    placeholder="https://www.youtube.com/watch?v=..."
+                    placeholder="e.g., https://.../video.mp4"
                     className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
             </div>
