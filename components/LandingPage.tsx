@@ -228,7 +228,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   return (
     <div className="bg-black text-white font-sans">
       <header className="fixed top-0 left-0 right-0 z-50 p-4 opacity-0" style={{ animation: 'fade-in-down 0.8s ease-out 0.2s forwards' }}>
-        <div className="container mx-auto relative flex items-center justify-between backdrop-blur-lg rounded-full p-4 px-6">
+        <div className="container mx-auto relative flex items-center justify-between backdrop-blur-lg rounded-full p-2 px-4 md:p-4 md:px-6">
           <div className="flex items-center gap-3">
             <img src={logoUrl} alt="MANIBAU Studios Logo" className="h-8 w-8 filter drop-shadow-lg animate-rotate-once" />
             <div className="text-xl font-bold tracking-wider font-poppins">
@@ -242,7 +242,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             <a href="#showcase" className="px-4 py-2 text-sm text-gray-200 hover:bg-white/10 rounded-full transition-colors">Showcase</a>
             <a href="#features" className="px-4 py-2 text-sm text-gray-200 hover:bg-white/10 rounded-full transition-colors">Features</a>
           </nav>
-          <button onClick={onGetStarted} className="bg-white text-black font-semibold px-6 py-3 rounded-full hover:bg-gray-200 transition-colors">
+          <button onClick={onGetStarted} className="bg-white text-black font-semibold px-4 py-2 md:px-6 md:py-3 rounded-full hover:bg-gray-200 transition-colors text-sm md:text-base whitespace-nowrap">
             Get Started
           </button>
         </div>
