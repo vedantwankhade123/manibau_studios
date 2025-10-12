@@ -54,6 +54,20 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
         zIndex: isSelected ? 10 : 1,
     };
 
+    const handleMouseDownOnBlock = (e: React.MouseEvent) => {
+        // Check if it's the second mousedown of a double-click
+        if (e.detail === 2) {
+            // Prevent default double-click behavior (e.g., text selection)
+            e.preventDefault();
+            
+            // Manually invoke the mousedown listener from dnd-kit to start the drag
+            if (listeners?.onMouseDown) {
+                listeners.onMouseDown(e as any);
+            }
+        }
+        // For single clicks, we let the event bubble up to the onClick handler for selection.
+    };
+
     const renderBlock = () => {
         switch (block.type) {
             case 'Heading': return <HeadingBlock block={block} />;
@@ -78,30 +92,28 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick, onR
             ref={setNodeRef}
             style={style}
             onClick={onClick}
+            onMouseDown={handleMouseDownOnBlock}
             className={`group border-2 ${isSelected ? 'border-blue-500' : 'border-transparent hover:border-blue-500/50'}`}
         >
             <div 
                 {...attributes} 
                 {...listeners} 
-                className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full p-1.5 cursor-grab bg-blue-500 text-white rounded-full z-10 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                className={`absolute bottom-full mb-1 left-1/2 -translate-x-1/2 p-1.5 cursor-grab bg-blue-500 text-white rounded-full z-10 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
             >
                 <Move size={14} />
             </div>
             <div className="w-full h-full">{renderBlock()}</div>
-            {isSelected && (
-                <>
-                    {resizeHandles.map(handle => (
-                        <div
-                            key={handle}
-                            className={`absolute bg-white border-2 border-blue-500 rounded-full w-3 h-3 -m-1.5 z-20 ${getHandleClasses(handle)}`}
-                            onMouseDown={(e) => {
-                                e.stopPropagation();
-                                onResizeStart(e, block.id, handle);
-                            }}
-                        />
-                    ))}
-                </>
-            )}
+            
+            {resizeHandles.map(handle => (
+                <div
+                    key={handle}
+                    className={`absolute bg-white border-2 border-blue-500 rounded-full w-3 h-3 -m-1.5 z-20 transition-opacity ${getHandleClasses(handle)} ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                    onMouseDown={(e) => {
+                        e.stopPropagation();
+                        onResizeStart(e, block.id, handle);
+                    }}
+                />
+            ))}
         </div>
     );
 };
