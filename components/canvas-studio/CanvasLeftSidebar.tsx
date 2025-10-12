@@ -1,18 +1,27 @@
-import React from 'react';
-import { Search, ChevronDown, Type, Pilcrow, Image as ImageIcon, Link, MousePointerClick, Minus, Divide, Video, Star, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronDown, Type, Pilcrow, Image as ImageIcon, Link, MousePointerClick, Minus, Divide, Video, Star, PanelLeftClose } from 'lucide-react';
 import ToolboxItem from './ToolboxItem';
 import { BlockType } from './types';
 
-const AccordionSection: React.FC<{ title: string; children: React.ReactNode; defaultOpen?: boolean }> = ({ title, children, defaultOpen }) => (
-    <details className="group" open={defaultOpen}>
-        <summary className="flex items-center justify-between p-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">
+interface AccordionSectionProps {
+    title: string;
+    children: React.ReactNode;
+    isOpen: boolean;
+    onToggle: () => void;
+}
+
+const AccordionSection: React.FC<AccordionSectionProps> = ({ title, children, isOpen, onToggle }) => (
+    <div>
+        <button onClick={onToggle} className="flex items-center justify-between p-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md w-full text-left">
             <span className="font-semibold text-sm">{title}</span>
-            <ChevronDown size={18} className="text-zinc-500 group-open:rotate-180 transition-transform" />
-        </summary>
-        <div className="p-2">
-            {children}
-        </div>
-    </details>
+            <ChevronDown size={18} className={`text-zinc-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+        {isOpen && (
+            <div className="p-2">
+                {children}
+            </div>
+        )}
+    </div>
 );
 
 interface CanvasLeftSidebarProps {
@@ -21,22 +30,26 @@ interface CanvasLeftSidebarProps {
 }
 
 const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onToggle }) => {
-    const typographyItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
-        { type: 'Heading', icon: <Type size={24} />, label: 'Heading' },
-        { type: 'Paragraph', icon: <Pilcrow size={24} />, label: 'Paragraph' },
-    ];
-    const layoutItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
-        { type: 'Spacer', icon: <Minus size={24} />, label: 'Spacer' },
-        { type: 'Divider', icon: <Divide size={24} />, label: 'Divider' },
-    ];
-    const mediaItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
-        { type: 'Image', icon: <ImageIcon size={24} />, label: 'Image' },
-        { type: 'Video', icon: <Video size={24} />, label: 'Video' },
-        { type: 'Icon', icon: <Star size={24} />, label: 'Icon' },
-    ];
-    const actionItems: { type: BlockType; icon: React.ReactNode; label: string }[] = [
-        { type: 'Button', icon: <MousePointerClick size={24} />, label: 'Button' },
-        { type: 'Social', icon: <Link size={24} />, label: 'Social Links' },
+    const [openSection, setOpenSection] = useState('Typography');
+
+    const sections = [
+        { title: 'Typography', items: [
+            { type: 'Heading' as BlockType, icon: <Type size={24} />, label: 'Heading' },
+            { type: 'Paragraph' as BlockType, icon: <Pilcrow size={24} />, label: 'Paragraph' },
+        ]},
+        { title: 'Layout', items: [
+            { type: 'Spacer' as BlockType, icon: <Minus size={24} />, label: 'Spacer' },
+            { type: 'Divider' as BlockType, icon: <Divide size={24} />, label: 'Divider' },
+        ]},
+        { title: 'Media', items: [
+            { type: 'Image' as BlockType, icon: <ImageIcon size={24} />, label: 'Image' },
+            { type: 'Video' as BlockType, icon: <Video size={24} />, label: 'Video' },
+            { type: 'Icon' as BlockType, icon: <Star size={24} />, label: 'Icon' },
+        ]},
+        { title: 'Actions', items: [
+            { type: 'Button' as BlockType, icon: <MousePointerClick size={24} />, label: 'Button' },
+            { type: 'Social' as BlockType, icon: <Link size={24} />, label: 'Social Links' },
+        ]},
     ];
 
     return (
@@ -48,34 +61,20 @@ const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onTo
                 </button>
             </div>
             <div className="flex-grow p-2 overflow-y-auto custom-scrollbar">
-                <AccordionSection title="Typography" defaultOpen>
-                    <div className="grid grid-cols-2 gap-2">
-                        {typographyItems.map(item => (
-                            <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
-                        ))}
-                    </div>
-                </AccordionSection>
-                <AccordionSection title="Layout">
-                    <div className="grid grid-cols-2 gap-2">
-                        {layoutItems.map(item => (
-                            <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
-                        ))}
-                    </div>
-                </AccordionSection>
-                <AccordionSection title="Media">
-                    <div className="grid grid-cols-2 gap-2">
-                        {mediaItems.map(item => (
-                            <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
-                        ))}
-                    </div>
-                </AccordionSection>
-                 <AccordionSection title="Actions">
-                    <div className="grid grid-cols-2 gap-2">
-                        {actionItems.map(item => (
-                            <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
-                        ))}
-                    </div>
-                </AccordionSection>
+                {sections.map(section => (
+                    <AccordionSection
+                        key={section.title}
+                        title={section.title}
+                        isOpen={openSection === section.title}
+                        onToggle={() => setOpenSection(openSection === section.title ? '' : section.title)}
+                    >
+                        <div className="grid grid-cols-2 gap-2">
+                            {section.items.map(item => (
+                                <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
+                            ))}
+                        </div>
+                    </AccordionSection>
+                ))}
             </div>
         </aside>
     );
