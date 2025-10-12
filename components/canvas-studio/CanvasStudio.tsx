@@ -15,7 +15,7 @@ import { useHistory } from './hooks/useHistory';
 import ContextMenu from './ContextMenu';
 import PageSettingsModal from './ui/PageSettingsModal';
 import ExportModal from './ui/ExportModal';
-import { generateHtmlForPage } from '@/components/canvas-studio/utils/exportUtils';
+import { generateHtmlForPage } from './utils/exportUtils';
 
 // Block component imports for drag overlay
 import HeadingBlock from './blocks/HeadingBlock';
@@ -71,7 +71,7 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
         case 'Paragraph':
             return { id, type, x: 50, y: 50, width: 400, height: 120, content: { text: 'This is a paragraph...', fontSize: '16px', textAlign: 'left', color: '#3f3f46', maxWidth: 600 } };
         case 'Button':
-            return { id, type, x: 50, y: 50, width: 200, height: 80, content: { text: 'Click Me', link: { type: 'url', value: '#' }, backgroundColor: '#2563eb', textColor: '#ffffff' } };
+            return { id, type, x: 50, y: 50, width: 200, height: 80, content: { text: 'Click Me', backgroundColor: '#2563eb', textColor: '#ffffff' } };
         case 'Image':
             return { id, type, x: 50, y: 50, width: 500, height: 300, content: { src: 'https://via.placeholder.com/500x300', alt: 'Placeholder', width: 100, borderRadius: 8 } };
         case 'Social':

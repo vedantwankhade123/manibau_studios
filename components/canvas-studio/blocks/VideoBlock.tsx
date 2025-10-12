@@ -68,18 +68,11 @@ const VideoBlock: React.FC<VideoBlockProps> = ({ block, onNavigate }) => {
         </div>
     );
 
-    if (link) {
-        if (link.type === 'page') {
-            return (
-                <button onClick={() => onNavigate && onNavigate(link.value)} className="w-full h-full p-2 flex justify-center">
-                    {videoPlayer}
-                </button>
-            );
-        }
+    if (link && link.type === 'page') {
         return (
-            <a href={link.value} target="_blank" rel="noopener noreferrer" className="w-full h-full p-2 flex justify-center" onClick={(e) => e.preventDefault()}>
+            <button onClick={() => onNavigate && onNavigate(link.value)} className="w-full h-full p-2 flex justify-center">
                 {videoPlayer}
-            </a>
+            </button>
         );
     }
 

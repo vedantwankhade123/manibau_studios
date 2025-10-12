@@ -47,7 +47,7 @@ const ImageSettings: React.FC<ImageSettingsProps> = ({ block, updateBlock, pages
                 max={200}
             />
             <LinkSettings
-                link={block.content.link || { type: 'url', value: '' }}
+                link={block.content.link}
                 onLinkChange={(link) => updateBlock(block.id, { link })}
                 pages={pages}
             />

@@ -48,7 +48,7 @@ const VideoSettings: React.FC<VideoSettingsProps> = ({ block, updateBlock, pages
                 max={50}
             />
             <LinkSettings
-                link={block.content.link || { type: 'url', value: '' }}
+                link={block.content.link}
                 onLinkChange={(link) => updateBlock(block.id, { link })}
                 pages={pages}
             />

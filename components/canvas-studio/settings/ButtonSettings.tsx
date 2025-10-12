@@ -22,7 +22,7 @@ const ButtonSettings: React.FC<ButtonSettingsProps> = ({ block, updateBlock, pag
                 />
             </div>
             <LinkSettings
-                link={block.content.link || { type: 'url', value: '#' }}
+                link={block.content.link}
                 onLinkChange={(link) => updateBlock(block.id, { link })}
                 pages={pages}
             />

@@ -40,11 +40,8 @@ const ParagraphBlock: React.FC<ParagraphBlockProps> = ({ block, onNavigate }) =>
         </div>
     );
 
-    if (link) {
-        if (link.type === 'page') {
-            return <button onClick={() => onNavigate && onNavigate(link.value)} className="w-full h-full">{paragraphElement}</button>;
-        }
-        return <a href={link.value} target="_blank" rel="noopener noreferrer" className="w-full h-full" onClick={(e) => e.preventDefault()}>{paragraphElement}</a>;
+    if (link && link.type === 'page') {
+        return <button onClick={() => onNavigate && onNavigate(link.value)} className="w-full h-full">{paragraphElement}</button>;
     }
 
     return paragraphElement;

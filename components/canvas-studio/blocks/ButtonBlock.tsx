@@ -11,7 +11,7 @@ const ButtonBlock: React.FC<ButtonBlockProps> = ({ block, onNavigate }) => {
 
     const commonClasses = "inline-block px-6 py-3 font-semibold rounded-md transition-colors";
 
-    if (link.type === 'page') {
+    if (link && link.type === 'page') {
         return (
             <div className="p-4 text-center">
                 <button
@@ -25,19 +25,14 @@ const ButtonBlock: React.FC<ButtonBlockProps> = ({ block, onNavigate }) => {
         );
     }
 
-    // Default to URL link
     return (
         <div className="p-4 text-center">
-            <a
-                href={link.value}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.preventDefault()} // Prevent actual navigation inside the editor
+            <div
                 style={{ backgroundColor, color: textColor }}
                 className={commonClasses}
             >
                 {text}
-            </a>
+            </div>
         </div>
     );
 };

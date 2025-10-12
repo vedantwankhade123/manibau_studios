@@ -54,7 +54,7 @@ const ParagraphSettings: React.FC<ParagraphSettingsProps> = ({ block, updateBloc
                 max={1200}
             />
             <LinkSettings
-                link={block.content.link || { type: 'url', value: '' }}
+                link={block.content.link}
                 onLinkChange={(link) => updateBlock(block.id, { link })}
                 pages={pages}
             />

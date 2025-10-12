@@ -19,7 +19,7 @@ export interface HeadingBlock extends Block {
         color: string;
         maxWidth?: number;
         link?: {
-            type: 'url' | 'page';
+            type: 'page';
             value: string;
         };
     };
@@ -34,7 +34,7 @@ export interface ParagraphBlock extends Block {
         color: string;
         maxWidth?: number;
         link?: {
-            type: 'url' | 'page';
+            type: 'page';
             value: string;
         };
     };
@@ -44,9 +44,9 @@ export interface ButtonBlock extends Block {
     type: 'Button';
     content: {
         text: string;
-        link: {
-            type: 'url' | 'page';
-            value: string; // URL string or page ID
+        link?: {
+            type: 'page';
+            value: string; // page ID
         };
         backgroundColor: string;
         textColor: string;
@@ -61,7 +61,7 @@ export interface ImageBlock extends Block {
         width: number;
         borderRadius: number;
         link?: {
-            type: 'url' | 'page';
+            type: 'page';
             value: string;
         };
     };
@@ -100,7 +100,7 @@ export interface VideoBlock extends Block {
         width: number;
         borderRadius: number;
         link?: {
-            type: 'url' | 'page';
+            type: 'page';
             value: string;
         };
     };
