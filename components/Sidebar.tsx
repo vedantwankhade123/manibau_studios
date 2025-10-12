@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapse
         onClick={() => setIsMobileMenuOpen(false)}
       />
       <aside className={`fixed top-0 left-0 bottom-0 z-40 bg-white dark:bg-zinc-900 flex flex-col transition-all duration-300 ease-in-out 
-        lg:relative lg:z-30 lg:translate-x-0
+        lg:translate-x-0
         ${isMobileMenuOpen ? 'translate-x-0 w-80' : '-translate-x-full w-80'}
         lg:${isCollapsed ? 'w-24' : 'w-80'}`}>
         <div className="p-4 flex flex-col h-full overflow-y-auto custom-scrollbar">
