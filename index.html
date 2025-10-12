@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/image-assets/MANIBAU Studios Logo.png" />
+    <link rel="apple-touch-icon" href="/image-assets/MANIBAU Studios Logo.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/image-assets/MANIBAU Studios Logo.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/image-assets/MANIBAU Studios Logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manibau Studios</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            keyframes: {
+              'marquee-left': {
+                '0%': { transform: 'translateX(0)' },
+                '100%': { transform: 'translateX(-50%)' },
+              },
+              'marquee-right': {
+                '0%': { transform: 'translateX(-50%)' },
+                '100%': { transform: 'translateX(0)' },
+              },
+              'animated-gradient': {
+                '0%': { 'background-position': '0% 50%' },
+                '50%': { 'background-position': '100% 50%' },
+                '100%': { 'background-position': '0% 50%' },
+              },
+              'fade-in-up': {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+            },
+            animation: {
+              'marquee-left': 'marquee-left 40s linear infinite',
+              'marquee-right': 'marquee-right 40s linear infinite',
+              'animated-gradient': 'animated-gradient 15s ease infinite',
+              'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
+            },
+          },
+        },
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <!-- highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- JSZip for creating ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- html2canvas for taking screenshots -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- js-beautify for code formatting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify-html.min.js"></script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background-color: white;
+        color: #18181b; /* zinc-900 */
+      }
+      .dark body {
+        background-color: black;
+        color: #e5e7eb; /* gray-200 */
+      }
+      /* Accessibility Styles */
+      html.font-size-small { font-size: 90%; }
+      html.font-size-medium { font-size: 100%; }
+      html.font-size-large { font-size: 110%; }
+
+      html.high-contrast {
+          filter: contrast(1.25);
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        html.reduce-motion * {
+          animation-duration: 1ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 1ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+      @keyframes shimmer {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+      .font-poppins {
+        font-family: 'Poppins', sans-serif;
+      }
+      /* Custom Scrollbar Styling */
+      /* Firefox */
+      .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #d4d4d8 transparent; /* zinc-300 */
+      }
+      .custom-scrollbar:hover {
+        scrollbar-color: #a1a1aa transparent; /* zinc-400 */
+      }
+      .dark .custom-scrollbar {
+         scrollbar-color: #3f3f46 transparent; /* zinc-700 */
+      }
+      .dark .custom-scrollbar:hover {
+         scrollbar-color: #52525b transparent; /* zinc-600 */
+      }
+
+      /* Webkit (Chrome, Safari) */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #d4d4d8; /* zinc-300 */
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background-clip: content-box;
+      }
+      .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+        background-color: #a1a1aa; /* zinc-400 */
+      }
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+         background-color: #3f3f46; /* zinc-700 */
+      }
+      .dark .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+         background-color: #52525b; /* zinc-600 */
+      }
+      /* Blinking cursor for typing animation */
+      .typing-cursor {
+        display: inline-block;
+        font-weight: bold;
+        color: #a1a1aa; /* zinc-400 */
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      /* Infinite scroll animation */
+      @keyframes infinite-scroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+      }
+      .animate-infinite-scroll {
+        animation: infinite-scroll 40s linear infinite;
+      }
+      /* Animated Headline Styles */
+      @keyframes shine {
+        0% { background-position: 100% center; }
+        100% { background-position: -100% center; }
+      }
+      @keyframes fade-effect {
+        0%, 100% { opacity: 0; }
+        15%, 85% { opacity: 1; }
+      }
+      .animated-headline {
+        color: #a1a1aa; /* Fallback for older browsers (zinc-400) */
+        background: linear-gradient(
+          120deg,
+          #a1a1aa 25%, /* zinc-400 */
+          #ffffff 50%, /* white */
+          #a1a1aa 75%  /* zinc-400 */
+        );
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fade-effect 4s ease-in-out, shine 2s linear 1s;
+        animation-fill-mode: forwards;
+      }
+      /* Glow animation */
+      @keyframes pulse-slow {
+        50% {
+          opacity: .2;
+        }
+      }
+      .animate-pulse-slow {
+        animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      /* Shine animation for cards */
+      @keyframes shine-sweep {
+        0% { transform: translateX(-100%) skewX(-20deg); }
+        100% { transform: translateX(200%) skewX(-20deg); }
+      }
+
+      .shine-effect {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .shine-effect::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.1) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        animation: shine-sweep 4s linear infinite;
+        z-index: 1;
+      }
+      /* Generating text animation */
+      @keyframes shine-generating {
+        0% { background-position: 200% center; }
+        100% { background-position: -200% center; }
+      }
+      .generating-text-animation {
+        background: linear-gradient(
+          120deg,
+          #71717a 30%,
+          #18181b 50%,
+          #71717a 70%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine-generating 1.5s linear infinite;
+      }
+      .dark .generating-text-animation {
+        background: linear-gradient(
+          120deg,
+          #a1a1aa 30%,
+          #e5e7eb 50%,
+          #a1a1aa 70%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine-generating 1.5s linear infinite;
+      }
+      /* Welcome Card Animations */
+      @keyframes welcome-glow-1 {
+        0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+        50% { transform: translate(20px, 10px) scale(1.1); opacity: 0.3; }
+      }
+      @keyframes welcome-glow-2 {
+        0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.1; }
+        50% { transform: translate(-15px, -15px) scale(0.9); opacity: 0.2; }
+      }
+      @keyframes fade-in-up {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      /* Notification Panel Animation */
+      @keyframes fade-in-down {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in-down {
+        animation: fade-in-down 0.3s ease-out forwards;
+      }
+      /* Auth Page Flowing Animations */
+      @keyframes float-1 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(40px, -60px) rotate(25deg); }
+      }
+      @keyframes float-2 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(-60px, 40px) rotate(-15deg); }
+      }
+      @keyframes float-3 {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(50px, 50px) rotate(-5deg); }
+      }
+      .animate-float-1 {
+        animation: float-1 20s ease-in-out infinite;
+      }
+      .animate-float-2 {
+        animation: float-2 25s ease-in-out infinite;
+      }
+      .animate-float-3 {
+        animation: float-3 18s ease-in-out infinite;
+      }
+      /* Auth Page Logo Animations */
+      @keyframes rotate-once-and-pause {
+        0% { transform: rotate(0deg); }
+        50%, 100% { transform: rotate(360deg); }
+      }
+      .animate-rotate-once {
+        animation: rotate-once-and-pause 4s ease-in-out infinite;
+      }
+      @keyframes logo-shine {
+        0% { background-position: 200% center; }
+        100% { background-position: -200% center; }
+      }
+      .animate-logo-shine {
+        background: linear-gradient(
+          120deg,
+          #a1a1aa 30%, /* zinc-400 */
+          #ffffff 50%,
+          #a1a1aa 70%  /* zinc-400 */
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: logo-shine 3s linear infinite;
+      }
+      /* Fading text animation */
+      @keyframes fade-in-out-text {
+        0%, 100% { opacity: 0; transform: translateY(10px); }
+        20%, 80% { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in-out-text {
+        animation: fade-in-out-text 4s ease-in-out forwards;
+      }
+    </style>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "name": "MANIBAU Studios",
+  "description": "An AI-powered image tool platform from MANIBAU Studios to generate new images from text prompts and edit existing ones with simple instructions, using Google's Gemini API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
