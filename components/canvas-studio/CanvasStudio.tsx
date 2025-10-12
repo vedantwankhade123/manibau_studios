@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Theme } from '../../App';
+import { Tool } from '../../types';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
@@ -36,6 +37,7 @@ import ShapeBlock from './blocks/ShapeBlock';
 declare const html2canvas: any;
 
 interface CanvasStudioProps {
+  setActiveTool: (tool: Tool) => void;
   onToggleNotifications: () => void;
   unreadCount: number;
   onToggleCommandPalette: () => void;
@@ -97,18 +99,25 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
     }
 };
 
-const DesktopOnlyMessage: React.FC = () => (
+const DesktopOnlyMessage: React.FC<{ onGoBack: () => void }> = ({ onGoBack }) => (
     <div className="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 p-8">
         <MonitorOff size={48} className="text-gray-400 dark:text-gray-500 mb-4" />
         <h2 className="text-xl font-semibold text-zinc-800 dark:text-gray-300 mb-2">Desktop Experience Recommended</h2>
-        <p className="max-w-sm">
+        <p className="max-w-sm mb-6">
             The Canvas Studio is a powerful tool designed for larger screens. For the best experience, please switch to a desktop or laptop computer.
         </p>
+        <button 
+            onClick={onGoBack} 
+            className="flex items-center gap-2 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-800 dark:text-white font-semibold px-4 py-2 rounded-full transition-colors"
+        >
+            <ChevronLeft size={18} />
+            <span>Go Back to Dashboard</span>
+        </button>
     </div>
 );
 
 const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
-    const { theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onLogout, onToggleCommandPalette, onToggleNotifications, unreadCount } = props;
+    const { setActiveTool, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onLogout, onToggleCommandPalette, onToggleNotifications, unreadCount } = props;
     
     const { state: pages, setState: setPagesHistory, undo, redo, canUndo, canRedo } = useHistory<Page[]>([
         { id: `page-${Date.now()}`, name: 'Home', blocks: [] }
@@ -381,7 +390,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
             <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
                 <div className="lg:hidden h-full">
-                    <DesktopOnlyMessage />
+                    <DesktopOnlyMessage onGoBack={() => setActiveTool(Tool.DASHBOARD)} />
                 </div>
                 <div className="h-full hidden lg:flex lg:flex-col">
                     <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">

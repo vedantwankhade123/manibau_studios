@@ -143,7 +143,7 @@ const ElementSelectorIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" class
     <path d="M3 3v4c0 .6.4 1 1 1h4"/>
     <path d="M3 21v-4c0-.6.4-1 1-1h4"/>
     <path d="M21 3v4c0 .6-.4 1-1 1h-4"/>
-    <path d="M21 21v-4c0-.6-.4-1 1-1h-4"/>
+    <path d="M21 21v-4c0-.6.4-1 1-1h-4"/>
     <path d="m9 9 5 12 1.8-5.2L21 14Z"/>
 </svg>);
 const ExternalLinkIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>);
@@ -491,13 +491,20 @@ const GeneratingAnimation: React.FC = () => {
     );
 };
 
-const DesktopOnlyMessage: React.FC = () => (
+const DesktopOnlyMessage: React.FC<{ onGoBack: () => void }> = ({ onGoBack }) => (
     <div className="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 p-8">
         <MonitorOff size={48} className="text-gray-400 dark:text-gray-500 mb-4" />
         <h2 className="text-xl font-semibold text-zinc-800 dark:text-gray-300 mb-2">Desktop Experience Recommended</h2>
-        <p className="max-w-sm">
+        <p className="max-w-sm mb-6">
             The Developer Studio is designed for a larger screen. For the best experience, please switch to a desktop or laptop computer.
         </p>
+        <button 
+            onClick={onGoBack} 
+            className="flex items-center gap-2 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-800 dark:text-white font-semibold px-4 py-2 rounded-full transition-colors"
+        >
+            <ChevronLeftIcon />
+            <span>Go Back to Dashboard</span>
+        </button>
     </div>
 );
 
@@ -1001,7 +1008,7 @@ const DevDraft: React.FC<DevDraftProps> = ({ setActiveTool, onToggleNotification
   return (
     <div className="h-full flex flex-col">
       <div className="lg:hidden h-full">
-        <DesktopOnlyMessage />
+        <DesktopOnlyMessage onGoBack={() => setActiveTool(Tool.DASHBOARD)} />
       </div>
       <div className="h-full hidden lg:flex lg:flex-col p-4 gap-4">
         <header className="flex-shrink-0 flex items-center justify-between bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-xl border border-zinc-200 dark:border-zinc-800 py-2 px-3">
