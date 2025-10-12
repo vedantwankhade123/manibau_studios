@@ -87,3 +87,9 @@ export interface IconBlock extends Block {
 }
 
 export type CanvasBlock = HeadingBlock | ParagraphBlock | ButtonBlock | ImageBlock | SocialBlock | SpacerBlock | DividerBlock | VideoBlock | IconBlock;
+
+export interface Page {
+  id: string;
+  name: string;
+  blocks: CanvasBlock[];
+}

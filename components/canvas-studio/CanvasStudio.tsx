@@ -7,9 +7,10 @@ import { ChevronLeft, ChevronRight, Undo, Redo, Monitor, Tablet, Smartphone, Pan
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
-import { DndContext, DragEndEvent, DragOverEvent, DragStartEvent, closestCenter } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { BlockType, CanvasBlock } from './types';
+import { BlockType, CanvasBlock, Page } from './types';
+import PageTabs from './ui/PageTabs';
 
 interface CanvasStudioProps {
   onToggleNotifications: () => void;
@@ -52,11 +53,17 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
 
 const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const { theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onLogout } = props;
-    const [blocks, setBlocks] = useState<CanvasBlock[]>([]);
+    const [pages, setPages] = useState<Page[]>([
+        { id: `page-${Date.now()}`, name: 'Home', blocks: [] }
+    ]);
+    const [activePageId, setActivePageId] = useState<string>(pages[0].id);
     const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
     const [device, setDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
     const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
     const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
+
+    const activePage = pages.find(p => p.id === activePageId);
+    const activeBlocks = activePage?.blocks || [];
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
@@ -65,33 +72,70 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
             const type = active.data.current?.type as BlockType;
             if (type) {
                 const newBlock = createNewBlock(type);
-                setBlocks(prev => [...prev, newBlock]);
+                setPages(prevPages => prevPages.map(p => 
+                    p.id === activePageId 
+                        ? { ...p, blocks: [...p.blocks, newBlock] } 
+                        : p
+                ));
                 setSelectedBlockId(newBlock.id);
             }
             return;
         }
 
         if (over && active.id !== over.id) {
-            const oldIndex = blocks.findIndex(b => b.id === active.id);
-            const newIndex = blocks.findIndex(b => b.id === over.id);
+            const oldIndex = activeBlocks.findIndex(b => b.id === active.id);
+            const newIndex = activeBlocks.findIndex(b => b.id === over.id);
             if (oldIndex !== -1 && newIndex !== -1) {
-                setBlocks(arrayMove(blocks, oldIndex, newIndex));
+                const newBlocks = arrayMove(activeBlocks, oldIndex, newIndex);
+                setPages(prevPages => prevPages.map(p => 
+                    p.id === activePageId 
+                        ? { ...p, blocks: newBlocks } 
+                        : p
+                ));
             }
         }
     };
 
     const updateBlockContent = (id: string, content: any) => {
-        setBlocks(prev => prev.map(b => b.id === id ? { ...b, content: { ...b.content, ...content } } : b));
+        setPages(prevPages => prevPages.map(p => 
+            p.id === activePageId 
+                ? { ...p, blocks: p.blocks.map(b => b.id === id ? { ...b, content: { ...b.content, ...content } } : b) } 
+                : p
+        ));
     };
 
     const deleteBlock = (id: string) => {
-        setBlocks(prev => prev.filter(b => b.id !== id));
+        setPages(prevPages => prevPages.map(p => 
+            p.id === activePageId 
+                ? { ...p, blocks: p.blocks.filter(b => b.id !== id) } 
+                : p
+        ));
         if (selectedBlockId === id) {
             setSelectedBlockId(null);
         }
     };
 
-    const selectedBlock = blocks.find(b => b.id === selectedBlockId) || null;
+    const addPage = () => {
+        const newPage: Page = {
+            id: `page-${Date.now()}`,
+            name: `Page ${pages.length + 1}`,
+            blocks: []
+        };
+        setPages(prev => [...prev, newPage]);
+        setActivePageId(newPage.id);
+    };
+
+    const deletePage = (id: string) => {
+        setPages(prev => {
+            const newPages = prev.filter(p => p.id !== id);
+            if (activePageId === id) {
+                setActivePageId(newPages[0]?.id || '');
+            }
+            return newPages;
+        });
+    };
+
+    const selectedBlock = activeBlocks.find(b => b.id === selectedBlockId) || null;
 
     return (
         <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
@@ -115,7 +159,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                 <div className="flex-grow flex min-h-0">
                     <CanvasLeftSidebar isCollapsed={!isLeftSidebarOpen} onToggle={() => setIsLeftSidebarOpen(false)} />
                     <div className="flex-1 flex flex-col">
-                        <div className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                        <div className="relative flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                             <div className="flex items-center gap-2">
                                 {!isLeftSidebarOpen && (
                                     <button onClick={() => setIsLeftSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
@@ -125,12 +169,21 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                                 <button className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"><Undo size={18} /></button>
                                 <button className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400"><Redo size={18} /></button>
                             </div>
-                            <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
-                                <button onClick={() => setDevice('desktop')} className={`p-1.5 rounded ${device === 'desktop' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Monitor size={18}/></button>
-                                <button onClick={() => setDevice('tablet')} className={`p-1.5 rounded ${device === 'tablet' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Tablet size={18}/></button>
-                                <button onClick={() => setDevice('mobile')} className={`p-1.5 rounded ${device === 'mobile' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Smartphone size={18}/></button>
+                            <div className="absolute left-1/2 -translate-x-1/2">
+                                <PageTabs 
+                                    pages={pages}
+                                    activePageId={activePageId}
+                                    onSelectPage={setActivePageId}
+                                    onAddPage={addPage}
+                                    onDeletePage={deletePage}
+                                />
                             </div>
                             <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
+                                    <button onClick={() => setDevice('desktop')} className={`p-1.5 rounded ${device === 'desktop' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Monitor size={18}/></button>
+                                    <button onClick={() => setDevice('tablet')} className={`p-1.5 rounded ${device === 'tablet' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Tablet size={18}/></button>
+                                    <button onClick={() => setDevice('mobile')} className={`p-1.5 rounded ${device === 'mobile' ? 'text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-700 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}><Smartphone size={18}/></button>
+                                </div>
                                 <button className="text-sm font-semibold px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">
                                     Publish
                                 </button>
@@ -141,7 +194,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                                 )}
                             </div>
                         </div>
-                        <Canvas blocks={blocks} selectedBlockId={selectedBlockId} onSelectBlock={setSelectedBlockId} device={device} />
+                        <Canvas blocks={activeBlocks} selectedBlockId={selectedBlockId} onSelectBlock={setSelectedBlockId} device={device} />
                     </div>
                     <CanvasRightSidebar selectedBlock={selectedBlock} updateBlock={updateBlockContent} deleteBlock={deleteBlock} isCollapsed={!isRightSidebarOpen} onToggle={() => setIsRightSidebarOpen(false)} />
                 </div>

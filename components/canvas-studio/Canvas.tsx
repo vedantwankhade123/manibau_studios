@@ -17,13 +17,13 @@ const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock,
     });
 
     const deviceStyles = {
-        desktop: { width: '100%', height: '100%', minHeight: '800px', boxShadow: 'none', borderRadius: '0.5rem' },
+        desktop: { width: '1280px', minHeight: '100%', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '0.5rem' },
         tablet: { width: '768px', height: '1024px', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '0.75rem' },
         mobile: { width: '375px', height: '667px', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', borderRadius: '1rem' },
     };
 
     return (
-        <div className="flex-1 bg-zinc-100 dark:bg-zinc-950 p-8 overflow-auto custom-scrollbar flex justify-center">
+        <div className="flex-1 bg-zinc-100 dark:bg-zinc-950 p-8 overflow-auto custom-scrollbar flex justify-start">
             <div
                 ref={setNodeRef}
                 className="mx-auto bg-white dark:bg-zinc-900 transition-all duration-300 ease-in-out"
