@@ -8,7 +8,6 @@ import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
 import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
 import { BlockType, CanvasBlock, Page } from './types';
 import PageTabs from './ui/PageTabs';
 
@@ -27,25 +26,26 @@ interface CanvasStudioProps {
 
 const createNewBlock = (type: BlockType): CanvasBlock => {
     const id = `${type}-${Date.now()}`;
+    const base = { id, x: 50, y: 50 };
     switch (type) {
         case 'Heading':
-            return { id, type, content: { text: 'Your Heading Here', level: 'h2', textAlign: 'center', color: '#18181b', maxWidth: 600 } };
+            return { ...base, type, width: 400, height: 80, content: { text: 'Your Heading Here', level: 'h2', textAlign: 'center', color: '#18181b', maxWidth: 600 } };
         case 'Paragraph':
-            return { id, type, content: { text: 'This is a paragraph. You can edit this text in the properties panel on the right.', fontSize: '16px', textAlign: 'left', color: '#3f3f46', maxWidth: 600 } };
+            return { ...base, type, width: 400, height: 120, content: { text: 'This is a paragraph. You can edit this text in the properties panel on the right.', fontSize: '16px', textAlign: 'left', color: '#3f3f46', maxWidth: 600 } };
         case 'Button':
-            return { id, type, content: { text: 'Click Me', url: '#', backgroundColor: '#2563eb', textColor: '#ffffff' } };
+            return { ...base, type, width: 200, height: 80, content: { text: 'Click Me', url: '#', backgroundColor: '#2563eb', textColor: '#ffffff' } };
         case 'Image':
-            return { id, type, content: { src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800', alt: 'Team working', width: 100 } };
+            return { ...base, type, width: 500, height: 300, content: { src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800', alt: 'Team working', width: 100 } };
         case 'Social':
-            return { id, type, content: { instagram: '#', facebook: '#', linkedin: '#' } };
+            return { ...base, type, width: 200, height: 80, content: { instagram: '#', facebook: '#', linkedin: '#' } };
         case 'Spacer':
-            return { id, type, content: { height: 50 } };
+            return { ...base, type, width: 500, height: 50, content: { height: 50 } };
         case 'Divider':
-            return { id, type, content: { thickness: 1, color: '#e5e7eb', marginY: 16 } };
+            return { ...base, type, width: 500, height: 40, content: { thickness: 1, color: '#e5e7eb', marginY: 16 } };
         case 'Video':
-            return { id, type, content: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', aspectRatio: '16/9', width: 100 } };
+            return { ...base, type, width: 500, height: 300, content: { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', aspectRatio: '16/9', width: 100 } };
         case 'Icon':
-            return { id, type, content: { iconName: 'Smile', size: 48, color: '#18181b' } };
+            return { ...base, type, width: 100, height: 100, content: { iconName: 'Smile', size: 48, color: '#18181b' } };
         default:
             throw new Error(`Unknown block type: ${type}`);
     }
@@ -67,7 +67,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const activeBlocks = activePage?.blocks || [];
 
     const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
+        const { active, over, delta } = event;
 
         if (active.id.toString().startsWith('toolbox-item-') && over?.id === 'canvas-droppable-area') {
             const type = active.data.current?.type as BlockType;
@@ -83,17 +83,17 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
             return;
         }
 
-        if (over && active.id !== over.id) {
-            const oldIndex = activeBlocks.findIndex(b => b.id === active.id);
-            const newIndex = activeBlocks.findIndex(b => b.id === over.id);
-            if (oldIndex !== -1 && newIndex !== -1) {
-                const newBlocks = arrayMove(activeBlocks, oldIndex, newIndex);
-                setPages(prevPages => prevPages.map(p => 
-                    p.id === activePageId 
-                        ? { ...p, blocks: newBlocks } 
-                        : p
-                ));
-            }
+        if (!active.id.toString().startsWith('toolbox-item-')) {
+            setPages(prevPages => prevPages.map(p => 
+                p.id === activePageId 
+                    ? { ...p, blocks: p.blocks.map(b => {
+                        if (b.id === active.id) {
+                            return { ...b, x: b.x + delta.x, y: b.y + delta.y };
+                        }
+                        return b;
+                      }) } 
+                    : p
+            ));
         }
     };
 

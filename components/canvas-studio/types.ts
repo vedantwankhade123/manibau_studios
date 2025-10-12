@@ -4,6 +4,10 @@ export interface Block {
     id: string;
     type: BlockType;
     content: any;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 }
 
 export interface HeadingBlock extends Block {

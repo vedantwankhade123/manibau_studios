@@ -1,7 +1,7 @@
 import React from 'react';
-import { useSortable } from '@dnd-kit/sortable';
+import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical } from 'lucide-react';
+import { Move } from 'lucide-react';
 import { CanvasBlock } from './types';
 import ImageBlock from './blocks/ImageBlock';
 import ButtonBlock from './blocks/ButtonBlock';
@@ -25,12 +25,15 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick }) =
         listeners,
         setNodeRef,
         transform,
-        transition,
-    } = useSortable({ id: block.id });
+    } = useDraggable({ id: block.id });
 
     const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
+        position: 'absolute' as const,
+        top: block.y,
+        left: block.x,
+        width: block.width,
+        height: block.height,
+        transform: CSS.Translate.toString(transform),
     };
 
     const renderBlock = () => {
@@ -63,12 +66,12 @@ const CanvasItem: React.FC<CanvasItemProps> = ({ block, isSelected, onClick }) =
             ref={setNodeRef}
             style={style}
             onClick={onClick}
-            className={`relative group border-2 ${isSelected ? 'border-blue-500' : 'border-transparent hover:border-blue-500/50'}`}
+            className={`group border-2 ${isSelected ? 'border-blue-500' : 'border-transparent hover:border-blue-500/50'}`}
         >
-            <div {...attributes} {...listeners} className="absolute -left-8 top-1/2 -translate-y-1/2 p-1 cursor-grab opacity-0 group-hover:opacity-100 bg-zinc-200 dark:bg-zinc-700 rounded">
-                <GripVertical size={16} />
+            <div {...attributes} {...listeners} className="absolute -top-3 -left-3 p-1.5 cursor-grab opacity-0 group-hover:opacity-100 bg-blue-500 text-white rounded-full z-10 transition-opacity">
+                <Move size={14} />
             </div>
-            {renderBlock()}
+            <div className="w-full h-full">{renderBlock()}</div>
         </div>
     );
 };

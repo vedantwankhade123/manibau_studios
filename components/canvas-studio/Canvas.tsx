@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CanvasBlock } from './types';
 import CanvasItem from './CanvasItem';
 
@@ -27,25 +26,23 @@ const Canvas: React.FC<CanvasProps> = ({ blocks, selectedBlockId, onSelectBlock,
         <div className="flex-1 bg-zinc-100 dark:bg-zinc-950 p-8 overflow-auto custom-scrollbar flex justify-center">
             <div
                 ref={setNodeRef}
-                className="mx-auto transition-all duration-300 ease-in-out"
+                className="mx-auto transition-all duration-300 ease-in-out relative"
                 style={{ ...deviceStyles[device], backgroundColor }}
             >
-                <SortableContext items={blocks.map(b => b.id)} strategy={verticalListSortingStrategy}>
-                    {blocks.length > 0 ? (
-                        blocks.map(block => (
-                            <CanvasItem
-                                key={block.id}
-                                block={block}
-                                isSelected={selectedBlockId === block.id}
-                                onClick={() => onSelectBlock(block.id)}
-                            />
-                        ))
-                    ) : (
-                        <div className="flex items-center justify-center h-full text-center text-zinc-400 p-8">
-                            <p>Drag components from the left sidebar to start building your page.</p>
-                        </div>
-                    )}
-                </SortableContext>
+                {blocks.length > 0 ? (
+                    blocks.map(block => (
+                        <CanvasItem
+                            key={block.id}
+                            block={block}
+                            isSelected={selectedBlockId === block.id}
+                            onClick={() => onSelectBlock(block.id)}
+                        />
+                    ))
+                ) : (
+                    <div className="flex items-center justify-center h-full text-center text-zinc-400 p-8">
+                        <p>Drag components from the left sidebar to start building your page.</p>
+                    </div>
+                )}
             </div>
         </div>
     );
