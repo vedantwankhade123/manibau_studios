@@ -143,23 +143,19 @@ const ChatWithAi: React.FC<ChatWithAiProps> = ({ setActiveTool, onToggleNotifica
 
     const lowerPrompt = prompt.toLowerCase();
     
-    const imageGenerationKeywords = [
+    const imageGenerationPrefixes = [
         'generate an image', 'create an image', 'make an image', 'draw an image',
-        'generate a picture', 'create a picture', 'make a picture',
-        'generate a photo', 'create a photo', 'make a photo',
-        'generate a logo', 'create a logo', 'make a logo',
-        'generate a drawing', 'create a drawing', 'make a drawing',
-        'generate a pic', 'create a pic'
+        'an image of', 'a picture of', 'a photo of', 'a logo for', 'a drawing of',
+        'photorealistic', 'cinematic', 'a portrait of', 'a render of'
     ];
 
-    const videoGenerationKeywords = [
-        'generate a video', 'create a video', 'make a video',
-        'generate a clip', 'create a clip', 'make a clip',
-        'generate an animation', 'create an animation', 'make an animation'
+    const videoGenerationPrefixes = [
+        'generate a video', 'create a video', 'make a video', 'animate a',
+        'a video of', 'a clip of', 'an animation of', 'a drone shot of', 'slow-motion video of'
     ];
 
-    const isImageRequest = imageGenerationKeywords.some(kw => lowerPrompt.includes(kw));
-    const isVideoRequest = videoGenerationKeywords.some(kw => lowerPrompt.includes(kw));
+    const isImageRequest = imageGenerationPrefixes.some(kw => lowerPrompt.startsWith(kw));
+    const isVideoRequest = videoGenerationPrefixes.some(kw => lowerPrompt.startsWith(kw));
 
     const sentImagesForState = await Promise.all(
         files.map(file =>
