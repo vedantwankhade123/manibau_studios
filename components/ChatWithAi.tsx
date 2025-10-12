@@ -322,7 +322,7 @@ const ChatWithAi: React.FC<ChatWithAiProps> = ({ setActiveTool, onToggleNotifica
                     className="bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-700 p-2 sm:p-3 rounded-lg text-left hover:border-zinc-300 dark:hover:border-zinc-600 transition-all"
                   >
                     <p className="font-semibold text-sm sm:text-base text-zinc-800 dark:text-gray-200">{p.title}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{p.prompt}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 hidden sm:line-clamp-2">{p.prompt}</p>
                   </button>
                 ))}
               </div>
