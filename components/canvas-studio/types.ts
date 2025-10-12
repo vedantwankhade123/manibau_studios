@@ -119,7 +119,11 @@ export interface TextBlock extends Block {
     type: 'Text';
     content: {
         text: string;
-        fontSize: string;
+        fontSize: number;
+        fontFamily: string;
+        fontWeight: 'normal' | 'bold';
+        lineHeight: number;
+        letterSpacing: number;
         textAlign: 'left' | 'center' | 'right';
         color: string;
         backgroundColor: string;

@@ -6,10 +6,14 @@ interface TextBlockProps {
 }
 
 const TextBlock: React.FC<TextBlockProps> = ({ block }) => {
-    const { text, fontSize, textAlign, color, backgroundColor, padding, borderRadius } = block.content;
+    const { text, fontSize, fontFamily, fontWeight, lineHeight, letterSpacing, textAlign, color, backgroundColor, padding, borderRadius } = block.content;
     
     const style: React.CSSProperties = {
-        fontSize,
+        fontSize: `${fontSize}px`,
+        fontFamily,
+        fontWeight,
+        lineHeight,
+        letterSpacing: `${letterSpacing}px`,
         textAlign,
         color,
         backgroundColor,

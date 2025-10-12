@@ -81,7 +81,7 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
         case 'Icon':
             return { id, type, x: 50, y: 50, width: 100, height: 100, content: { iconName: 'Smile', size: 48, color: '#18181b' } };
         case 'Text':
-            return { id, type, x: 50, y: 50, width: 300, height: 150, content: { text: 'This is a text box. You can add more content here.', fontSize: '16px', textAlign: 'left', color: '#18181b', backgroundColor: 'transparent', padding: 16, borderRadius: 8 } };
+            return { id, type, x: 50, y: 50, width: 300, height: 150, content: { text: 'This is a text box. You can add more content here.', fontSize: 16, fontFamily: 'Inter', fontWeight: 'normal', lineHeight: 1.5, letterSpacing: 0, textAlign: 'left', color: '#18181b', backgroundColor: 'transparent', padding: 16, borderRadius: 8 } };
         case 'Map':
             return { id, type, x: 50, y: 50, width: 500, height: 400, content: { address: 'New York, NY', zoom: 13 } };
         case 'Shape':
@@ -352,7 +352,6 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                             onSelectPage={setActivePageId} 
                             onAddPage={addPage} 
                             onDeletePage={deletePage} 
-                            onUpdatePage={handleUpdatePage}
                             onEditPage={setEditingPage}
                         />
                     </div>
