@@ -165,13 +165,13 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
 
       <main className="flex-grow p-4 md:p-8 overflow-y-auto custom-scrollbar">
         <div className="w-full max-w-7xl space-y-12 mx-auto">
-            <div className="relative w-full h-52 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+            <div className="relative w-full h-60 md:h-52 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
                 <div
                     className="flex h-full transition-transform duration-700 ease-in-out"
                     style={{ transform: `translateX(-${activeIndex * 100}%)` }}
                 >
                     {banners.map((banner, index) => (
-                        <div key={index} className={`relative w-full h-full flex-shrink-0 p-8 md:p-12 flex flex-col justify-center overflow-hidden`}>
+                        <div key={index} className={`relative w-full h-full flex-shrink-0 p-6 md:p-8 lg:p-12 flex flex-col justify-center overflow-hidden`}>
                             {banner.multiVideoSrcs ? (
                                 <div className="absolute inset-0 flex w-full h-full">
                                     {banner.multiVideoSrcs.map((src, i) => (
@@ -186,12 +186,12 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                             <div className="absolute inset-0 bg-black/50"></div>
                             <div className="relative z-10">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-12 h-12 bg-white/20 dark:bg-black/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 dark:border-black/20">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 dark:bg-black/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 dark:border-black/20">
                                         {banner.icon}
                                     </div>
                                     <div>
-                                        <h1 key={`${index}-title`} className="text-2xl font-bold text-white animate-fade-in-up">{banner.title}</h1>
-                                        <p key={`${index}-desc`} className="text-md text-gray-300 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>{banner.description}</p>
+                                        <h1 key={`${index}-title`} className="text-xl sm:text-2xl font-bold text-white animate-fade-in-up">{banner.title}</h1>
+                                        <p key={`${index}-desc`} className="text-sm sm:text-md text-gray-300 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>{banner.description}</p>
                                     </div>
                                 </div>
                             </div>
