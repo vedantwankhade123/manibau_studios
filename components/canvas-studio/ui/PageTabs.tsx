@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, X, Settings2 } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { Page } from '../types';
 import PageSettingsModal from './PageSettingsModal';
 
@@ -20,6 +20,11 @@ const PageTabs: React.FC<PageTabsProps> = ({ pages, activePageId, onSelectPage, 
         setEditingPage(null);
     };
 
+    const handleRightClick = (e: React.MouseEvent, page: Page) => {
+        e.preventDefault();
+        setEditingPage(page);
+    };
+
     return (
         <>
             <div className="flex items-center gap-2">
@@ -28,6 +33,8 @@ const PageTabs: React.FC<PageTabsProps> = ({ pages, activePageId, onSelectPage, 
                         <div key={page.id} className="relative group">
                             <button
                                 onClick={() => onSelectPage(page.id)}
+                                onContextMenu={(e) => handleRightClick(e, page)}
+                                title="Right-click for settings"
                                 className={`px-3 py-1 text-sm rounded transition-colors flex items-center gap-1.5 ${
                                     activePageId === page.id
                                         ? 'bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100 shadow-sm'
@@ -35,14 +42,6 @@ const PageTabs: React.FC<PageTabsProps> = ({ pages, activePageId, onSelectPage, 
                                 }`}
                             >
                                 {page.name}
-                                <Settings2 
-                                    size={12} 
-                                    className="text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setEditingPage(page);
-                                    }}
-                                />
                             </button>
                             {pages.length > 1 && (
                                 <button
