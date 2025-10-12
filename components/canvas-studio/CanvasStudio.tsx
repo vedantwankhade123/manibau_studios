@@ -7,7 +7,7 @@ import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, Pa
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { BlockType, CanvasBlock, Page } from './types';
 import PageTabs from './ui/PageTabs';
 import { useHistory } from './hooks/useHistory';
@@ -88,6 +88,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const [canvasBackgroundColor, setCanvasBackgroundColor] = useState('#FFFFFF');
     const [resizingState, setResizingState] = useState<{ blockId: string; handle: string; initialX: number; initialY: number; initialWidth: number; initialHeight: number; initialBlockX: number; initialBlockY: number; } | null>(null);
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number; blockId: string; } | null>(null);
+    const [dragStartCoords, setDragStartCoords] = useState<{ x: number; y: number } | null>(null);
     
     const debounceTimer = useRef<number | null>(null);
 
@@ -106,20 +107,45 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
         setSelectedBlockId(newBlock.id);
     };
 
+    const handleDragStart = (event: DragStartEvent) => {
+        const { activatorEvent } = event;
+        if (activatorEvent instanceof MouseEvent || activatorEvent instanceof PointerEvent || ('touches' in activatorEvent && (activatorEvent as TouchEvent).touches.length > 0)) {
+            const eventCoord = 'touches' in activatorEvent ? (activatorEvent as TouchEvent).touches[0] : activatorEvent;
+            setDragStartCoords({ x: eventCoord.clientX, y: eventCoord.clientY });
+        }
+    };
+
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over, delta } = event;
-        if (active.id.toString().startsWith('toolbox-item-') && over?.id === 'canvas-droppable-area') {
+
+        if (active.id.toString().startsWith('toolbox-item-') && over?.id === 'canvas-droppable-area' && dragStartCoords) {
             const type = active.data.current?.type as BlockType;
             if (type) {
+                const canvasRect = over.rect;
+                const finalX = dragStartCoords.x + delta.x;
+                const finalY = dragStartCoords.y + delta.y;
+
+                let newBlockX = finalX - canvasRect.left;
+                let newBlockY = finalY - canvasRect.top;
+
                 const newBlock = createNewBlock(type);
+                newBlockX -= newBlock.width / 2;
+                newBlockY -= newBlock.height / 2;
+
+                newBlock.x = Math.max(0, Math.min(newBlockX, canvasRect.width - newBlock.width));
+                newBlock.y = Math.max(0, Math.min(newBlockY, canvasHeight - newBlock.height));
+
                 setPagesHistory(prev => prev.map(p => p.id === activePageId ? { ...p, blocks: [...p.blocks, newBlock] } : p));
                 setSelectedBlockId(newBlock.id);
             }
+            setDragStartCoords(null);
             return;
         }
+
         if (!active.id.toString().startsWith('toolbox-item-')) {
             setPagesHistory(prev => prev.map(p => p.id === activePageId ? { ...p, blocks: p.blocks.map(b => b.id === active.id ? { ...b, x: b.x + delta.x, y: b.y + delta.y } : b) } : p));
         }
+        setDragStartCoords(null);
     };
 
     const updateBlockContent = useCallback((id: string, content: any) => {
@@ -239,7 +265,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
     const selectedBlock = activeBlocks.find(b => b.id === selectedBlockId) || null;
 
     return (
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
                 <header className="flex-shrink-0 flex items-center justify-between p-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <div className="flex items-center gap-2 text-sm">
