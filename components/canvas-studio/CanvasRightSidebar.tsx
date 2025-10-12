@@ -1,5 +1,5 @@
 import React from 'react';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Trash2 } from 'lucide-react';
 import { CanvasBlock } from './types';
 import TextSettings from './settings/TextSettings';
 import ImageSettings from './settings/ImageSettings';
@@ -9,9 +9,10 @@ import SocialSettings from './settings/SocialSettings';
 interface CanvasRightSidebarProps {
     selectedBlock: CanvasBlock | null;
     updateBlock: (id: string, content: any) => void;
+    deleteBlock: (id: string) => void;
 }
 
-const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ selectedBlock, updateBlock }) => {
+const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ selectedBlock, updateBlock, deleteBlock }) => {
     const renderSettings = () => {
         if (!selectedBlock) {
             return (
@@ -44,6 +45,17 @@ const CanvasRightSidebar: React.FC<CanvasRightSidebarProps> = ({ selectedBlock, 
             <div className="flex-grow p-4 overflow-y-auto custom-scrollbar space-y-6">
                 {renderSettings()}
             </div>
+            {selectedBlock && (
+                <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+                    <button
+                        onClick={() => deleteBlock(selectedBlock.id)}
+                        className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-red-500 dark:text-red-400 hover:bg-red-500/10 py-2 rounded-md transition-colors"
+                    >
+                        <Trash2 size={16} />
+                        Delete Block
+                    </button>
+                </div>
+            )}
         </aside>
     );
 };
