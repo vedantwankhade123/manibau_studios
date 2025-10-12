@@ -26,19 +26,19 @@ const Login: React.FC<LoginProps> = ({ onGoBack }) => {
       icon: <GenerateIcon />, 
       color: 'text-blue-400', 
       name: 'Image Studio',
-      background: { type: 'image', src: `${ASSETS_URL}/landing-page/showcase/row1-img3.jpeg` }
+      background: { type: 'image', src: `${ASSETS_URL}/dashboard/banners/image-studio.jpeg` }
     },
     { 
       icon: <VideoIcon />, 
       color: 'text-red-400', 
       name: 'Video Studio',
-      background: { type: 'video', src: `${ASSETS_URL}/landing-page/showcase/row1-vid3.mp4` }
+      background: { type: 'video', src: `${ASSETS_URL}/dashboard/banners/video-studio-1.mp4` }
     },
     { 
       icon: <SketchIcon />, 
       color: 'text-yellow-400', 
       name: 'Sketch Studio',
-      background: { type: 'image', src: `${ASSETS_URL}/landing-page/showcase/row2-img2.jpeg` }
+      background: { type: 'image', src: `${ASSETS_URL}/dashboard/banners/sketch-studio.jpeg` }
     },
     { 
       icon: <CodeIcon />, 

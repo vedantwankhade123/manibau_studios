@@ -127,8 +127,6 @@ const AccountSettingsContent: React.FC<{
     const [apiKeyInput, setApiKeyInput] = useState(customApiKey || '');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
-    const [newAvatarPreview, setNewAvatarPreview] = useState<string | null>(null);
     const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
     const [apiKeySaveState, setApiKeySaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
     const [isRemoveApiKeyModalOpen, setIsRemoveApiKeyModalOpen] = useState(false);
@@ -141,17 +139,6 @@ const AccountSettingsContent: React.FC<{
         }
     }, [profile]);
 
-    useEffect(() => {
-        if (newAvatarFile) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setNewAvatarPreview(reader.result as string);
-            };
-            reader.readAsDataURL(newAvatarFile);
-        } else {
-            setNewAvatarPreview(null);
-        }
-    }, [newAvatarFile]);
 
     const handleToggleEdit = () => {
         if (isEditingProfile) { // This is now the "Cancel" action
@@ -159,8 +146,6 @@ const AccountSettingsContent: React.FC<{
                 setFirstName(profile.first_name || '');
                 setLastName(profile.last_name || '');
             }
-            setNewAvatarFile(null);
-            setNewAvatarPreview(null);
         }
         setIsEditingProfile(!isEditingProfile);
     };
@@ -169,37 +154,9 @@ const AccountSettingsContent: React.FC<{
         if (!session?.user) return;
         setSaveState('saving');
 
-        let avatar_url = profile?.avatar_url;
-
-        if (newAvatarFile) {
-            const fileExt = newAvatarFile.name.split('.').pop();
-            const fileName = `${session.user.id}-${Date.now()}.${fileExt}`;
-            const filePath = `avatars/${fileName}`;
-
-            const { error: uploadError } = await supabase.storage
-                .from('public-assets')
-                .upload(filePath, newAvatarFile, {
-                    cacheControl: '3600',
-                    upsert: true,
-                });
-
-            if (uploadError) {
-                alert('Error uploading avatar: ' + uploadError.message);
-                setSaveState('idle');
-                return;
-            }
-
-            const { data } = supabase.storage
-                .from('public-assets')
-                .getPublicUrl(filePath);
-            
-            avatar_url = data.publicUrl;
-        }
-
         const updates = {
             first_name: firstName,
             last_name: lastName,
-            avatar_url: avatar_url,
             updated_at: new Date().toISOString(),
         };
 
@@ -219,8 +176,6 @@ const AccountSettingsContent: React.FC<{
             setTimeout(() => {
                 setSaveState('idle');
                 setIsEditingProfile(false);
-                setNewAvatarFile(null);
-                setNewAvatarPreview(null);
             }, 2000);
         }
     };
@@ -260,7 +215,6 @@ const AccountSettingsContent: React.FC<{
     const user = {
         name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || session?.user?.email || 'User',
         email: session?.user?.email || '',
-        avatarUrl: profile?.avatar_url || undefined,
     };
 
     return (
@@ -271,15 +225,12 @@ const AccountSettingsContent: React.FC<{
                     <UserProfileCard
                         name={user.name}
                         email={user.email}
-                        avatarUrl={user.avatarUrl}
                         isEditing={isEditingProfile}
                         firstName={firstName}
                         lastName={lastName}
                         onFirstNameChange={setFirstName}
                         onLastNameChange={setLastName}
-                        onAvatarChange={setNewAvatarFile}
                         onToggleEdit={handleToggleEdit}
-                        newAvatarPreview={newAvatarPreview || undefined}
                     />
                     {isEditingProfile && (
                         <div className="mt-4 flex justify-end gap-2">

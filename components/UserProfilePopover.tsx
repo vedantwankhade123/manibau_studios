@@ -45,7 +45,6 @@ const UserProfilePopover: React.FC<UserProfilePopoverProps> = ({ onOpenSettings,
   const user = {
       name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || session?.user?.email || 'User',
       email: session?.user?.email || '',
-      avatarUrl: profile?.avatar_url || undefined,
   };
 
   return (
@@ -53,7 +52,6 @@ const UserProfilePopover: React.FC<UserProfilePopoverProps> = ({ onOpenSettings,
       <button onClick={() => setIsOpen(!isOpen)} aria-haspopup="true" aria-expanded={isOpen}>
         <UserInfoDisplay
           name={user.name}
-          avatarUrl={user.avatarUrl}
         />
       </button>
       {isOpen && (
@@ -66,12 +64,8 @@ const UserProfilePopover: React.FC<UserProfilePopoverProps> = ({ onOpenSettings,
           </div>
           
           <div className="flex items-center gap-3 mb-4 pb-4 border-b border-zinc-200 dark:border-zinc-700">
-            <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="User avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <UserIconSmall />
-                )}
+            <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
+                <UserIconSmall />
             </div>
             <div>
                 <p className="font-semibold text-zinc-800 dark:text-white">{user.name}</p>

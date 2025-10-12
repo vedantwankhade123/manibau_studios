@@ -83,25 +83,25 @@ const features = [
   },
 ];
 
-const ASSETS_URL = '/image-assets';
+const ASSETS_URL = '/landing-page';
 
 const showcaseItemsRow1 = [
-    { type: 'image', src: `${ASSETS_URL}/landing-page/showcase/row1-img1.jpeg`, prompt: 'A moody, atmospheric shot of a person walking through a neon-lit city street at night, cinematic lighting.', tool: 'Image Studio' },
-    { type: 'video', src: `${ASSETS_URL}/landing-page/showcase/row1-vid1.mp4`, prompt: 'A cinematic drone shot flying over a dramatic, misty mountain range at sunrise.', tool: 'Video Studio' },
-    { type: 'image', src: `${ASSETS_URL}/landing-page/showcase/row1-img2.jpeg`, prompt: 'An abstract, vibrant painting with swirling colors and textures, created from a simple sketch.', tool: 'Sketch Studio' },
-    { type: 'video', src: `${ASSETS_URL}/landing-page/showcase/row1-vid2.mp4`, prompt: 'A photorealistic video of a majestic lion walking across a savanna.', tool: 'Video Studio' },
-    { type: 'image', src: `${ASSETS_URL}/landing-page/showcase/row1-img3.jpeg`, prompt: 'A cinematic, photorealistic portrait of an astronaut on Mars, detailed visor reflection, dramatic lighting.', tool: 'Image Studio' },
-    { type: 'video', src: `${ASSETS_URL}/landing-page/showcase/row1-vid3.mp4`, prompt: 'An animated scene of a colorful bird flying through a lush jungle.', tool: 'Video Studio' },
-    { type: 'sketch', sketchSrc: `${ASSETS_URL}/landing-page/showcase/row1-sketch1.png`, src: `${ASSETS_URL}/landing-page/showcase/row1-sketch1-result.jpeg`, prompt: 'A photorealistic modern house in the woods, cinematic lighting, high detail.', tool: 'Sketch Studio' },
+    { type: 'image', src: `${ASSETS_URL}/showcase/row1-img1.jpeg`, prompt: 'A moody, atmospheric shot of a person walking through a neon-lit city street at night, cinematic lighting.', tool: 'Image Studio' },
+    { type: 'video', src: `${ASSETS_URL}/showcase/row1-vid1.mp4`, prompt: 'A cinematic drone shot flying over a dramatic, misty mountain range at sunrise.', tool: 'Video Studio' },
+    { type: 'image', src: `${ASSETS_URL}/showcase/row1-img2.jpeg`, prompt: 'An abstract, vibrant painting with swirling colors and textures, created from a simple sketch.', tool: 'Sketch Studio' },
+    { type: 'video', src: `${ASSETS_URL}/showcase/row1-vid2.mp4`, prompt: 'A photorealistic video of a majestic lion walking across a savanna.', tool: 'Video Studio' },
+    { type: 'image', src: `${ASSETS_URL}/showcase/row1-img3.jpeg`, prompt: 'A cinematic, photorealistic portrait of an astronaut on Mars, detailed visor reflection, dramatic lighting.', tool: 'Image Studio' },
+    { type: 'video', src: `${ASSETS_URL}/showcase/row1-vid3.mp4`, prompt: 'An animated scene of a colorful bird flying through a lush jungle.', tool: 'Video Studio' },
+    { type: 'sketch', sketchSrc: `${ASSETS_URL}/showcase/row1-sketch1.png`, src: `${ASSETS_URL}/showcase/row1-sketch1-result.jpeg`, prompt: 'A photorealistic modern house in the woods, cinematic lighting, high detail.', tool: 'Sketch Studio' },
 ];
 
 const showcaseItemsRow2 = [
-    { type: 'image', src: `${ASSETS_URL}/landing-page/showcase/row2-img1.jpeg`, prompt: 'A sleek, futuristic sports car driving on a neon-lit street at night, cyberpunk aesthetic.', tool: 'Image Studio' },
-    { type: 'video', src: `${ASSETS_URL}/landing-page/showcase/row2-vid1.mp4`, prompt: 'An aerial shot of a beautiful beach with turquoise water and white sand.', tool: 'Video Studio' },
-    { type: 'sketch', sketchSrc: `${ASSETS_URL}/landing-page/showcase/row2-sketch1.png`, src: `${ASSETS_URL}/landing-page/showcase/row2-sketch1-result.jpeg`, prompt: 'A powerful, majestic dragon perched on a mountain peak, breathing fire, fantasy digital art.', tool: 'Sketch Studio' },
-    { type: 'image', src: `${ASSETS_URL}/landing-page/showcase/row2-img2.jpeg`, prompt: 'A close-up, detailed portrait of a red panda in a bamboo forest, soft lighting.', tool: 'Image Studio' },
-    { type: 'video', src: `${ASSETS_URL}/landing-page/showcase/row2-vid2.mp4`, prompt: 'A slow-motion video of honey being drizzled over a stack of pancakes.', tool: 'Video Studio' },
-    { type: 'image', src: `${ASSETS_URL}/landing-page/showcase/row2-img3.jpeg`, prompt: 'A vast, alien desert landscape with two suns in the sky and strange rock formations.', tool: 'Image Studio' },
+    { type: 'image', src: `${ASSETS_URL}/showcase/row2-img1.jpeg`, prompt: 'A sleek, futuristic sports car driving on a neon-lit street at night, cyberpunk aesthetic.', tool: 'Image Studio' },
+    { type: 'video', src: `${ASSETS_URL}/showcase/row2-vid1.mp4`, prompt: 'An aerial shot of a beautiful beach with turquoise water and white sand.', tool: 'Video Studio' },
+    { type: 'sketch', sketchSrc: `${ASSETS_URL}/showcase/row2-sketch1.png`, src: `${ASSETS_URL}/showcase/row2-sketch1-result.jpeg`, prompt: 'A powerful, majestic dragon perched on a mountain peak, breathing fire, fantasy digital art.', tool: 'Sketch Studio' },
+    { type: 'image', src: `${ASSETS_URL}/showcase/row2-img2.jpeg`, prompt: 'A close-up, detailed portrait of a red panda in a bamboo forest, soft lighting.', tool: 'Image Studio' },
+    { type: 'video', src: `${ASSETS_URL}/showcase/row2-vid2.mp4`, prompt: 'A slow-motion video of honey being drizzled over a stack of pancakes.', tool: 'Video Studio' },
+    { type: 'image', src: `${ASSETS_URL}/showcase/row2-img3.jpeg`, prompt: 'A vast, alien desert landscape with two suns in the sky and strange rock formations.', tool: 'Image Studio' },
 ];
 
 const ShowcaseCard: React.FC<{ item: typeof showcaseItemsRow1[0] }> = ({ item }) => {
@@ -111,7 +111,7 @@ const ShowcaseCard: React.FC<{ item: typeof showcaseItemsRow1[0] }> = ({ item })
     if (item.type === 'code' && codeRef.current && typeof hljs !== 'undefined') {
       hljs.highlightElement(codeRef.current);
     }
-  }, [item.type, item.code]);
+  }, [item.type]);
 
   const renderMedia = () => {
     switch (item.type) {
@@ -127,7 +127,7 @@ const ShowcaseCard: React.FC<{ item: typeof showcaseItemsRow1[0] }> = ({ item })
       case 'code':
         return (
           <div className="w-full h-full bg-zinc-800 p-4 overflow-hidden">
-            <pre className="text-[10px] text-left"><code ref={codeRef} className="language-html">{item.code}</code></pre>
+            <pre className="text-[10px] text-left"><code ref={codeRef} className="language-html">{'<!-- Code content would go here -->'}</code></pre>
           </div>
         );
       case 'image':
@@ -288,17 +288,106 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             <p className="text-gray-400 max-w-2xl mx-auto mb-12">
               Watch a quick overview of how MANIBAU Studios transforms your ideas into reality.
             </p>
-            <div className="relative group max-w-4xl mx-auto">
+            <div className="relative max-w-4xl mx-auto">
               <div className="absolute -inset-4 bg-white rounded-full blur-3xl opacity-10 animate-pulse-slow"></div>
               <div className="relative aspect-video rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl shadow-purple-500/10 group">
-                <iframe
-                    className="w-full h-full"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&playlist=dQw4w9WgXcQ&controls=0&showinfo=0&rel=0"
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                ></iframe>
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  src="/landing-page/in-action-video.mp4"
+                >
+                  Your browser does not support the video tag.
+                </video>
+                
+                {/* Video Controls Overlay - Top Right Corner */}
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity duration-300 z-10">
+                  <div className="flex gap-2">
+                    {/* Play/Pause Button */}
+                    <button
+                      onClick={() => {
+                        if (videoRef.current) {
+                          if (videoRef.current.paused) {
+                            videoRef.current.play();
+                          } else {
+                            videoRef.current.pause();
+                          }
+                        }
+                      }}
+                      className="bg-black/60 hover:bg-black/80 text-white p-2 rounded-lg backdrop-blur-sm transition-all duration-200 hover:scale-105 border border-white/30 shadow-lg"
+                      title="Play/Pause"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                    
+                    {/* Volume Control Button */}
+                    <button
+                      onClick={() => {
+                        if (videoRef.current) {
+                          videoRef.current.muted = !videoRef.current.muted;
+                          setIsMuted(videoRef.current.muted);
+                        }
+                      }}
+                      className="bg-black/60 hover:bg-black/80 text-white p-2 rounded-lg backdrop-blur-sm transition-all duration-200 hover:scale-105 border border-white/30 shadow-lg"
+                      title={isMuted ? "Unmute" : "Mute"}
+                    >
+                      {isMuted ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 9l4 4m0-4l-4 4" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        </svg>
+                      )}
+                    </button>
+                    
+                    {/* Expand Button */}
+                    <button
+                      onClick={() => {
+                        if (videoRef.current) {
+                          if (videoRef.current.requestFullscreen) {
+                            videoRef.current.requestFullscreen();
+                          } else if ((videoRef.current as any).webkitRequestFullscreen) {
+                            (videoRef.current as any).webkitRequestFullscreen();
+                          } else if ((videoRef.current as any).msRequestFullscreen) {
+                            (videoRef.current as any).msRequestFullscreen();
+                          }
+                        }
+                      }}
+                      className="bg-black/60 hover:bg-black/80 text-white p-2 rounded-lg backdrop-blur-sm transition-all duration-200 hover:scale-105 border border-white/30 shadow-lg"
+                      title="Fullscreen"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                      </svg>
+                    </button>
+                    
+                    {/* Share Button */}
+                    <button
+                      onClick={() => {
+                        const link = document.createElement('a');
+                        link.href = '/landing-page/in-action-video.mp4';
+                        link.download = 'manibau-studios-demo.mp4';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
+                      className="bg-black/60 hover:bg-black/80 text-white p-2 rounded-lg backdrop-blur-sm transition-all duration-200 hover:scale-105 border border-white/30 shadow-lg"
+                      title="Download Video"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
