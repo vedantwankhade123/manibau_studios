@@ -453,6 +453,7 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
                 onTouchMove={draw}
                 width={canvasDimensions.width}
                 height={canvasDimensions.height}
+                style={{ touchAction: 'none' }}
                 className={`bg-white rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 cursor-crosshair w-full max-w-[440px] ${aspectRatioClass}`}
             />
             <div className="w-full max-w-[440px] mt-4 flex flex-col items-center">
