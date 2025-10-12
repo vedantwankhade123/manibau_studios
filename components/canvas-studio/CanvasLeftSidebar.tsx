@@ -34,23 +34,23 @@ const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onTo
 
     const sections = [
         { title: 'Typography', items: [
-            { type: 'Heading' as BlockType, icon: <Type size={24} />, label: 'Heading' },
-            { type: 'Paragraph' as BlockType, icon: <Pilcrow size={24} />, label: 'Paragraph' },
-            { type: 'Text' as BlockType, icon: <Text size={24} />, label: 'Text Box' },
+            { type: 'Heading' as BlockType, icon: <Type size={20} />, label: 'Heading' },
+            { type: 'Paragraph' as BlockType, icon: <Pilcrow size={20} />, label: 'Paragraph' },
+            { type: 'Text' as BlockType, icon: <Text size={20} />, label: 'Text Box' },
         ]},
         { title: 'Layout', items: [
-            { type: 'Spacer' as BlockType, icon: <Minus size={24} />, label: 'Spacer' },
-            { type: 'Divider' as BlockType, icon: <Divide size={24} />, label: 'Divider' },
+            { type: 'Spacer' as BlockType, icon: <Minus size={20} />, label: 'Spacer' },
+            { type: 'Divider' as BlockType, icon: <Divide size={20} />, label: 'Divider' },
         ]},
         { title: 'Media', items: [
-            { type: 'Image' as BlockType, icon: <ImageIcon size={24} />, label: 'Image' },
-            { type: 'Video' as BlockType, icon: <Video size={24} />, label: 'Video' },
-            { type: 'Icon' as BlockType, icon: <Star size={24} />, label: 'Icon' },
+            { type: 'Image' as BlockType, icon: <ImageIcon size={20} />, label: 'Image' },
+            { type: 'Video' as BlockType, icon: <Video size={20} />, label: 'Video' },
+            { type: 'Icon' as BlockType, icon: <Star size={20} />, label: 'Icon' },
         ]},
         { title: 'Actions', items: [
-            { type: 'Button' as BlockType, icon: <MousePointerClick size={24} />, label: 'Button' },
-            { type: 'Social' as BlockType, icon: <Link size={24} />, label: 'Social Links' },
-            { type: 'Map' as BlockType, icon: <Map size={24} />, label: 'Map' },
+            { type: 'Button' as BlockType, icon: <MousePointerClick size={20} />, label: 'Button' },
+            { type: 'Social' as BlockType, icon: <Link size={20} />, label: 'Social Links' },
+            { type: 'Map' as BlockType, icon: <Map size={20} />, label: 'Map' },
         ]},
     ];
 
@@ -70,7 +70,7 @@ const CanvasLeftSidebar: React.FC<CanvasLeftSidebarProps> = ({ isCollapsed, onTo
                         isOpen={openSection === section.title}
                         onToggle={() => setOpenSection(openSection === section.title ? '' : section.title)}
                     >
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-3 gap-2">
                             {section.items.map(item => (
                                 <ToolboxItem key={item.type} type={item.type} icon={item.icon} label={item.label} />
                             ))}

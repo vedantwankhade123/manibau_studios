@@ -3,7 +3,7 @@ import { Theme } from '../../App';
 import ThemeToggleButton from '../ThemeToggleButton';
 import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
-import { ChevronLeft, ChevronRight, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search } from 'lucide-react';
 import CanvasLeftSidebar from './CanvasLeftSidebar';
 import Canvas from './Canvas';
 import CanvasRightSidebar from './CanvasRightSidebar';
@@ -24,6 +24,23 @@ interface CanvasStudioProps {
   customApiKey: string | null;
   onLogout: () => void;
 }
+
+const SearchButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+    <button onClick={onClick} className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors">
+        <Search size={18} />
+    </button>
+);
+
+const NotificationBell: React.FC<{ onClick: () => void; notificationCount: number; }> = ({ onClick, notificationCount }) => (
+    <button onClick={onClick} className="relative p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        {notificationCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-zinc-900"></span>
+        )}
+    </button>
+);
 
 const createNewBlock = (type: BlockType): CanvasBlock => {
     const id = `${type}-${Date.now()}`;
@@ -56,7 +73,7 @@ const createNewBlock = (type: BlockType): CanvasBlock => {
 };
 
 const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
-    const { theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onLogout } = props;
+    const { theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onLogout, onToggleCommandPalette, onToggleNotifications, unreadCount } = props;
     
     const { state: pages, setState: setPagesHistory, undo, redo, canUndo, canRedo } = useHistory<Page[]>([
         { id: `page-${Date.now()}`, name: 'Home', blocks: [] }
@@ -196,6 +213,8 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                         <span className="font-semibold text-zinc-800 dark:text-zinc-200">Canvas Studio</span>
                     </div>
                     <div className="flex items-center gap-2">
+                        <SearchButton onClick={onToggleCommandPalette} />
+                        <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
                         <ThemeToggleButton theme={theme} setTheme={setTheme} />
                         <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
                     </div>

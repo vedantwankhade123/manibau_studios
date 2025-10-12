@@ -19,10 +19,10 @@ const ToolboxItem: React.FC<ToolboxItemProps> = ({ type, icon, label }) => {
             ref={setNodeRef}
             {...listeners}
             {...attributes}
-            className="w-full aspect-square flex flex-col items-center justify-center gap-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg cursor-grab hover:bg-zinc-50 dark:hover:bg-zinc-700 hover:shadow-md transition-all"
+            className="w-full aspect-square flex flex-col items-center justify-center gap-1 p-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg cursor-grab hover:bg-zinc-50 dark:hover:bg-zinc-700 hover:shadow-md transition-all"
         >
             <div className="text-zinc-500 dark:text-zinc-400">{icon}</div>
-            <span className="text-xs font-medium">{label}</span>
+            <span className="text-xs font-medium text-center leading-tight">{label}</span>
         </div>
     );
 };
