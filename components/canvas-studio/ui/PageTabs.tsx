@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Edit2 } from 'lucide-react';
 import { Page } from '../types';
 
 interface PageTabsProps {
@@ -48,13 +48,14 @@ const PageTabs: React.FC<PageTabsProps> = ({ pages, activePageId, onSelectPage, 
                             <button
                                 onClick={() => onSelectPage(page.id)}
                                 onDoubleClick={() => setRenamingPageId(page.id)}
-                                className={`px-3 py-1 text-sm rounded transition-colors ${
+                                className={`px-3 py-1 text-sm rounded transition-colors flex items-center gap-1.5 ${
                                     activePageId === page.id
                                         ? 'bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100 shadow-sm'
                                         : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/50 dark:hover:bg-zinc-700/50'
                                 }`}
                             >
                                 {page.name}
+                                <Edit2 size={12} className="text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </button>
                         )}
                         {pages.length > 1 && (

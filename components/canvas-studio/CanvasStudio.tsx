@@ -387,7 +387,7 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                     />
                 )}
             </div>
-            <DragOverlay>
+            <DragOverlay dropAnimation={null}>
                 {activeDragItem ? (
                     'width' in activeDragItem ? (
                         <div style={{ width: activeDragItem.width, height: activeDragItem.height, opacity: 0.8, pointerEvents: 'none' }}>
