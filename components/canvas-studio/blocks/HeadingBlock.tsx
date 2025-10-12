@@ -23,6 +23,15 @@ const HeadingBlock: React.FC<HeadingBlockProps> = ({ block }) => {
         wrapperStyle.marginRight = 'auto';
     }
 
+    const sizeClasses = {
+        h1: 'text-4xl',
+        h2: 'text-3xl',
+        h3: 'text-2xl',
+        h4: 'text-xl',
+        h5: 'text-lg',
+        h6: 'text-base',
+    };
+
     return (
         <div className="p-4">
             <div style={wrapperStyle}>
@@ -31,7 +40,7 @@ const HeadingBlock: React.FC<HeadingBlockProps> = ({ block }) => {
                         textAlign,
                         color,
                     }}
-                    className="font-bold w-full"
+                    className={`font-bold w-full ${sizeClasses[level]}`}
                 >
                     {text}
                 </Tag>
