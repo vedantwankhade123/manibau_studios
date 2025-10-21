@@ -9,7 +9,6 @@ import { Tool } from '../types';
 import { Project } from './Dashboard';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
-import UserProfilePopover from './UserProfilePopover';
 import { SettingsTab } from './SettingsModal';
 import { KeyRound } from 'lucide-react';
 import MenuButton from './MenuButton';
@@ -42,8 +41,6 @@ interface ImageGeneratorProps {
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
-  onSaveApiKey: (apiKey: string) => Promise<void>;
-  onLogout: () => void;
 }
 
 const SearchButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
@@ -101,7 +98,7 @@ const aspectRatios: { value: string; label: string }[] = [
   { value: '9:16', label: 'Story' },
 ];
 
-const ImageGenerator: React.FC<ImageGeneratorProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onSaveApiKey, onLogout }) => {
+const ImageGenerator: React.FC<ImageGeneratorProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings }) => {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [editingImage, setEditingImage] = useState<{ url: string; prompt: string } | null>(null);
   const [variationsModalState, setVariationsModalState] = useState<{ prompt: string; sourceImageUrl: string } | null>(null);
@@ -248,7 +245,6 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ setActiveTool, onToggle
             <ThemeToggleButton theme={theme} setTheme={setTheme} />
             <SearchButton onClick={onToggleCommandPalette} />
             <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
-            <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
         </div>
       </header>
       <div className="flex-grow overflow-y-auto custom-scrollbar">

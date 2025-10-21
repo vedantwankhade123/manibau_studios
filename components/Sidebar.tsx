@@ -46,23 +46,16 @@ const SettingsIcon = () => (
   </svg>
 );
 
-const LogoutIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-  </svg>
-);
-
 interface SidebarProps {
   activeTool: Tool;
   setActiveTool: (tool: Tool) => void;
   isCollapsed: boolean;
-  onLogout: () => void;
   onOpenSettings: () => void;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapsed, onLogout, onOpenSettings, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapsed, onOpenSettings, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const navItems = [
     { id: Tool.DASHBOARD, label: 'Dashboard', icon: <DashboardIcon /> },
     { id: Tool.CHAT_WITH_AI, label: 'AI Studio', icon: <Sparkles /> },
@@ -133,16 +126,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapse
               <div className="flex-shrink-0"><SettingsIcon /></div>
               <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isCollapsed && !isMobileMenuOpen ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
                   <span className="whitespace-nowrap">Settings</span>
-              </div>
-            </button>
-            <button
-              onClick={onLogout}
-              className={`${baseClasses} ${inactiveClasses} ${navItemPadding}`}
-              title="Logout"
-            >
-              <div className="flex-shrink-0"><LogoutIcon /></div>
-              <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isCollapsed && !isMobileMenuOpen ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
-                  <span className="whitespace-nowrap">Logout</span>
               </div>
             </button>
           </div>

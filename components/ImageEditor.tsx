@@ -9,7 +9,6 @@ import { Tool } from '../types';
 import { Project } from './Dashboard';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
-import UserProfilePopover from './UserProfilePopover';
 import { SettingsTab } from './SettingsModal';
 import { KeyRound, MonitorOff } from 'lucide-react';
 
@@ -40,8 +39,6 @@ interface DevDraftProps {
   isSidebarCollapsed: boolean;
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
-  onSaveApiKey: (apiKey: string) => Promise<void>;
-  onLogout: () => void;
 }
 
 type ConversationTurn = {
@@ -509,7 +506,7 @@ const DesktopOnlyMessage: React.FC<{ onGoBack: () => void }> = ({ onGoBack }) =>
 );
 
 
-const DevDraft: React.FC<DevDraftProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onSaveApiKey, onLogout }) => {
+const DevDraft: React.FC<DevDraftProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings }) => {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [files, setFiles] = useState<WebsiteFile[]>([]);
   const [activeFile, setActiveFile] = useState<string | null>(null);
@@ -1057,7 +1054,6 @@ const DevDraft: React.FC<DevDraftProps> = ({ setActiveTool, onToggleNotification
                   <ThemeToggleButton theme={theme} setTheme={setTheme} />
                   <SearchButton onClick={onToggleCommandPalette} />
                   <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
-                  <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
               </div>
           </div>
         </header>

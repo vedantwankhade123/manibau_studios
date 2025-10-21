@@ -3,7 +3,6 @@ import { Tool } from '../types';
 import { Project } from './Dashboard';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
-import UserProfilePopover from './UserProfilePopover';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { KeyRound, Sparkles, LayoutTemplate } from 'lucide-react';
 import MenuButton from './MenuButton';
@@ -39,8 +38,6 @@ interface LibraryProps {
   onDeleteProject: (projectId: string) => void;
   onRenameProject: (projectId: string, newName: string) => void;
   onDeleteMultipleProjects: (projectIds: string[]) => void;
-  onSaveApiKey: (apiKey: string) => Promise<void>;
-  onLogout: () => void;
 }
 
 const toolInfo: { [key in Tool]?: { name: string; icon: React.ReactNode; gradient: string } } = {
@@ -52,7 +49,7 @@ const toolInfo: { [key in Tool]?: { name: string; icon: React.ReactNode; gradien
   [Tool.DEV_DRAFT]: { name: 'Developer Studio', icon: <CodeIcon />, gradient: 'from-green-500 to-teal-500' },
 };
 
-const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveTool, theme, setTheme, customApiKey, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onDeleteProject, onRenameProject, onDeleteMultipleProjects, onSaveApiKey, onLogout }) => {
+const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveTool, theme, setTheme, customApiKey, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onDeleteProject, onRenameProject, onDeleteMultipleProjects }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<Tool | 'ALL'>('ALL');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -173,7 +170,6 @@ const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveToo
               </button>
             )}
             <ThemeToggleButton theme={theme} setTheme={setTheme} />
-            <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
         </div>
       </header>
       

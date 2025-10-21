@@ -5,7 +5,6 @@ import { Tool } from '../types';
 import { Project } from './Dashboard';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
-import UserProfilePopover from './UserProfilePopover';
 import { SettingsTab } from './SettingsModal';
 import { KeyRound, Sparkles, User, ChevronLeft, ChevronRight, ThumbsUp, ThumbsDown, RefreshCw, Copy, Check, Link } from 'lucide-react';
 import type { Content } from "@google/genai";
@@ -29,8 +28,6 @@ interface ChatWithAiProps {
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
-  onSaveApiKey: (apiKey: string) => Promise<void>;
-  onLogout: () => void;
 }
 
 interface Source {
@@ -117,7 +114,7 @@ const examplePrompts = [
   { title: 'Draft an email', prompt: 'Draft a professional email to a potential client, introducing my web design services and asking for a brief meeting to discuss their needs.' },
 ];
 
-const ChatWithAi: React.FC<ChatWithAiProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onLogout }) => {
+const ChatWithAi: React.FC<ChatWithAiProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings }) => {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
@@ -303,7 +300,6 @@ const ChatWithAi: React.FC<ChatWithAiProps> = ({ setActiveTool, onToggleNotifica
             <ThemeToggleButton theme={theme} setTheme={setTheme} />
             <SearchButton onClick={onToggleCommandPalette} />
             <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
-            <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
         </div>
       </header>
       <div className="flex-grow overflow-y-auto custom-scrollbar">

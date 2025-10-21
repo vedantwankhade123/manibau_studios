@@ -10,7 +10,6 @@ interface CommandPaletteProps {
     projects: Project[];
     setActiveTool: (tool: Tool) => void;
     onOpenSettings: (tab: SettingsTab) => void;
-    onLogout: () => void;
 }
 
 type Command = {
@@ -31,9 +30,8 @@ const CodeIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w
 const VideoIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>);
 const LibraryIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>);
 const ProjectsIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>);
-const LogoutIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>);
 
-const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, projects, setActiveTool, onOpenSettings, onLogout }) => {
+const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, projects, setActiveTool, onOpenSettings }) => {
     const [query, setQuery] = useState('');
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -67,12 +65,10 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, projec
             action: () => onOpenSettings(setting.id)
         }));
         
-        const actionCommands: Command[] = [
-            { type: 'action', id: 'logout', title: 'Logout', description: 'Sign out of your account', icon: <LogoutIcon />, action: onLogout },
-        ];
+        const actionCommands: Command[] = [];
 
         return [...toolCommands, ...projectCommands, ...actionCommands, ...settingsCommands];
-    }, [projects, setActiveTool, onOpenSettings, onLogout]);
+    }, [projects, setActiveTool, onOpenSettings]);
 
     const filteredCommands = useMemo(() => {
         if (!query) return commands;

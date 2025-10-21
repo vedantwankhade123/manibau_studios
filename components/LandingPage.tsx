@@ -177,7 +177,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   const inActionRef = useRef<HTMLElement>(null);
   const showcaseRef = useRef<HTMLElement>(null);
   const featuresRef = useRef<HTMLElement>(null);
-  const pricingRef = useRef<HTMLElement>(null);
   const footerRef = useRef<HTMLElement>(null);
 
   const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({});
@@ -187,7 +186,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         { ref: inActionRef, id: 'in-action' },
         { ref: showcaseRef, id: 'showcase' },
         { ref: featuresRef, id: 'features' },
-        { ref: pricingRef, id: 'pricing' },
         { ref: footerRef, id: 'footer' },
     ];
 
@@ -459,7 +457,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     <h4 className="font-semibold text-gray-200 mb-4">Company</h4>
                     <ul className="space-y-2 text-sm">
                         <li><a href="#" className="text-gray-400 hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="#pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
                         <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a></li>
                     </ul>
                 </div>

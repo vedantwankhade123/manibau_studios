@@ -8,7 +8,6 @@ import ImageEditorModal from './ImageEditorModal';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
 import AspectRatioModal from './AspectRatioModal';
-import UserProfilePopover from './UserProfilePopover';
 import { SettingsTab } from './SettingsModal';
 import { KeyRound } from 'lucide-react';
 import MenuButton from './MenuButton';
@@ -90,8 +89,6 @@ interface SketchGeneratorProps {
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
-  onSaveApiKey: (apiKey: string) => Promise<void>;
-  onLogout: () => void;
 }
 
 // Helper function to calculate canvas dimensions
@@ -152,7 +149,7 @@ const PromptModal: React.FC<{ isOpen: boolean; onClose: () => void; onGenerate: 
 };
 
 const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
-  const { setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onSaveApiKey, onLogout } = props;
+  const { setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
   const history = useRef<ImageData[]>([]);
@@ -410,7 +407,6 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
             <ThemeToggleButton theme={theme} setTheme={setTheme} />
             <SearchButton onClick={onToggleCommandPalette} />
             <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
-            <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
         </div>
       </header>
       <div className="flex-grow flex flex-col md:flex-row min-h-0 relative">

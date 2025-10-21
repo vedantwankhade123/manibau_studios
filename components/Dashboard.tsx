@@ -3,7 +3,6 @@ import { Tool } from '../types';
 import DashboardProjectsModal from './DashboardProjectsModal';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
-import UserProfilePopover from './UserProfilePopover';
 import { PartyPopper, Video, KeyRound, Sparkles, LayoutTemplate } from 'lucide-react';
 import MenuButton from './MenuButton';
 
@@ -77,11 +76,9 @@ interface DashboardProps {
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: 'account') => void;
-  onSaveApiKey: (apiKey: string) => Promise<void>;
-  onLogout: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onLoadProject, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onSaveApiKey, onLogout }) => {
+const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onLoadProject, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings }) => {
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -159,7 +156,6 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
             <ThemeToggleButton theme={theme} setTheme={setTheme} />
             <SearchButton onClick={onToggleCommandPalette} />
             <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
-            <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
         </div>
       </header>
 

@@ -2,11 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Theme, FontSize } from '../App';
-import UserProfileCard from './UserProfileCard';
-import { useSession } from '../src/contexts/SessionContext';
-import { supabase } from '../src/integrations/supabase/client';
 import { Loader2, Check, ExternalLink } from 'lucide-react';
-import RemoveApiKeyConfirmationModal from './RemoveApiKeyConfirmationModal';
 
 // --- Icon Components ---
 const GeneralIcon = () => (
@@ -124,141 +120,31 @@ const AccountSettingsContent: React.FC<{
     customApiKey: string | null;
     setCustomApiKey: (key: string | null) => void;
 }> = ({ customApiKey, setCustomApiKey }) => {
-    const { profile, session, setProfile } = useSession();
-    const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [apiKeyInput, setApiKeyInput] = useState(customApiKey || '');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
     const [apiKeySaveState, setApiKeySaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
-    const [isRemoveApiKeyModalOpen, setIsRemoveApiKeyModalOpen] = useState(false);
 
-    useEffect(() => {
-        if (profile) {
-            setFirstName(profile.first_name || '');
-            setLastName(profile.last_name || '');
-            setApiKeyInput(profile.gemini_api_key || '');
-        }
-    }, [profile]);
-
-
-    const handleToggleEdit = () => {
-        if (isEditingProfile) { // This is now the "Cancel" action
-            if (profile) {
-                setFirstName(profile.first_name || '');
-                setLastName(profile.last_name || '');
-            }
-        }
-        setIsEditingProfile(!isEditingProfile);
-    };
-
-    const handleProfileUpdate = async () => {
-        if (!session?.user) return;
-        setSaveState('saving');
-
-        const updates = {
-            first_name: firstName,
-            last_name: lastName,
-            updated_at: new Date().toISOString(),
-        };
-
-        const { data, error: updateError } = await supabase
-            .from('profiles')
-            .update(updates)
-            .eq('id', session.user.id)
-            .select()
-            .single();
-
-        if (updateError) {
-            alert('Error updating profile: ' + updateError.message);
-            setSaveState('idle');
-        } else {
-            setProfile(data);
-            setSaveState('saved');
-            setTimeout(() => {
-                setSaveState('idle');
-                setIsEditingProfile(false);
-            }, 2000);
-        }
-    };
-
-    const handleSaveApiKey = async (keyToSave: string | null) => {
-        if (!session?.user) return;
+    const handleSaveApiKey = () => {
         setApiKeySaveState('saving');
-
-        const { data, error } = await supabase
-            .from('profiles')
-            .update({ gemini_api_key: keyToSave })
-            .eq('id', session.user.id)
-            .select()
-            .single();
-
-        if (error) {
-            alert('Error saving API key: ' + error.message);
-            setApiKeySaveState('idle');
-        } else {
-            setProfile(data);
-            setCustomApiKey(keyToSave);
-            setApiKeyInput(keyToSave || '');
+        setCustomApiKey(apiKeyInput.trim() || null);
+        // Simulate saving for UI feedback
+        setTimeout(() => {
             setApiKeySaveState('saved');
             setTimeout(() => setApiKeySaveState('idle'), 2000);
-        }
+        }, 500);
     };
 
     const handleRemoveApiKey = () => {
-        setIsRemoveApiKeyModalOpen(true);
-    };
-
-    const confirmAndRemoveApiKey = async () => {
-        await handleSaveApiKey(null);
-        setIsRemoveApiKeyModalOpen(false);
-    };
-
-    const user = {
-        name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || session?.user?.email || 'User',
-        email: session?.user?.email || '',
+        if (window.confirm("Are you sure you want to remove your API key?")) {
+            setApiKeyInput('');
+            setCustomApiKey(null);
+        }
     };
 
     return (
         <div>
-            <h3 className="text-2xl font-bold mb-6">Account Information</h3>
+            <h3 className="text-2xl font-bold mb-6">API Key</h3>
             <div className="space-y-8">
-                <SettingsSection title="User Profile" description="This is your profile information.">
-                    <UserProfileCard
-                        name={user.name}
-                        email={user.email}
-                        isEditing={isEditingProfile}
-                        firstName={firstName}
-                        lastName={lastName}
-                        onFirstNameChange={setFirstName}
-                        onLastNameChange={setLastName}
-                        onToggleEdit={handleToggleEdit}
-                    />
-                    {isEditingProfile && (
-                        <div className="mt-4 flex justify-end gap-2">
-                            <button onClick={handleToggleEdit} disabled={saveState === 'saving'} className="px-4 py-2 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded-lg font-semibold text-sm disabled:opacity-50">Cancel</button>
-                            <button
-                                onClick={handleProfileUpdate}
-                                disabled={saveState !== 'idle'}
-                                className={`px-4 py-2 rounded-lg font-semibold text-sm w-32 flex items-center justify-center transition-all duration-300 ease-in-out ${
-                                    saveState === 'saved'
-                                        ? 'bg-green-600 hover:bg-green-700 text-white'
-                                        : 'bg-black text-white dark:bg-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50'
-                                }`}
-                            >
-                                {saveState === 'saving' && <Loader2 className="animate-spin h-5 w-5" />}
-                                {saveState === 'saved' && (
-                                    <div className="flex items-center gap-1.5">
-                                        <Check className="h-5 w-5" />
-                                        <span>Saved!</span>
-                                    </div>
-                                )}
-                                {saveState === 'idle' && <span>Save Changes</span>}
-                            </button>
-                        </div>
-                    )}
-                </SettingsSection>
-                <SettingsSection title="Your API Key" description="Your Google Gemini API key is required to use the generative features of this platform.">
+                <SettingsSection title="Your API Key" description="Your Google Gemini API key is required to use the generative features of this platform. It is saved locally in your browser.">
                     <div className="p-4 border border-zinc-200 dark:border-zinc-700 bg-zinc-100/50 dark:bg-zinc-800/50 rounded-2xl space-y-4">
                         <div>
                             <label htmlFor="api-key-input" className="block text-sm font-medium text-gray-500 dark:text-gray-400">Your Gemini API Key</label>
@@ -272,7 +158,7 @@ const AccountSettingsContent: React.FC<{
                                     className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-white rounded-lg p-2.5 focus:ring-gray-500 focus:border-gray-500 font-mono"
                                 />
                                 <button
-                                    onClick={() => handleSaveApiKey(apiKeyInput.trim() || null)}
+                                    onClick={handleSaveApiKey}
                                     disabled={apiKeySaveState !== 'idle'}
                                     className={`px-4 py-2 rounded-lg font-semibold text-sm w-24 flex items-center justify-center transition-colors ${
                                         apiKeySaveState === 'saved'
@@ -305,12 +191,6 @@ const AccountSettingsContent: React.FC<{
                     </a>
                 </SettingsSection>
             </div>
-            <RemoveApiKeyConfirmationModal
-                isOpen={isRemoveApiKeyModalOpen}
-                onClose={() => setIsRemoveApiKeyModalOpen(false)}
-                onConfirm={confirmAndRemoveApiKey}
-                isLoading={apiKeySaveState === 'saving'}
-            />
         </div>
     );
 };

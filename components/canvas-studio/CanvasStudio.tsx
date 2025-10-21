@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 import { Theme } from '../../App';
 import { Tool } from '../../types';
 import ThemeToggleButton from '../ThemeToggleButton';
-import UserProfilePopover from '../UserProfilePopover';
 import { SettingsTab } from '../SettingsModal';
 import { ChevronLeft, Undo, Redo, Monitor, Tablet, Smartphone, PanelLeftOpen, PanelRightOpen, Search, Type, Pilcrow, Image as ImageIcon, Link as LinkIcon, MousePointerClick, Minus, Divide, Video, Star, Text, Map, Square, Download, MonitorOff } from 'lucide-react';
 import CanvasLeftSidebar from './CanvasLeftSidebar';
@@ -47,7 +46,6 @@ interface CanvasStudioProps {
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
   onOpenSettings: (tab?: SettingsTab) => void;
   customApiKey: string | null;
-  onLogout: () => void;
 }
 
 const SearchButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
@@ -117,7 +115,7 @@ const DesktopOnlyMessage: React.FC<{ onGoBack: () => void }> = ({ onGoBack }) =>
 );
 
 const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
-    const { setActiveTool, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onLogout, onToggleCommandPalette, onToggleNotifications, unreadCount } = props;
+    const { setActiveTool, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onToggleCommandPalette, onToggleNotifications, unreadCount } = props;
     
     const { state: pages, setState: setPagesHistory, undo, redo, canUndo, canRedo } = useHistory<Page[]>([
         { id: `page-${Date.now()}`, name: 'Home', blocks: [] }
@@ -431,7 +429,6 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                             <SearchButton onClick={onToggleCommandPalette} />
                             <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
                             <ThemeToggleButton theme={theme} setTheme={setTheme} />
-                            <UserProfilePopover onOpenSettings={onOpenSettings} onLogout={onLogout} />
                             {!isRightSidebarOpen && <button onClick={() => setIsRightSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelRightOpen size={18} /></button>}
                         </div>
                     </header>

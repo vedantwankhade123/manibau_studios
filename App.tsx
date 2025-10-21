@@ -4,7 +4,6 @@ import ImageGenerator from './components/ImageGenerator';
 import DevDraft from './components/ImageEditor';
 import Dashboard from './components/Dashboard';
 import { Tool, Notification } from './types';
-import LandingPage from './components/LandingPage';
 import SettingsModal, { SettingsTab } from './components/SettingsModal';
 import CommandPalette from './components/CommandPalette';
 import { Project } from './components/Dashboard';
@@ -13,11 +12,6 @@ import SketchGenerator from './components/SketchGenerator';
 import Library from './components/Library';
 import VideoGenerator from './components/VideoGenerator';
 import NotificationPanel from './components/NotificationPanel';
-import { SessionContextProvider, useSession } from './src/contexts/SessionContext';
-import Login from './src/pages/Login';
-import { supabase } from './src/integrations/supabase/client';
-import Spinner from './components/Spinner';
-import LogoutConfirmationModal from './components/LogoutConfirmationModal';
 import ChatWithAi from './components/ChatWithAi';
 import CanvasStudio from './components/canvas-studio/CanvasStudio';
 import TermsOfService from './src/pages/TermsOfService';
@@ -26,9 +20,7 @@ import PrivacyPolicy from './src/pages/PrivacyPolicy';
 export type Theme = 'light' | 'dark';
 export type FontSize = 'small' | 'medium' | 'large';
 
-const AppContainer: React.FC = () => {
-  const { session, loading, profile, setProfile } = useSession();
-  const [showStudio, setShowStudio] = useState(false);
+const App: React.FC = () => {
   const [activeTool, setActiveTool] = useState<Tool>(Tool.DASHBOARD);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -36,7 +28,6 @@ const AppContainer: React.FC = () => {
   const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>('general');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [viewingLegalPage, setViewingLegalPage] = useState<'terms' | 'privacy' | null>(null);
   
   const [theme, setTheme] = useState<Theme>('dark');
@@ -69,29 +60,19 @@ const AppContainer: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (profile) {
-      setCustomApiKey(profile.gemini_api_key || null);
+    const savedKey = localStorage.getItem('geminiApiKey');
+    if (savedKey) {
+        setCustomApiKey(savedKey);
     }
-  }, [profile]);
+  }, []);
 
-  const handleSaveApiKey = async (key: string) => {
-    if (!session?.user) return;
+  const handleSaveApiKey = (key: string) => {
     const newKey = key.trim() || null;
-
-    const { data, error } = await supabase
-        .from('profiles')
-        .update({ gemini_api_key: newKey })
-        .eq('id', session.user.id)
-        .select()
-        .single();
-
-    if (error) {
-        alert('Error saving API key: ' + error.message);
+    setCustomApiKey(newKey);
+    if (newKey) {
+        localStorage.setItem('geminiApiKey', newKey);
     } else {
-        if (setProfile) {
-            setProfile(data);
-        }
-        setCustomApiKey(newKey);
+        localStorage.removeItem('geminiApiKey');
     }
   };
 
@@ -99,41 +80,35 @@ const AppContainer: React.FC = () => {
     setNotifications(notifications.map(n => ({ ...n, read: true })));
   };
 
-  // Load projects from localStorage on session change
+  // Load projects from localStorage
   useEffect(() => {
-    if (session?.user) {
-      try {
-        const localData = localStorage.getItem(`manibau-projects-${session.user.id}`);
-        if (localData) {
-          const parsedProjects: Omit<Project, 'timestamp'>[] = JSON.parse(localData);
-          const formattedProjects = parsedProjects.map(p => ({
-            ...p,
-            timestamp: new Date(p.updated_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
-          })).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
-          setProjects(formattedProjects);
-        } else {
-          setProjects([]);
-        }
-      } catch (e) {
-        console.error("Failed to load projects from local storage", e);
+    try {
+      const localData = localStorage.getItem('manibau-projects');
+      if (localData) {
+        const parsedProjects: Omit<Project, 'timestamp'>[] = JSON.parse(localData);
+        const formattedProjects = parsedProjects.map(p => ({
+          ...p,
+          timestamp: new Date(p.updated_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
+        })).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+        setProjects(formattedProjects);
+      } else {
         setProjects([]);
       }
-    } else {
+    } catch (e) {
+      console.error("Failed to load projects from local storage", e);
       setProjects([]);
     }
-  }, [session]);
+  }, []);
 
   // Save projects to localStorage whenever they change
   useEffect(() => {
-    if (session?.user && projects) {
-      try {
-        const projectsToSave = projects.map(({ timestamp, ...rest }) => rest);
-        localStorage.setItem(`manibau-projects-${session.user.id}`, JSON.stringify(projectsToSave));
-      } catch (e) {
-        console.error("Failed to save projects to local storage", e);
-      }
+    try {
+      const projectsToSave = projects.map(({ timestamp, ...rest }) => rest);
+      localStorage.setItem('manibau-projects', JSON.stringify(projectsToSave));
+    } catch (e) {
+      console.error("Failed to save projects to local storage", e);
     }
-  }, [projects, session]);
+  }, [projects]);
 
 
   useEffect(() => {
@@ -196,15 +171,6 @@ const AppContainer: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!session) {
-      if (showStudio) {
-        document.title = "Authentication | Manibau Studios";
-      } else {
-        document.title = "Manibau Studios";
-      }
-      return;
-    }
-
     switch (activeTool) {
       case Tool.DASHBOARD:
         document.title = "Dashboard | Manibau Studios";
@@ -233,18 +199,13 @@ const AppContainer: React.FC = () => {
       default:
         document.title = "Manibau Studios";
     }
-  }, [activeTool, session, showStudio]);
+  }, [activeTool]);
 
   const handleAddProject = (projectData: Omit<Project, 'id' | 'timestamp'>): string => {
-    if (!session?.user) {
-      alert("You must be logged in to save a project.");
-      return '';
-    }
     const now = new Date();
     const newProject: Project = {
       ...projectData,
       id: crypto.randomUUID(),
-      user_id: session.user.id,
       created_at: now.toISOString(),
       updated_at: now.toISOString(),
       timestamp: now.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
@@ -254,7 +215,6 @@ const AppContainer: React.FC = () => {
   };
 
   const handleUpdateProject = (projectId: string, updatedData: Partial<Omit<Project, 'id'>>) => {
-    if (!session?.user) return;
     const now = new Date();
     setProjects(prev => prev.map(p => 
         p.id === projectId 
@@ -269,13 +229,6 @@ const AppContainer: React.FC = () => {
         setActiveTool(projectToLoad.tool);
         setLoadedProject(projectToLoad);
     }
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsLogoutModalOpen(false);
-    setShowStudio(false);
-    setActiveTool(Tool.DASHBOARD);
   };
   
   const handleRenameProject = (projectId: string, newName: string) => {
@@ -321,14 +274,6 @@ const AppContainer: React.FC = () => {
     }
   }, [activeTool]);
 
-  if (loading) {
-    return <div className="h-screen w-screen flex items-center justify-center bg-zinc-900"><Spinner /></div>;
-  }
-
-  if (!session) {
-    return showStudio ? <Login onGoBack={() => setShowStudio(false)} /> : <LandingPage onGetStarted={() => setShowStudio(true)} />;
-  }
-
   if (viewingLegalPage === 'terms') {
     return <TermsOfService onGoBack={() => setViewingLegalPage(null)} />;
   }
@@ -356,7 +301,6 @@ const AppContainer: React.FC = () => {
         setIsMobileMenuOpen,
         onOpenSettings: handleOpenSettings,
         onSaveApiKey: handleSaveApiKey,
-        onLogout: () => setIsLogoutModalOpen(true),
     };
     switch (activeTool) {
       case Tool.CHAT_WITH_AI: return <ChatWithAi {...commonProps} loadedProject={loadedProject} />;
@@ -379,7 +323,7 @@ const AppContainer: React.FC = () => {
           </div>
         </div>
       </main>
-      <Sidebar activeTool={activeTool} setActiveTool={handleSetActiveTool} isCollapsed={isSidebarCollapsed} onLogout={() => setIsLogoutModalOpen(true)} onOpenSettings={() => handleOpenSettings()} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+      <Sidebar activeTool={activeTool} setActiveTool={handleSetActiveTool} isCollapsed={isSidebarCollapsed} onOpenSettings={() => handleOpenSettings()} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
       <NotificationPanel isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} notifications={notifications} onMarkAllAsRead={handleMarkAllAsRead} onNavigate={(tool) => setActiveTool(tool)} />
       <SettingsModal 
         isOpen={isSettingsOpen} 
@@ -387,7 +331,7 @@ const AppContainer: React.FC = () => {
         theme={theme} 
         setTheme={setTheme} 
         customApiKey={customApiKey} 
-        setCustomApiKey={setCustomApiKey} 
+        setCustomApiKey={handleSaveApiKey} 
         initialTab={settingsInitialTab} 
         fontSize={fontSize} 
         setFontSize={setFontSize} 
@@ -398,17 +342,8 @@ const AppContainer: React.FC = () => {
         onViewTerms={() => setViewingLegalPage('terms')}
         onViewPrivacy={() => setViewingLegalPage('privacy')}
       />
-      <CommandPalette isOpen={isCommandPaletteOpen} onClose={() => setIsCommandPaletteOpen(false)} projects={projects} setActiveTool={handleSetActiveTool} onOpenSettings={handleOpenSettings} onLogout={() => setIsLogoutModalOpen(true)} />
-      <LogoutConfirmationModal isOpen={isLogoutModalOpen} onClose={() => setIsLogoutModalOpen(false)} onConfirm={handleLogout} />
+      <CommandPalette isOpen={isCommandPaletteOpen} onClose={() => setIsCommandPaletteOpen(false)} projects={projects} setActiveTool={handleSetActiveTool} onOpenSettings={handleOpenSettings} />
     </div>
-  );
-};
-
-const App: React.FC = () => {
-  return (
-    <SessionContextProvider>
-      <AppContainer />
-    </SessionContextProvider>
   );
 };
 
