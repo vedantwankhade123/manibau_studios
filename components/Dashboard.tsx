@@ -139,7 +139,11 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         title: "Produce with Video Studio",
         description: "Generate captivating short videos from simple text prompts.",
         icon: <div className="w-8 h-8 text-red-300"><VideoIcon /></div>,
-        videoSrc: '/landing-page/in-action-video.mp4',
+        videoSources: [
+            '/image-assets/dashboard/banners/video-studio-1.mp4',
+            '/image-assets/dashboard/banners/video-studio-2.mp4',
+            '/image-assets/dashboard/banners/video-studio-3.mp4',
+        ],
         action: () => setActiveTool(Tool.VIDEO_STUDIO),
         buttonText: 'Create Video',
     },
@@ -202,7 +206,13 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                 >
                     {banners.map((banner, index) => (
                         <div key={index} className={`relative w-full h-full flex-shrink-0 p-6 md:p-8 lg:p-12 flex flex-col justify-center overflow-hidden`}>
-                            {banner.gradient ? (
+                            {(banner as any).videoSources ? (
+                                <div className="absolute inset-0 grid grid-cols-3">
+                                    {(banner as any).videoSources.map((src: string, i: number) => (
+                                        <video key={i} src={src} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+                                    ))}
+                                </div>
+                            ) : banner.gradient ? (
                                 <>
                                     <div className={`absolute inset-0 ${banner.gradient} bg-[length:400%_400%] animate-animated-gradient`} />
                                     {banner.id === 'welcome' && (
