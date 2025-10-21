@@ -45,6 +45,8 @@ const App: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const handleGoToLanding = () => setShowLandingPage(true);
+
   useEffect(() => {
     const welcomeNotificationSeen = localStorage.getItem('welcomeNotificationSeen');
     if (!welcomeNotificationSeen) {
@@ -307,6 +309,7 @@ const App: React.FC = () => {
         setIsMobileMenuOpen,
         onOpenSettings: handleOpenSettings,
         onSaveApiKey: handleSaveApiKey,
+        onGoToLanding: handleGoToLanding,
     };
     switch (activeTool) {
       case Tool.CHAT_WITH_AI: return <ChatWithAi {...commonProps} loadedProject={loadedProject} />;
