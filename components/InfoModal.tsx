@@ -13,12 +13,12 @@ const GithubIcon = () => (
     </svg>
 );
 
-interface OpenSourceModalProps {
+interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const OpenSourceModal: React.FC<OpenSourceModalProps> = ({ isOpen, onClose }) => {
+const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
@@ -28,29 +28,23 @@ const OpenSourceModal: React.FC<OpenSourceModalProps> = ({ isOpen, onClose }) =>
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-4 border-b border-zinc-800 flex-shrink-0">
-          <h2 className="text-lg font-bold">MANIBAU Studios is Open Source</h2>
+          <h2 className="text-lg font-bold">Free, Private, and Powerful</h2>
           <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-white hover:bg-zinc-700"><CloseIcon /></button>
         </div>
         <div className="p-6 overflow-y-auto custom-scrollbar prose prose-invert prose-sm sm:prose-base max-w-none">
-          <p>We believe in the power of community and transparency. That's why MANIBAU Studios is a fully open-source project, built for developers, creators, and AI enthusiasts.</p>
+          <p>We believe powerful creative tools should be accessible to everyone. That's why MANIBAU Studios is completely free to use.</p>
           
-          <h4>Our Philosophy</h4>
-          <p>Our goal is to provide a powerful, local-first creative suite that respects your privacy and gives you full control over your data. By making our code public, we invite you to:</p>
+          <h4>Your Data Stays With You</h4>
+          <p>Our platform is built on a "local-first" philosophy. This means:</p>
           <ul>
-            <li><strong>Learn:</strong> See how a modern AI application is built with React, Vite, Tailwind CSS, and the Google Gemini API.</li>
-            <li><strong>Customize:</strong> Fork the repository and adapt the studio to your specific needs. Add new tools, change the UI, or integrate different AI models.</li>
-            <li><strong>Contribute:</strong> Help us improve! You can report bugs, suggest new features, or submit pull requests to make MANIBAU Studios even better.</li>
+            <li><strong>Complete Privacy:</strong> All your projects, conversations, and generated content are stored exclusively in your browser's local storage on your own device. We never see or store your data.</li>
+            <li><strong>You're in Control:</strong> Your Google Gemini API key is also saved locally. It's sent directly from your browser to Google, never passing through our servers.</li>
           </ul>
 
-          <h4>How to Use the Code</h4>
-          <p>The entire application runs in your browser. There is no complex backend to set up. Here’s how you can run it locally:</p>
-          <ol>
-            <li>Clone the repository from GitHub.</li>
-            <li>Install the dependencies using `npm install`.</li>
-            <li>Get a Google Gemini API key and add it to a `.env.local` file.</li>
-            <li>Run the development server with `npm run dev`.</li>
-          </ol>
-          <p>It's that simple! You'll have your own instance of MANIBAU Studios running on your machine.</p>
+          <h4>How is it Free?</h4>
+          <p>The application itself is free. To power the AI features, you need to provide your own Google Gemini API key. While the Gemini API has a generous free tier, be aware that extensive use may incur costs from Google.</p>
+          <p><strong>Important:</strong> Because everything is stored locally, remember to back up important projects. Clearing your browser's data will permanently delete your work.</p>
+          <p>For those interested in the technology, MANIBAU Studios is also an open-source project. You can view the code, contribute, or even host your own version.</p>
 
           <div className="not-prose flex justify-center mt-8">
             <a 
@@ -60,7 +54,7 @@ const OpenSourceModal: React.FC<OpenSourceModalProps> = ({ isOpen, onClose }) =>
               className="inline-flex items-center gap-3 bg-white text-black font-semibold px-6 py-3 rounded-full hover:bg-gray-200 transition-colors"
             >
               <GithubIcon />
-              <span>View on GitHub</span>
+              <span>View Code on GitHub</span>
             </a>
           </div>
         </div>
@@ -69,4 +63,4 @@ const OpenSourceModal: React.FC<OpenSourceModalProps> = ({ isOpen, onClose }) =>
   );
 };
 
-export default OpenSourceModal;
+export default InfoModal;

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import OpenSourceModal from './OpenSourceModal';
+import InfoModal from './InfoModal';
 const logoUrl = '/image-assets/MANIBAU Studios Logo.png';
 
 // --- Icon Components ---
@@ -300,8 +300,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 </a>
             </div>
             <div className="inline-block bg-zinc-800/50 border border-zinc-700 rounded-full px-4 py-2 text-sm text-gray-300 mt-12 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 1.0s forwards' }}>
-              MANIBAU Studios is now Open Source! 
-              <button onClick={() => setIsModalOpen(true)} className="ml-2 font-semibold text-purple-400 hover:text-purple-300 underline">Read More</button>
+              MANIBAU Studios is completely free to use. 
+              <button onClick={() => setIsModalOpen(true)} className="ml-2 font-semibold text-purple-400 hover:text-purple-300 underline">Learn More</button>
             </div>
           </div>
         </section>
@@ -496,7 +496,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
         </div>
       </footer>
-      <OpenSourceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <InfoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };
