@@ -87,39 +87,25 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         title: "Welcome Back",
         description: "What will you create today?",
         icon: <PartyPopper size={32} className="text-pink-400" />,
-        videoSrc: `${ASSETS_URL}/dashboard/banners/welcome.mp4`,
-        source: "MANIBAU Studios",
+        gradient: 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500',
+    },
+    {
+        title: "New: Canvas Studio (BETA)",
+        description: "Design beautiful websites with a drag-and-drop editor.",
+        icon: <LayoutTemplate size={32} className="text-indigo-300" />,
+        gradient: 'bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500',
+    },
+    {
+        title: "Configure Your API Key",
+        description: "Add your Gemini API key in the settings to unlock all features.",
+        icon: <KeyRound size={32} className="text-yellow-300" />,
+        gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500',
     },
     {
         title: "Explore Image Studio",
         description: "Generate breathtaking images and art with simple text prompts.",
         icon: <div className="w-8 h-8 text-blue-400"><GenerateIcon /></div>,
         imgSrc: `${ASSETS_URL}/dashboard/banners/image-studio.jpeg`,
-        source: "MANIBAU Studios",
-    },
-    {
-        title: "New: Video Studio",
-        description: "Generate stunning, high-definition videos from simple text prompts.",
-        icon: <Video size={32} className="text-red-400" />,
-        multiVideoSrcs: [
-            `${ASSETS_URL}/dashboard/banners/video-studio-1.mp4`,
-            `${ASSETS_URL}/dashboard/banners/video-studio-2.mp4`,
-            `${ASSETS_URL}/dashboard/banners/video-studio-3.mp4`
-        ],
-        source: "MANIBAU Studios",
-    },
-    {
-        title: "Unleash Sketch Studio",
-        description: "Turn your doodles into masterpieces with AI.",
-        icon: <div className="w-8 h-8 text-yellow-400"><SketchIcon /></div>,
-        imgSrc: `${ASSETS_URL}/dashboard/banners/sketch-studio.jpeg`,
-        source: "MANIBAU Studios",
-    },
-    {
-        title: "Build with Developer Studio",
-        description: "Describe the website you envision, and watch it come to life.",
-        icon: <div className="w-8 h-8 text-green-400"><CodeIcon /></div>,
-        imgSrc: `${ASSETS_URL}/dashboard/banners/dev-studio.jpeg`,
         source: "MANIBAU Studios",
     },
   ], []);
@@ -168,18 +154,12 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                 >
                     {banners.map((banner, index) => (
                         <div key={index} className={`relative w-full h-full flex-shrink-0 p-6 md:p-8 lg:p-12 flex flex-col justify-center overflow-hidden`}>
-                            {banner.multiVideoSrcs ? (
-                                <div className="absolute inset-0 flex w-full h-full">
-                                    {banner.multiVideoSrcs.map((src, i) => (
-                                        <video key={i} src={src} autoPlay loop muted playsInline className="w-1/3 h-full object-cover" />
-                                    ))}
-                                </div>
-                            ) : banner.videoSrc ? (
-                                <video src={banner.videoSrc} autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover" />
+                            {banner.gradient ? (
+                                <div className={`absolute inset-0 ${banner.gradient} bg-[length:200%_200%] animate-animated-gradient`} />
                             ) : banner.imgSrc ? (
                                 <img src={banner.imgSrc} alt="" className="absolute inset-0 w-full h-full object-cover" />
                             ) : null}
-                            <div className="absolute inset-0 bg-black/50"></div>
+                            <div className="absolute inset-0 bg-black/30"></div>
                             <div className="relative z-10">
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 dark:bg-black/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 dark:border-black/20">
@@ -187,13 +167,15 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                                     </div>
                                     <div>
                                         <h1 key={`${index}-title`} className="text-xl sm:text-2xl font-bold text-white animate-fade-in-up">{banner.title}</h1>
-                                        <p key={`${index}-desc`} className="text-sm sm:text-md text-gray-300 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>{banner.description}</p>
+                                        <p key={`${index}-desc`} className="text-sm sm:text-md text-gray-200 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>{banner.description}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div className="absolute bottom-2 right-3 text-white/50 text-[10px] font-semibold bg-black/30 px-2 py-1 rounded-md backdrop-blur-sm">
-                                Source: {banner.source}
-                            </div>
+                            {banner.source && (
+                                <div className="absolute bottom-2 right-3 text-white/50 text-[10px] font-semibold bg-black/30 px-2 py-1 rounded-md backdrop-blur-sm">
+                                    Source: {banner.source}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
