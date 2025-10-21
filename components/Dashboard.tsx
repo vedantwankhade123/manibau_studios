@@ -3,7 +3,7 @@ import { Tool } from '../types';
 import DashboardProjectsModal from './DashboardProjectsModal';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
-import { PartyPopper, Video, KeyRound, Sparkles, LayoutTemplate } from 'lucide-react';
+import { PartyPopper, Video, KeyRound, Sparkles, LayoutTemplate, Home } from 'lucide-react';
 import MenuButton from './MenuButton';
 
 interface WebsiteFile {
@@ -76,39 +76,48 @@ interface DashboardProps {
   setIsSidebarCollapsed: (isCollapsed: boolean) => void;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
   onOpenSettings: (tab?: 'account') => void;
+  onGoToLanding: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onLoadProject, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings }) => {
+const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onLoadProject, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onGoToLanding }) => {
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const banners = useMemo(() => [
     {
+        id: 'welcome',
         title: "Welcome Back",
         description: "What will you create today?",
         icon: <PartyPopper size={32} className="text-pink-400" />,
         gradient: 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500',
     },
     {
+        id: 'canvas',
         title: "New: Canvas Studio (BETA)",
         description: "Design beautiful websites with a drag-and-drop editor.",
         icon: <LayoutTemplate size={32} className="text-indigo-300" />,
         gradient: 'bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500',
+        action: () => setActiveTool(Tool.CANVAS_STUDIO),
+        buttonText: 'Launch Canvas Studio',
     },
     {
+        id: 'apikey',
         title: "Configure Your API Key",
         description: "Add your Gemini API key in the settings to unlock all features.",
         icon: <KeyRound size={32} className="text-yellow-300" />,
         gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500',
+        action: () => onOpenSettings('account'),
+        buttonText: 'Configure API Key',
     },
     {
+        id: 'image',
         title: "Explore Image Studio",
         description: "Generate breathtaking images and art with simple text prompts.",
         icon: <div className="w-8 h-8 text-blue-400"><GenerateIcon /></div>,
         imgSrc: `${ASSETS_URL}/dashboard/banners/image-studio.jpeg`,
         source: "MANIBAU Studios",
     },
-  ], []);
+  ], [setActiveTool, onOpenSettings]);
 
   useEffect(() => {
       const interval = setInterval(() => {
@@ -131,6 +140,11 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                 {isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </button>
             <h1 className="text-lg font-bold">Dashboard</h1>
+            <div className="w-px h-5 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
+            <button onClick={onGoToLanding} className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                <Home size={18} />
+                <span className="hidden sm:inline">Home</span>
+            </button>
         </div>
         <div className="flex items-center gap-2">
             {!customApiKey && (
@@ -155,7 +169,15 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                     {banners.map((banner, index) => (
                         <div key={index} className={`relative w-full h-full flex-shrink-0 p-6 md:p-8 lg:p-12 flex flex-col justify-center overflow-hidden`}>
                             {banner.gradient ? (
-                                <div className={`absolute inset-0 ${banner.gradient} bg-[length:200%_200%] animate-animated-gradient`} />
+                                <>
+                                    <div className={`absolute inset-0 ${banner.gradient} bg-[length:400%_400%] animate-animated-gradient`} />
+                                    {banner.id === 'welcome' && (
+                                        <>
+                                            <div className="absolute top-0 left-1/4 w-72 h-72 bg-pink-500/50 rounded-full filter blur-3xl animate-welcome-glow-1"></div>
+                                            <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-purple-500/50 rounded-full filter blur-3xl animate-welcome-glow-2"></div>
+                                        </>
+                                    )}
+                                </>
                             ) : banner.imgSrc ? (
                                 <img src={banner.imgSrc} alt="" className="absolute inset-0 w-full h-full object-cover" />
                             ) : null}
@@ -170,6 +192,11 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                                         <p key={`${index}-desc`} className="text-sm sm:text-md text-gray-200 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>{banner.description}</p>
                                     </div>
                                 </div>
+                                {(banner as any).action && (
+                                    <button onClick={(banner as any).action} className="mt-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-semibold px-4 py-2 rounded-full text-sm hover:bg-white/30 transition-colors animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+                                        {(banner as any).buttonText}
+                                    </button>
+                                )}
                             </div>
                             {banner.source && (
                                 <div className="absolute bottom-2 right-3 text-white/50 text-[10px] font-semibold bg-black/30 px-2 py-1 rounded-md backdrop-blur-sm">
