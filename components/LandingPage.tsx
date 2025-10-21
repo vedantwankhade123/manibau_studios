@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import OpenSourceModal from './OpenSourceModal';
 const logoUrl = '/image-assets/MANIBAU Studios Logo.png';
 
 // --- Icon Components ---
+import { Sparkles, LayoutTemplate, Video, PenTool, Code } from 'lucide-react';
 
 // Video Controls
 const MuteIcon = () => (
@@ -61,6 +63,7 @@ const EmailIcon = () => (
     <polyline points="22,6 12,13 2,6"></polyline>
   </svg>
 );
+const ImageIcon: React.FC<{ className?: string }> = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" className={className || "h-5 w-5"} viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" /></svg>);
 
 declare const hljs: any;
 
@@ -70,16 +73,34 @@ interface LandingPageProps {
 
 const features = [
   {
+    title: "AI Studio",
+    description: "Engage in dynamic conversations, brainstorm ideas, and get instant answers from a powerful AI assistant.",
+    icon: <Sparkles className="w-8 h-8 mb-4 text-purple-400" />,
+  },
+  {
     title: "Image Studio",
-    description: "Generate breathtaking images and art with simple text prompts. Edit, refine, and iterate on your creations in a seamless, conversational interface.",
+    description: "Generate breathtaking images and art with simple text prompts. Edit, refine, and iterate on your creations.",
+    icon: <ImageIcon className="w-8 h-8 mb-4 text-blue-400" />,
+  },
+  {
+    title: "Video Studio",
+    description: "Create captivating, high-definition short videos from text prompts in minutes.",
+    icon: <Video className="w-8 h-8 mb-4 text-red-400" />,
   },
   {
     title: "Sketch Studio",
-    description: "Turn your doodles into masterpieces. Draw a sketch, provide a prompt, and let our AI bring your vision to life with stunning detail.",
+    description: "Turn your doodles into masterpieces. Draw a sketch and let our AI bring your vision to life with stunning detail.",
+    icon: <PenTool className="w-8 h-8 mb-4 text-yellow-400" />,
   },
   {
     title: "Developer Studio",
-    description: "Describe the website you envision, and watch it come to life. Our AI generates multi-file, production-ready code with Tailwind CSS.",
+    description: "Describe the website you envision, and watch it come to life with production-ready HTML, CSS, and JavaScript.",
+    icon: <Code className="w-8 h-8 mb-4 text-green-400" />,
+  },
+  {
+    title: "Canvas Studio",
+    description: "Visually design websites with a drag-and-drop editor, combining AI power with manual control.",
+    icon: <LayoutTemplate className="w-8 h-8 mb-4 text-indigo-400" />,
   },
 ];
 
@@ -165,6 +186,7 @@ const MarqueeRow: React.FC<{ items: typeof showcaseItemsRow1; direction?: 'left'
 const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const headlines = [
     "Create at the Speed of Thought",
@@ -250,6 +272,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         <section id="home" className="h-screen flex items-center justify-center text-center bg-gradient-to-br from-zinc-900 to-black relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] opacity-40"></div>
           <div className="z-10 px-4">
+            <div className="inline-block bg-zinc-800/50 border border-zinc-700 rounded-full px-4 py-2 text-sm text-gray-300 mb-6 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 0.2s forwards' }}>
+              MANIBAU Studios is now Open Source! 
+              <button onClick={() => setIsModalOpen(true)} className="ml-2 font-semibold text-purple-400 hover:text-purple-300 underline">Read More</button>
+            </div>
             <h1 key={headlineIndex} className="text-5xl md:text-7xl font-bold mb-4 animated-headline">
               {headlines[headlineIndex]}
             </h1>
@@ -404,19 +430,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
         <section id="features" ref={featuresRef} className={`py-32 bg-black transition-all duration-1000 ease-out ${visibleSections['features'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-24'}`}>
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-4xl font-bold mb-12">One Platform, Infinite Possibilities</h2>
-          </div>
-          <div
-            className="relative w-full overflow-hidden"
-            style={{ maskImage: "linear-gradient(to right, transparent, black 20%, black 80%, transparent)" }}
-          >
-            <div className="flex animate-infinite-scroll hover:[animation-play-state:paused]">
-              {[...features, ...features].map((feature, index) => (
-                <div key={index} className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 p-4" style={{ minWidth: '33.333%' }}>
-                  <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-zinc-800 h-full">
-                    <h3 className="text-2xl font-semibold mb-3">{feature.title}</h3>
-                    <p className="text-gray-400">{feature.description}</p>
-                  </div>
+            <h2 className="text-4xl font-bold mb-4">One Platform, Infinite Possibilities</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto mb-12">
+              A comprehensive suite of AI-powered tools designed to bring your creative and technical projects to life.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {features.map((feature, index) => (
+                <div key={index} className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-zinc-800 text-left h-full hover:-translate-y-2 transition-transform duration-300">
+                  {feature.icon}
+                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                  <p className="text-gray-400 text-sm">{feature.description}</p>
                 </div>
               ))}
             </div>
@@ -473,6 +496,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
         </div>
       </footer>
+      <OpenSourceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

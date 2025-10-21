@@ -16,11 +16,13 @@ import ChatWithAi from './components/ChatWithAi';
 import CanvasStudio from './components/canvas-studio/CanvasStudio';
 import TermsOfService from './src/pages/TermsOfService';
 import PrivacyPolicy from './src/pages/PrivacyPolicy';
+import LandingPage from './components/LandingPage';
 
 export type Theme = 'light' | 'dark';
 export type FontSize = 'small' | 'medium' | 'large';
 
 const App: React.FC = () => {
+  const [showLandingPage, setShowLandingPage] = useState(true);
   const [activeTool, setActiveTool] = useState<Tool>(Tool.DASHBOARD);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -273,6 +275,10 @@ const App: React.FC = () => {
       setIsSidebarCollapsed(true);
     }
   }, [activeTool]);
+
+  if (showLandingPage) {
+    return <LandingPage onGetStarted={() => setShowLandingPage(false)} />;
+  }
 
   if (viewingLegalPage === 'terms') {
     return <TermsOfService onGoBack={() => setViewingLegalPage(null)} />;
