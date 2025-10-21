@@ -110,6 +110,33 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         buttonText: 'Configure API Key',
     },
     {
+        id: 'ai_studio',
+        title: "Converse with AI Studio",
+        description: "Brainstorm ideas, write content, and get instant answers.",
+        icon: <Sparkles size={32} className="text-purple-300" />,
+        gradient: 'bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400',
+        action: () => setActiveTool(Tool.CHAT_WITH_AI),
+        buttonText: 'Open AI Studio',
+    },
+    {
+        id: 'sketch_studio',
+        title: "Create with Sketch Studio",
+        description: "Transform your simple drawings into detailed, beautiful images.",
+        icon: <div className="w-8 h-8 text-yellow-300"><SketchIcon /></div>,
+        gradient: 'bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500',
+        action: () => setActiveTool(Tool.SKETCH_STUDIO),
+        buttonText: 'Start Sketching',
+    },
+    {
+        id: 'video_studio',
+        title: "Produce with Video Studio",
+        description: "Generate captivating short videos from simple text prompts.",
+        icon: <div className="w-8 h-8 text-red-300"><VideoIcon /></div>,
+        videoSrc: '/landing-page/in-action-video.mp4',
+        action: () => setActiveTool(Tool.VIDEO_STUDIO),
+        buttonText: 'Create Video',
+    },
+    {
         id: 'image',
         title: "Explore Image Studio",
         description: "Generate breathtaking images and art with simple text prompts.",
@@ -180,6 +207,8 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                                 </>
                             ) : banner.imgSrc ? (
                                 <img src={banner.imgSrc} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                            ) : (banner as any).videoSrc ? (
+                                <video src={(banner as any).videoSrc} autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover" />
                             ) : null}
                             <div className="absolute inset-0 bg-black/30"></div>
                             <div className="relative z-10">
