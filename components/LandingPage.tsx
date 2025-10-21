@@ -265,7 +265,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <span className="text-gray-400"> STUDIOS</span>
             </div>
           </div>
-          <nav className={`hidden md:absolute md:left-1/2 md:-translate-x-1/2 md:flex items-center gap-1 rounded-full p-2 shadow-lg transition-colors duration-300 ${isScrolled ? 'bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800' : 'bg-white/10 border border-white/20'} backdrop-blur-lg`}>
+          <nav className={`hidden md:absolute md:left-1/2 md:-translate-x-1/2 md:flex items-center gap-1 rounded-full p-2 shadow-lg transition-colors duration-300 ${isScrolled ? 'bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 backdrop-blur-lg' : 'border border-transparent'}`}>
             <a href="#home" className={`px-4 py-2 text-sm rounded-full transition-colors ${isScrolled ? 'text-zinc-800 dark:text-gray-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50' : 'text-gray-200 hover:bg-white/10'}`}>Home</a>
             <a href="#in-action" className={`px-4 py-2 text-sm rounded-full transition-colors ${isScrolled ? 'text-zinc-800 dark:text-gray-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50' : 'text-gray-200 hover:bg-white/10'}`}>In Action</a>
             <a href="#showcase" className={`px-4 py-2 text-sm rounded-full transition-colors ${isScrolled ? 'text-zinc-800 dark:text-gray-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50' : 'text-gray-200 hover:bg-white/10'}`}>Showcase</a>
