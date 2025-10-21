@@ -44,7 +44,15 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose }) => {
           <h4>How is it Free?</h4>
           <p>The application itself is free. To power the AI features, you need to provide your own Google Gemini API key. While the Gemini API has a generous free tier, be aware that extensive use may incur costs from Google.</p>
           <p><strong>Important:</strong> Because everything is stored locally, remember to back up important projects. Clearing your browser's data will permanently delete your work.</p>
-          <p>For those interested in the technology, MANIBAU Studios is also an open-source project. You can view the code, contribute, or even host your own version.</p>
+
+          <h4>License & Usage</h4>
+          <p>The source code for MANIBAU Studios is available for viewing on GitHub for educational and inspirational purposes. However, please note the following restrictions:</p>
+          <ul>
+              <li>The code is provided for learning and reference only.</li>
+              <li>You are <strong>not permitted</strong> to host, redistribute, or use this application or its code in a commercial or production environment.</li>
+              <li>You may not use the code to create a derivative service or product without explicit permission.</li>
+          </ul>
+          <p>If you are interested in using MANIBAU Studios for commercial purposes, or would like to purchase a license to host your own version, please contact us to discuss options.</p>
 
           <div className="not-prose flex justify-center mt-8">
             <a 
@@ -54,7 +62,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose }) => {
               className="inline-flex items-center gap-3 bg-white text-black font-semibold px-6 py-3 rounded-full hover:bg-gray-200 transition-colors"
             >
               <GithubIcon />
-              <span>View Code on GitHub</span>
+              <span>View Source on GitHub</span>
             </a>
           </div>
         </div>

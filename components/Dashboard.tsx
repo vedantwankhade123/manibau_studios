@@ -86,10 +86,17 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
   const banners = useMemo(() => [
     {
         id: 'welcome',
-        title: "Welcome Back",
-        description: "What will you create today?",
+        title: "Welcome Back, Creator!",
+        description: "Your next masterpiece is just a prompt away. What will you create today?",
         icon: <PartyPopper size={32} className="text-pink-400" />,
         gradient: 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500',
+        extraElements: (
+            <>
+                <Sparkles size={24} className="absolute top-4 right-20 text-white/30 animate-float-1" style={{ animationDuration: '15s' }} />
+                <Video size={20} className="absolute bottom-4 left-10 text-white/30 animate-float-2" style={{ animationDuration: '20s' }} />
+                <div className="w-16 h-16 absolute bottom-10 right-10 text-white/30 animate-float-3" style={{ animationDuration: '25s' }}><GenerateIcon /></div>
+            </>
+        )
     },
     {
         id: 'canvas',
@@ -204,6 +211,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                                             <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-purple-500/50 rounded-full filter blur-3xl animate-welcome-glow-2"></div>
                                         </>
                                     )}
+                                    {(banner as any).extraElements}
                                 </>
                             ) : banner.imgSrc ? (
                                 <img src={banner.imgSrc} alt="" className="absolute inset-0 w-full h-full object-cover" />

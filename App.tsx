@@ -332,7 +332,7 @@ const App: React.FC = () => {
           </div>
         </div>
       </main>
-      <Sidebar activeTool={activeTool} setActiveTool={handleSetActiveTool} isCollapsed={isSidebarCollapsed} onOpenSettings={() => handleOpenSettings()} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+      <Sidebar activeTool={activeTool} setActiveTool={handleSetActiveTool} isCollapsed={isSidebarCollapsed} onOpenSettings={() => handleOpenSettings()} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} onGoToLanding={handleGoToLanding} />
       <NotificationPanel isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} notifications={notifications} onMarkAllAsRead={handleMarkAllAsRead} onNavigate={(tool) => setActiveTool(tool)} />
       <SettingsModal 
         isOpen={isSettingsOpen} 

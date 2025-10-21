@@ -1,7 +1,7 @@
 import React from 'react';
 const logoUrl = '/image-assets/MANIBAU Studios Logo.png';
 import { Tool } from '../types';
-import { Sparkles, LayoutTemplate } from 'lucide-react';
+import { Sparkles, LayoutTemplate, Home } from 'lucide-react';
 
 const DashboardIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -53,9 +53,10 @@ interface SidebarProps {
   onOpenSettings: () => void;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
+  onGoToLanding: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapsed, onOpenSettings, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapsed, onOpenSettings, isMobileMenuOpen, setIsMobileMenuOpen, onGoToLanding }) => {
   const navItems = [
     { id: Tool.DASHBOARD, label: 'Dashboard', icon: <DashboardIcon /> },
     { id: Tool.CHAT_WITH_AI, label: 'AI Studio', icon: <Sparkles /> },
@@ -118,6 +119,16 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTool, setActiveTool, isCollapse
           </nav>
 
           <div className="flex-shrink-0 flex flex-col gap-3">
+            <button
+              onClick={onGoToLanding}
+              className={`${baseClasses} ${inactiveClasses} ${navItemPadding}`}
+              title="Home"
+            >
+              <div className="flex-shrink-0"><Home /></div>
+              <div className={`overflow-hidden transition-all duration-200 ease-in-out ${isCollapsed && !isMobileMenuOpen ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
+                  <span className="whitespace-nowrap">Home</span>
+              </div>
+            </button>
             <button
               onClick={onOpenSettings}
               className={`${baseClasses} ${inactiveClasses} ${navItemPadding}`}
