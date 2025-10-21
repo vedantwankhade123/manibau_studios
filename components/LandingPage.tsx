@@ -187,6 +187,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const headlines = [
     "Create at the Speed of Thought",
@@ -202,6 +203,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   const footerRef = useRef<HTMLElement>(null);
 
   const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const handleScroll = () => {
+        setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const sections = [
@@ -256,11 +265,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <span className="text-gray-400"> STUDIOS</span>
             </div>
           </div>
-          <nav className="hidden md:absolute md:left-1/2 md:-translate-x-1/2 md:flex items-center gap-1 bg-white/10 border border-white/20 backdrop-blur-lg rounded-full p-2 shadow-lg shadow-black/20">
-            <a href="#home" className="px-4 py-2 text-sm text-gray-200 hover:bg-white/10 rounded-full transition-colors">Home</a>
-            <a href="#in-action" className="px-4 py-2 text-sm text-gray-200 hover:bg-white/10 rounded-full transition-colors">In Action</a>
-            <a href="#showcase" className="px-4 py-2 text-sm text-gray-200 hover:bg-white/10 rounded-full transition-colors">Showcase</a>
-            <a href="#features" className="px-4 py-2 text-sm text-gray-200 hover:bg-white/10 rounded-full transition-colors">Features</a>
+          <nav className={`hidden md:absolute md:left-1/2 md:-translate-x-1/2 md:flex items-center gap-1 rounded-full p-2 shadow-lg transition-colors duration-300 ${isScrolled ? 'bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800' : 'bg-white/10 border border-white/20'} backdrop-blur-lg`}>
+            <a href="#home" className={`px-4 py-2 text-sm rounded-full transition-colors ${isScrolled ? 'text-zinc-800 dark:text-gray-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50' : 'text-gray-200 hover:bg-white/10'}`}>Home</a>
+            <a href="#in-action" className={`px-4 py-2 text-sm rounded-full transition-colors ${isScrolled ? 'text-zinc-800 dark:text-gray-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50' : 'text-gray-200 hover:bg-white/10'}`}>In Action</a>
+            <a href="#showcase" className={`px-4 py-2 text-sm rounded-full transition-colors ${isScrolled ? 'text-zinc-800 dark:text-gray-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50' : 'text-gray-200 hover:bg-white/10'}`}>Showcase</a>
+            <a href="#features" className={`px-4 py-2 text-sm rounded-full transition-colors ${isScrolled ? 'text-zinc-800 dark:text-gray-200 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50' : 'text-gray-200 hover:bg-white/10'}`}>Features</a>
           </nav>
           <button onClick={onGetStarted} className="bg-white text-black font-semibold px-4 py-2 md:px-6 md:py-3 rounded-full hover:bg-gray-200 transition-colors text-sm md:text-base whitespace-nowrap">
             Get Started
@@ -479,6 +488,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
             <div className="mt-12 border-t border-zinc-800 pt-8 text-center text-sm text-gray-500">
                 <p>&copy; {new Date().getFullYear()} MANIBAU Studios. All Rights Reserved. Made in India.</p>
+                <p className="mt-2">Developer: Vedant Wankhade</p>
             </div>
         </div>
       </footer>

@@ -76,7 +76,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
         id: 'welcome',
         title: "Welcome Back, Creator!",
         description: "Your next masterpiece is just a prompt away. What will you create today?",
-        icon: <PartyPopper size={32} className="text-pink-400" />,
+        icon: <PartyPopper size={48} className="text-pink-400" />,
         gradient: 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500',
         extraElements: (
             <>
@@ -92,7 +92,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
         id: 'canvas',
         title: "New: Canvas Studio (BETA)",
         description: "Design beautiful websites with a drag-and-drop editor.",
-        icon: <LayoutTemplate size={32} className="text-indigo-300" />,
+        icon: <LayoutTemplate size={48} className="text-indigo-300" />,
         gradient: 'bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500',
         action: () => setActiveTool(Tool.CANVAS_STUDIO),
         buttonText: 'Launch Canvas Studio',
@@ -107,7 +107,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
         id: 'apikey',
         title: "Configure Your API Key",
         description: "Add your Gemini API key in the settings to unlock all features.",
-        icon: <KeyRound size={32} className="text-yellow-300" />,
+        icon: <KeyRound size={48} className="text-yellow-300" />,
         gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500',
         action: () => onOpenSettings('account'),
         buttonText: 'Configure API Key',
@@ -121,7 +121,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
         id: 'ai_studio',
         title: "Converse with AI Studio",
         description: "Brainstorm ideas, write content, and get instant answers.",
-        icon: <Sparkles size={32} className="text-purple-300" />,
+        icon: <Sparkles size={48} className="text-purple-300" />,
         gradient: 'bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400',
         action: () => setActiveTool(Tool.CHAT_WITH_AI),
         buttonText: 'Open AI Studio',
@@ -135,7 +135,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
         id: 'sketch_studio',
         title: "Create with Sketch Studio",
         description: "Transform your simple drawings into detailed, beautiful images.",
-        icon: <div className="w-8 h-8 text-yellow-300"><SketchIcon /></div>,
+        icon: <div className="w-12 h-12 text-yellow-300"><SketchIcon /></div>,
         gradient: 'bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500',
         action: () => setActiveTool(Tool.SKETCH_STUDIO),
         buttonText: 'Start Sketching',
@@ -149,7 +149,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
         id: 'video_studio',
         title: "Produce with Video Studio",
         description: "Generate captivating short videos from simple text prompts.",
-        icon: <div className="w-8 h-8 text-red-300"><VideoIcon /></div>,
+        icon: <div className="w-12 h-12 text-red-300"><VideoIcon /></div>,
         videoSources: [
             '/image-assets/dashboard/banners/video-studio-1.mp4',
             '/image-assets/dashboard/banners/video-studio-2.mp4',
@@ -162,7 +162,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
         id: 'image',
         title: "Explore Image Studio",
         description: "Generate breathtaking images and art with simple text prompts.",
-        icon: <div className="w-8 h-8 text-blue-400"><GenerateIcon /></div>,
+        icon: <div className="w-12 h-12 text-blue-400"><GenerateIcon /></div>,
         imgSrc: `${ASSETS_URL}/dashboard/banners/image-studio.jpeg`,
     },
   ], [setActiveTool, onOpenSettings]);
@@ -240,7 +240,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
                             <div className="absolute inset-0 bg-black/30"></div>
                             <div className="relative z-10 flex flex-col items-center text-center md:items-start md:text-left">
                                 <div className="flex flex-col items-center md:flex-row md:items-center gap-4 mb-4">
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 dark:bg-black/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 dark:border-black/20 flex-shrink-0">
+                                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 dark:bg-black/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 dark:border-black/20 flex-shrink-0">
                                         {banner.icon}
                                     </div>
                                     <div>
@@ -257,7 +257,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
                         </div>
                     ))}
                 </div>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 hidden md:flex gap-2 z-20">
                     {banners.map((_, index) => (
                         <button
                             key={index}
