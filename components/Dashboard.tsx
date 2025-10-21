@@ -3,7 +3,7 @@ import { Tool } from '../types';
 import DashboardProjectsModal from './DashboardProjectsModal';
 import { Theme } from '../App';
 import ThemeToggleButton from './ThemeToggleButton';
-import { PartyPopper, Video, KeyRound, Sparkles, LayoutTemplate, Home } from 'lucide-react';
+import { PartyPopper, Video, KeyRound, Sparkles, LayoutTemplate, Home, PenTool, Code } from 'lucide-react';
 import MenuButton from './MenuButton';
 
 interface WebsiteFile {
@@ -95,6 +95,8 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                 <Sparkles size={24} className="absolute top-4 right-20 text-white/30 animate-float-1" style={{ animationDuration: '15s' }} />
                 <Video size={20} className="absolute bottom-4 left-10 text-white/30 animate-float-2" style={{ animationDuration: '20s' }} />
                 <div className="w-16 h-16 absolute bottom-10 right-10 text-white/30 animate-float-3" style={{ animationDuration: '25s' }}><GenerateIcon /></div>
+                <PenTool size={22} className="absolute top-10 left-24 text-white/30 animate-float-2" style={{ animationDuration: '18s' }} />
+                <Code size={28} className="absolute bottom-12 right-1/3 text-white/30 animate-float-1" style={{ animationDuration: '22s' }} />
             </>
         )
     },
@@ -106,6 +108,12 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         gradient: 'bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500',
         action: () => setActiveTool(Tool.CANVAS_STUDIO),
         buttonText: 'Launch Canvas Studio',
+        extraElements: (
+            <>
+                <LayoutTemplate size={24} className="absolute top-4 right-20 text-white/20 animate-float-1" style={{ animationDuration: '16s' }} />
+                <div className="absolute bottom-4 left-10 text-white/20 animate-float-2 w-5 h-5 border-2 rounded-md" style={{ animationDuration: '21s' }} />
+            </>
+        )
     },
     {
         id: 'apikey',
@@ -115,6 +123,11 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500',
         action: () => onOpenSettings('account'),
         buttonText: 'Configure API Key',
+        extraElements: (
+            <>
+                <KeyRound size={24} className="absolute top-4 right-20 text-white/20 animate-float-3" style={{ animationDuration: '14s' }} />
+            </>
+        )
     },
     {
         id: 'ai_studio',
@@ -124,6 +137,11 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         gradient: 'bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400',
         action: () => setActiveTool(Tool.CHAT_WITH_AI),
         buttonText: 'Open AI Studio',
+        extraElements: (
+            <>
+                <Sparkles size={24} className="absolute bottom-4 right-10 text-white/20 animate-float-1" style={{ animationDuration: '17s' }} />
+            </>
+        )
     },
     {
         id: 'sketch_studio',
@@ -133,6 +151,11 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         gradient: 'bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500',
         action: () => setActiveTool(Tool.SKETCH_STUDIO),
         buttonText: 'Start Sketching',
+        extraElements: (
+            <>
+                <PenTool size={24} className="absolute top-8 left-12 text-white/20 animate-float-2" style={{ animationDuration: '19s' }} />
+            </>
+        )
     },
     {
         id: 'video_studio',
@@ -153,7 +176,6 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         description: "Generate breathtaking images and art with simple text prompts.",
         icon: <div className="w-8 h-8 text-blue-400"><GenerateIcon /></div>,
         imgSrc: `${ASSETS_URL}/dashboard/banners/image-studio.jpeg`,
-        source: "MANIBAU Studios",
     },
   ], [setActiveTool, onOpenSettings]);
 
@@ -229,9 +251,9 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                                 <video src={(banner as any).videoSrc} autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover" />
                             ) : null}
                             <div className="absolute inset-0 bg-black/30"></div>
-                            <div className="relative z-10">
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 dark:bg-black/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 dark:border-black/20">
+                            <div className="relative z-10 flex flex-col items-center text-center md:items-start md:text-left">
+                                <div className="flex flex-col items-center md:flex-row md:items-center gap-4 mb-4">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 dark:bg-black/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 dark:border-black/20 flex-shrink-0">
                                         {banner.icon}
                                     </div>
                                     <div>
@@ -245,11 +267,6 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                                     </button>
                                 )}
                             </div>
-                            {banner.source && (
-                                <div className="absolute bottom-2 right-3 text-white/50 text-[10px] font-semibold bg-black/30 px-2 py-1 rounded-md backdrop-blur-sm">
-                                    Source: {banner.source}
-                                </div>
-                            )}
                         </div>
                     ))}
                 </div>

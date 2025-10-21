@@ -272,6 +272,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         <section id="home" className="h-screen flex items-center justify-center text-center bg-gradient-to-br from-zinc-900 to-black relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] opacity-40"></div>
           <div className="z-10 px-4">
+            <div className="inline-block bg-zinc-800/50 border border-zinc-700 rounded-full px-3 py-1.5 md:px-4 md:py-2 text-sm text-gray-300 mb-8 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 1.0s forwards' }}>
+              MANIBAU Studios is completely free to use. 
+              <button onClick={() => setIsModalOpen(true)} className="ml-2 font-semibold text-purple-400 hover:text-purple-300 underline">Learn More</button>
+            </div>
             <h1 key={headlineIndex} className="text-5xl md:text-7xl font-bold mb-4 animated-headline">
               {headlines[headlineIndex]}
             </h1>
@@ -280,12 +284,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </p>
             <button
               onClick={onGetStarted}
-              className="bg-white text-black font-semibold px-8 py-3 rounded-full text-lg hover:bg-gray-200 transition-colors shadow-lg shadow-white/10 opacity-0"
+              className="bg-white text-black font-semibold px-6 py-3 text-base md:px-8 md:py-3 md:text-lg rounded-full hover:bg-gray-200 transition-colors shadow-lg shadow-white/10 opacity-0"
               style={{ animation: 'fade-in-up 0.8s ease-out 0.6s forwards' }}
             >
               Start Creating Now
             </button>
-            <div className="flex gap-6 justify-center mt-12 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 0.8s forwards' }}>
+            <div className="flex gap-4 md:gap-6 justify-center mt-12 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 0.8s forwards' }}>
                 <a href="https://github.com/vedantwankhade123" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
                     <GithubIcon />
                 </a>
@@ -298,10 +302,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <a href="mailto:manibaustudios@gmail.com" className="text-gray-400 hover:text-white transition-colors" aria-label="Email">
                     <EmailIcon />
                 </a>
-            </div>
-            <div className="inline-block bg-zinc-800/50 border border-zinc-700 rounded-full px-4 py-2 text-sm text-gray-300 mt-12 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 1.0s forwards' }}>
-              MANIBAU Studios is completely free to use. 
-              <button onClick={() => setIsModalOpen(true)} className="ml-2 font-semibold text-purple-400 hover:text-purple-300 underline">Learn More</button>
             </div>
           </div>
         </section>
