@@ -282,7 +282,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] opacity-40"></div>
           <div className="z-10 px-4">
             <div className="inline-block bg-zinc-800/50 border border-zinc-700 rounded-full px-3 py-1.5 md:px-4 md:py-2 text-sm text-gray-300 mb-8 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 1.0s forwards' }}>
-              MANIBAU Studios is completely free to use. 
+              Completely free to use. 
               <button onClick={() => setIsModalOpen(true)} className="ml-2 font-semibold text-purple-400 hover:text-purple-300 underline">Learn More</button>
             </div>
             <h1 key={headlineIndex} className="text-5xl md:text-7xl font-bold mb-4 animated-headline">
