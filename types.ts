@@ -9,13 +9,3 @@ export enum Tool {
   VIDEO_STUDIO = 'VIDEO_STUDIO',
   CANVAS_STUDIO = 'CANVAS_STUDIO',
 }
-
-export interface Notification {
-  id: number;
-  type: 'image' | 'video' | 'sketch' | 'code' | 'credits' | 'api_key' | 'welcome';
-  title: string;
-  description: string;
-  time: string;
-  read: boolean;
-  link?: Tool;
-}

@@ -25,16 +25,6 @@ const SearchButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
         </svg>
     </button>
 );
-const NotificationBell: React.FC<{ onClick: () => void; notificationCount: number; }> = ({ onClick, notificationCount }) => (
-    <button onClick={onClick} className="relative p-1.5 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
-        {notificationCount > 0 && (
-            <span className="absolute top-1 right-1 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-zinc-900"></span>
-        )}
-    </button>
-);
 const UndoIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l4-4m-4 4l4 4" /></svg>);
 const TrashIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>);
 const EraserIcon = () => (
@@ -75,8 +65,6 @@ const ActionButton: React.FC<{ onClick?: () => void; children: React.ReactNode; 
 
 interface SketchGeneratorProps {
   setActiveTool: (tool: Tool) => void;
-  onToggleNotifications: () => void;
-  unreadCount: number;
   onToggleCommandPalette: () => void;
   onAddProject: (project: Omit<Project, 'id' | 'timestamp'>) => string;
   onUpdateProject: (projectId: string, updatedData: Partial<Omit<Project, 'id'>>) => void;
@@ -149,7 +137,7 @@ const PromptModal: React.FC<{ isOpen: boolean; onClose: () => void; onGenerate: 
 };
 
 const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
-  const { setActiveTool, onToggleNotifications, unreadCount, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings } = props;
+  const { setActiveTool, onToggleCommandPalette, onAddProject, onUpdateProject, loadedProject, onProjectLoaded, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
   const history = useRef<ImageData[]>([]);
@@ -406,7 +394,6 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
             )}
             <ThemeToggleButton theme={theme} setTheme={setTheme} />
             <SearchButton onClick={onToggleCommandPalette} />
-            <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
         </div>
       </header>
       <div className="flex-grow flex flex-col md:flex-row min-h-0 relative">

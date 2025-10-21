@@ -37,8 +37,6 @@ declare const html2canvas: any;
 
 interface CanvasStudioProps {
   setActiveTool: (tool: Tool) => void;
-  onToggleNotifications: () => void;
-  unreadCount: number;
   onToggleCommandPalette: () => void;
   theme: Theme;
   setTheme: (theme: Theme) => void;
@@ -51,17 +49,6 @@ interface CanvasStudioProps {
 const SearchButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
     <button onClick={onClick} className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors">
         <Search size={18} />
-    </button>
-);
-
-const NotificationBell: React.FC<{ onClick: () => void; notificationCount: number; }> = ({ onClick, notificationCount }) => (
-    <button onClick={onClick} className="relative p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-black dark:hover:text-white transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
-        {notificationCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-zinc-900"></span>
-        )}
     </button>
 );
 
@@ -115,7 +102,7 @@ const DesktopOnlyMessage: React.FC<{ onGoBack: () => void }> = ({ onGoBack }) =>
 );
 
 const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
-    const { setActiveTool, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onToggleCommandPalette, onToggleNotifications, unreadCount } = props;
+    const { setActiveTool, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, onOpenSettings, onToggleCommandPalette } = props;
     
     const { state: pages, setState: setPagesHistory, undo, redo, canUndo, canRedo } = useHistory<Page[]>([
         { id: `page-${Date.now()}`, name: 'Home', blocks: [] }
@@ -427,7 +414,6 @@ const CanvasStudio: React.FC<CanvasStudioProps> = (props) => {
                                 <button onClick={() => setDevice('mobile')} className={`p-1.5 rounded ${device === 'mobile' ? 'bg-white dark:bg-zinc-700' : ''}`}><Smartphone size={18}/></button>
                             </div>
                             <SearchButton onClick={onToggleCommandPalette} />
-                            <NotificationBell onClick={onToggleNotifications} notificationCount={unreadCount} />
                             <ThemeToggleButton theme={theme} setTheme={setTheme} />
                             {!isRightSidebarOpen && <button onClick={() => setIsRightSidebarOpen(true)} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"><PanelRightOpen size={18} /></button>}
                         </div>

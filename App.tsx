@@ -3,7 +3,7 @@ import Sidebar from './components/Sidebar';
 import ImageGenerator from './components/ImageGenerator';
 import DevDraft from './components/ImageEditor';
 import Dashboard from './components/Dashboard';
-import { Tool, Notification } from './types';
+import { Tool } from './types';
 import SettingsModal, { SettingsTab } from './components/SettingsModal';
 import CommandPalette from './components/CommandPalette';
 import { Project } from './components/Dashboard';
@@ -11,7 +11,6 @@ import { setUserApiKey } from './services/geminiService';
 import SketchGenerator from './components/SketchGenerator';
 import Library from './components/Library';
 import VideoGenerator from './components/VideoGenerator';
-import NotificationPanel from './components/NotificationPanel';
 import ChatWithAi from './components/ChatWithAi';
 import CanvasStudio from './components/canvas-studio/CanvasStudio';
 import TermsOfService from './src/pages/TermsOfService';
@@ -28,7 +27,6 @@ const App: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>('general');
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [viewingLegalPage, setViewingLegalPage] = useState<'terms' | 'privacy' | null>(null);
   
@@ -42,26 +40,7 @@ const App: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loadedProject, setLoadedProject] = useState<Project | null>(null);
 
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const unreadCount = notifications.filter(n => !n.read).length;
-
   const handleGoToLanding = () => setShowLandingPage(true);
-
-  useEffect(() => {
-    const welcomeNotificationSeen = localStorage.getItem('welcomeNotificationSeen');
-    if (!welcomeNotificationSeen) {
-        const welcomeNotification: Notification = {
-            id: Date.now(),
-            type: 'welcome',
-            title: 'Welcome to MANIBAU Studios!',
-            description: 'Your projects are saved locally in your browser. Clearing browser data will delete them.',
-            time: 'Just now',
-            read: false,
-        };
-        setNotifications([welcomeNotification]);
-        localStorage.setItem('welcomeNotificationSeen', 'true');
-    }
-  }, []);
 
   useEffect(() => {
     const savedKey = localStorage.getItem('geminiApiKey');
@@ -78,10 +57,6 @@ const App: React.FC = () => {
     } else {
         localStorage.removeItem('geminiApiKey');
     }
-  };
-
-  const handleMarkAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
   };
 
   // Load projects from localStorage
@@ -292,8 +267,6 @@ const App: React.FC = () => {
   const renderTool = () => {
     const commonProps = { 
         setActiveTool: handleSetActiveTool,
-        onToggleNotifications: () => setIsNotificationsOpen(p => !p),
-        unreadCount,
         onToggleCommandPalette: () => setIsCommandPaletteOpen(p => !p),
         projects,
         onRenameProject: handleRenameProject,
@@ -333,7 +306,6 @@ const App: React.FC = () => {
         </div>
       </main>
       <Sidebar activeTool={activeTool} setActiveTool={handleSetActiveTool} isCollapsed={isSidebarCollapsed} onOpenSettings={() => handleOpenSettings()} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} onGoToLanding={handleGoToLanding} />
-      <NotificationPanel isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} notifications={notifications} onMarkAllAsRead={handleMarkAllAsRead} onNavigate={(tool) => setActiveTool(tool)} />
       <SettingsModal 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 

@@ -289,20 +289,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             >
               Start Creating Now
             </button>
-            <div className="flex gap-4 md:gap-6 justify-center mt-12 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 0.8s forwards' }}>
-                <a href="https://github.com/vedantwankhade123" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
-                    <GithubIcon />
-                </a>
-                <a href="https://www.instagram.com/_vedantkwankhade_?igsh=MXY2YTQwNG80eHV6bQ==" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
-                    <InstagramIcon />
-                </a>
-                <a href="https://www.linkedin.com/in/vedant-wankhade123?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
-                    <LinkedInIcon />
-                </a>
-                <a href="mailto:manibaustudios@gmail.com" className="text-gray-400 hover:text-white transition-colors" aria-label="Email">
-                    <EmailIcon />
-                </a>
-            </div>
           </div>
         </section>
 
