@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Tool } from '../types';
 import DashboardProjectsModal from './DashboardProjectsModal';
 import { Theme } from '../App';
@@ -70,6 +70,11 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPalette, projects, onRenameProject, onDeleteProject, onLoadProject, customApiKey, theme, setTheme, isSidebarCollapsed, setIsSidebarCollapsed, setIsMobileMenuOpen, onOpenSettings, onGoToLanding }) => {
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const bannerContainerRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef(0);
+  const touchMoveX = useRef(0);
+  const isSwiping = useRef(false);
 
   const banners = useMemo(() => [
     {
@@ -168,12 +173,55 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
   ], [setActiveTool, onOpenSettings]);
 
   useEffect(() => {
-      const interval = setInterval(() => {
-          setActiveIndex(prevIndex => (prevIndex + 1) % banners.length);
-      }, 5000); // Slide every 5 seconds
+      const startInterval = () => {
+          if (intervalRef.current) clearInterval(intervalRef.current);
+          intervalRef.current = setInterval(() => {
+              setActiveIndex(prevIndex => (prevIndex + 1) % banners.length);
+          }, 5000);
+      };
+      startInterval();
 
-      return () => clearInterval(interval);
+      return () => {
+          if (intervalRef.current) clearInterval(intervalRef.current);
+      };
   }, [banners.length]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      touchStartX.current = e.touches[0].clientX;
+      touchMoveX.current = e.touches[0].clientX;
+      isSwiping.current = true;
+      if (bannerContainerRef.current) {
+          bannerContainerRef.current.style.transition = 'none';
+      }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+      if (!isSwiping.current || !bannerContainerRef.current) return;
+      touchMoveX.current = e.touches[0].clientX;
+      const diff = touchMoveX.current - touchStartX.current;
+      const baseOffset = -activeIndex * bannerContainerRef.current.offsetWidth;
+      bannerContainerRef.current.style.transform = `translateX(${baseOffset + diff}px)`;
+  };
+
+  const handleTouchEnd = () => {
+      if (!isSwiping.current || !bannerContainerRef.current) return;
+      isSwiping.current = false;
+      const diff = touchMoveX.current - touchStartX.current;
+      const containerWidth = bannerContainerRef.current.offsetWidth;
+
+      bannerContainerRef.current.style.transition = 'transform 700ms ease-in-out';
+
+      if (Math.abs(diff) > containerWidth / 4) { // Swipe threshold
+          if (diff < 0) { // Swiped left
+              setActiveIndex(prev => (prev + 1) % banners.length);
+          } else { // Swiped right
+              setActiveIndex(prev => (prev - 1 + banners.length) % banners.length);
+          }
+      } else { // Snap back
+          bannerContainerRef.current.style.transform = `translateX(-${activeIndex * 100}%)`;
+      }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -210,8 +258,12 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleCommandPal
         <div className="w-full max-w-7xl space-y-12 mx-auto">
             <div className="relative w-full h-60 md:h-52 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
                 <div
+                    ref={bannerContainerRef}
                     className="flex h-full transition-transform duration-700 ease-in-out"
                     style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
                 >
                     {banners.map((banner, index) => (
                         <div key={index} className={`relative w-full h-full flex-shrink-0 p-6 md:p-8 lg:p-12 flex flex-col justify-center overflow-hidden`}>

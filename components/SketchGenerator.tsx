@@ -162,6 +162,9 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
   // Carousel state
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [animatingFromIndex, setAnimatingFromIndex] = useState<number | null>(null);
+  const touchStartX = useRef(0);
+  const touchMoveX = useRef(0);
+  const isSwiping = useRef(false);
 
   useEffect(() => {
     if (loadedProject && loadedProject.tool === Tool.SKETCH_STUDIO) {
@@ -368,6 +371,30 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
     setActiveImageIndex(prev => (prev === generatedImages.length - 1 ? 0 : prev + 1));
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+      isSwiping.current = true;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+      if (!isSwiping.current) return;
+      touchMoveX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+      if (!isSwiping.current) return;
+      isSwiping.current = false;
+      const diff = touchMoveX.current - touchStartX.current;
+      
+      if (Math.abs(diff) > 50) { // Swipe threshold
+          if (diff < 0) {
+              goToNextImage();
+          } else {
+              goToPrevImage();
+          }
+      }
+  };
+
   const aspectRatioClass = aspectRatioClassMap[aspectRatio] || 'aspect-square';
   const canvasDimensions = getCanvasDimensions(aspectRatio);
 
@@ -473,7 +500,12 @@ const SketchGenerator: React.FC<SketchGeneratorProps> = (props) => {
                     
                     {generatedImages.length > 0 && (
                         <div className="w-full max-w-[440px] flex flex-col items-center">
-                            <div className={`relative w-full ${aspectRatioClass} overflow-hidden rounded-xl`}>
+                            <div 
+                                className={`relative w-full ${aspectRatioClass} overflow-hidden rounded-xl`}
+                                onTouchStart={handleTouchStart}
+                                onTouchMove={handleTouchMove}
+                                onTouchEnd={handleTouchEnd}
+                            >
                                 {generatedImages.map((url, index) => {
                                     const offset = index - activeImageIndex;
                                     const isAnimatingOut = animatingFromIndex === index;

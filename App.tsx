@@ -21,7 +21,7 @@ export type Theme = 'light' | 'dark';
 export type FontSize = 'small' | 'medium' | 'large';
 
 const App: React.FC = () => {
-  const [showLandingPage, setShowLandingPage] = useState(true);
+  const [showLandingPage, setShowLandingPage] = useState(window.location.pathname !== '/app');
   const [activeTool, setActiveTool] = useState<Tool>(Tool.DASHBOARD);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,7 +40,28 @@ const App: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loadedProject, setLoadedProject] = useState<Project | null>(null);
 
-  const handleGoToLanding = () => setShowLandingPage(true);
+  useEffect(() => {
+    const handlePopState = () => {
+        setShowLandingPage(window.location.pathname !== '/app');
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleEnterApp = () => {
+      if (window.location.pathname !== '/app') {
+          window.history.pushState({ path: '/app' }, '', '/app');
+      }
+      setShowLandingPage(false);
+  };
+
+  const handleGoToLanding = () => {
+      if (window.location.pathname !== '/') {
+          window.history.pushState({ path: '/' }, '', '/');
+      }
+      setShowLandingPage(true);
+  };
 
   useEffect(() => {
     const savedKey = localStorage.getItem('geminiApiKey');
@@ -254,7 +275,7 @@ const App: React.FC = () => {
   }, [activeTool]);
 
   if (showLandingPage) {
-    return <LandingPage onGetStarted={() => setShowLandingPage(false)} />;
+    return <LandingPage onGetStarted={handleEnterApp} />;
   }
 
   if (viewingLegalPage === 'terms') {
