@@ -186,9 +186,9 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
         </div>
         <div className="flex items-center gap-2">
             {!customApiKey && (
-              <button onClick={() => onOpenSettings('account')} className="flex items-center gap-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 px-3 py-1.5 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-900/50">
+              <button onClick={() => onOpenSettings('account')} className="flex items-center gap-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-900/50 p-2 md:px-3 md:py-1.5">
                 <KeyRound size={16} />
-                <span>Add API Key</span>
+                <span className="hidden md:inline">Add API Key</span>
               </button>
             )}
             <ThemeToggleButton theme={theme} setTheme={setTheme} />
@@ -264,6 +264,22 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTool, onToggleNotificati
                     ))}
                 </div>
             </div>
+
+            {!customApiKey && (
+              <div className="md:hidden bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-500/30 p-4 rounded-2xl flex items-center gap-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-yellow-400/20 rounded-full flex items-center justify-center">
+                  <KeyRound className="w-5 h-5 text-yellow-600 dark:text-yellow-300" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-yellow-800 dark:text-yellow-200">Add Your API Key</h3>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300/80">Unlock all AI features by adding your Gemini API key in the settings.</p>
+                </div>
+                <button onClick={() => onOpenSettings('account')} className="ml-auto flex-shrink-0 bg-yellow-500 text-white font-semibold px-3 py-1.5 rounded-full text-sm hover:bg-yellow-600 transition-colors">
+                  Add Key
+                </button>
+              </div>
+            )}
+
             {/* Tools Section */}
             <section>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

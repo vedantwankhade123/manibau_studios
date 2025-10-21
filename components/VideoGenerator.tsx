@@ -219,9 +219,9 @@ const VideoGenerator: React.FC<VideoGeneratorProps> = ({ setActiveTool, onToggle
         </div>
         <div className="flex items-center gap-2">
             {!customApiKey && (
-              <button onClick={() => onOpenSettings('account')} className="flex items-center gap-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 px-3 py-1.5 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-900/50">
+              <button onClick={() => onOpenSettings('account')} className="flex items-center gap-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 rounded-full hover:bg-yellow-200 dark:hover:bg-yellow-900/50 p-2 md:px-3 md:py-1.5">
                 <KeyRound size={16} />
-                <span>Add API Key</span>
+                <span className="hidden md:inline">Add API Key</span>
               </button>
             )}
             <ThemeToggleButton theme={theme} setTheme={setTheme} />
