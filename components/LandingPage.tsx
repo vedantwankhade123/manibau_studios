@@ -74,12 +74,12 @@ interface LandingPageProps {
 const features = [
   {
     title: "AI Studio",
-    description: "Engage in dynamic conversations, brainstorm ideas, and get instant answers from a powerful AI assistant.",
+    description: "Chat with a powerful AI assistant to brainstorm ideas and get instant answers.",
     icon: <Sparkles className="w-8 h-8 mb-4 text-purple-400" />,
   },
   {
     title: "Image Studio",
-    description: "Generate breathtaking images and art with simple text prompts. Edit, refine, and iterate on your creations.",
+    description: "Generate breathtaking images and art from text, then edit and refine your creations.",
     icon: <ImageIcon className="w-8 h-8 mb-4 text-blue-400" />,
   },
   {
@@ -89,12 +89,12 @@ const features = [
   },
   {
     title: "Sketch Studio",
-    description: "Turn your doodles into masterpieces. Draw a sketch and let our AI bring your vision to life with stunning detail.",
+    description: "Turn your doodles into masterpieces. Sketch an idea and let our AI bring it to life with stunning detail.",
     icon: <PenTool className="w-8 h-8 mb-4 text-yellow-400" />,
   },
   {
     title: "Developer Studio",
-    description: "Describe the website you envision, and watch it come to life with production-ready HTML, CSS, and JavaScript.",
+    description: "Describe the website you envision and watch it come to life with production-ready code.",
     icon: <Code className="w-8 h-8 mb-4 text-green-400" />,
   },
   {
@@ -289,7 +289,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               {headlines[headlineIndex]}
             </h1>
             <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-8 opacity-0" style={{ animation: 'fade-in-up 0.8s ease-out 0.4s forwards' }}>
-              Harness the power of generative AI to bring your ideas to life. From stunning visuals to fully functional websites, MANIBAU Studios is your all-in-one creative suite.
+              Harness generative AI to bring your ideas to life. From stunning visuals to functional websites, MANIBAU Studios is your complete creative suite.
             </p>
             <button
               onClick={onGetStarted}
