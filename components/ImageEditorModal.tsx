@@ -305,9 +305,9 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
   }, [activeTool]);
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex items-center justify-center p-2 sm:p-4" aria-modal="true" role="dialog">
       <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-zinc-800 w-full h-full flex flex-col lg:flex-row overflow-hidden shadow-2xl">
-        <div className="flex-1 flex items-center justify-center p-4 lg:p-8 relative overflow-hidden">
+        <div className="flex-1 flex items-center justify-center p-2 sm:p-4 lg:p-8 relative overflow-hidden">
           {isLoading && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30 rounded-lg">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-400"></div>
@@ -325,19 +325,19 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
         </div>
 
         <div className="w-full lg:w-96 bg-zinc-900/50 border-t lg:border-t-0 lg:border-l border-zinc-800 flex flex-col">
-          <div className="flex-shrink-0 p-4 flex justify-between items-center border-b border-zinc-800">
+          <div className="flex-shrink-0 p-2 sm:p-4 flex justify-between items-center border-b border-zinc-800">
             <h2 className="text-xl font-bold">Image Editor</h2>
             <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:text-white hover:bg-zinc-700 transition-colors" aria-label="Close editor">
               <CloseIcon />
             </button>
           </div>
 
-          <div className="flex-grow p-4 overflow-y-auto custom-scrollbar">
+          <div className="flex-grow p-2 sm:p-4 overflow-y-auto custom-scrollbar">
             <h3 className="text-sm font-semibold text-gray-400 mb-2 uppercase tracking-wider">Adjustments</h3>
-            <div className="grid grid-cols-4 gap-2 mb-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
               {adjustmentTools.map(tool => (<button key={tool.name} onClick={tool.onClick} disabled={isLoading} className="flex flex-col items-center justify-center gap-1 bg-zinc-800/50 border border-zinc-700 py-1 rounded-lg text-xs font-medium text-gray-300 hover:border-zinc-600 hover:text-white transition-colors disabled:opacity-50"> {tool.name} </button>))}
             </div>
-            <div className="grid grid-cols-4 gap-2 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
               {filters.map(f => (<button key={f.name} onClick={() => setFilter(f.value)} disabled={isLoading} className={`flex items-center justify-center text-xs font-medium py-1 rounded-lg border transition-colors disabled:opacity-50 ${filter === f.value ? 'bg-zinc-700 border-zinc-600 text-white' : 'bg-zinc-800/50 border-zinc-700 text-gray-300 hover:border-zinc-600'}`}> {f.name} </button>))}
             </div>
 
@@ -369,7 +369,7 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
             {error && <p className="text-red-400 mt-4 bg-red-900/20 p-3 rounded-lg text-center">{error}</p>}
           </div>
 
-          <div className="flex-shrink-0 p-4 border-t border-zinc-800 flex gap-3">
+          <div className="flex-shrink-0 p-2 sm:p-4 border-t border-zinc-800 flex gap-3">
             <button onClick={onClose} disabled={isLoading} className="w-full bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700 text-white font-bold py-2 px-4 rounded-lg hover:border-zinc-600 disabled:opacity-50">
               Discard
             </button>
