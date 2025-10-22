@@ -195,20 +195,57 @@ const Library: React.FC<LibraryProps> = ({ projects, onLoadProject, setActiveToo
                     <ChevronDownIcon />
                 </button>
                 {isFilterOpen && (
-                    <div className="absolute top-full right-0 mt-2 w-48 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-xl z-10 py-1">
-                        {filters.map(filter => (
-                            <button
-                                key={filter.id}
-                                onClick={() => {
-                                    setActiveFilter(filter.id);
-                                    setIsFilterOpen(false);
-                                }}
-                                className="w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-gray-300 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                    <>
+                        {/* Desktop Dropdown */}
+                        <div className="hidden md:block absolute top-full right-0 mt-2 w-48 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-xl z-10 py-1">
+                            {filters.map(filter => (
+                                <button
+                                    key={filter.id}
+                                    onClick={() => {
+                                        setActiveFilter(filter.id);
+                                        setIsFilterOpen(false);
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-gray-300 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                                >
+                                    {filter.name}
+                                </button>
+                            ))}
+                        </div>
+                        {/* Mobile Modal */}
+                        <div className="md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setIsFilterOpen(false)}>
+                            <div 
+                                className="bg-gradient-to-br from-zinc-100 to-white dark:from-zinc-900 dark:to-black rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-sm shadow-2xl"
+                                onClick={e => e.stopPropagation()}
                             >
-                                {filter.name}
-                            </button>
-                        ))}
-                    </div>
+                                <div className="flex justify-between items-center p-4 border-b border-zinc-200 dark:border-zinc-800">
+                                    <h2 className="text-lg font-bold">Filter Projects</h2>
+                                    <button onClick={() => setIsFilterOpen(false)} className="p-1 rounded-full text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors" aria-label="Close">
+                                        <XIcon />
+                                    </button>
+                                </div>
+                                <div className="p-4">
+                                    <div className="space-y-2">
+                                        {filters.map(filter => (
+                                            <button
+                                                key={filter.id}
+                                                onClick={() => {
+                                                    setActiveFilter(filter.id);
+                                                    setIsFilterOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                                                    activeFilter === filter.id
+                                                        ? 'bg-zinc-700 text-white'
+                                                        : 'bg-zinc-100 dark:bg-zinc-800/50 text-zinc-700 dark:text-gray-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                                                }`}
+                                            >
+                                                {filter.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
                 )}
             </div>
             {isDeleteMode ? (
