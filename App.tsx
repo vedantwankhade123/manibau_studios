@@ -20,9 +20,38 @@ import LandingPage from './components/LandingPage';
 export type Theme = 'light' | 'dark';
 export type FontSize = 'small' | 'medium' | 'large';
 
+// --- Routing Configuration ---
+const toolToPath: Record<Tool, string> = {
+    [Tool.DASHBOARD]: 'dashboard',
+    [Tool.CHAT_WITH_AI]: 'ai-studio',
+    [Tool.GENERATE]: 'image-studio',
+    [Tool.DEV_DRAFT]: 'developer-studio',
+    [Tool.SKETCH_STUDIO]: 'sketch-studio',
+    [Tool.LIBRARY]: 'library',
+    [Tool.VIDEO_STUDIO]: 'video-studio',
+    [Tool.CANVAS_STUDIO]: 'canvas-studio',
+};
+
+const pathToTool: Record<string, Tool> = Object.entries(toolToPath).reduce((acc, [key, value]) => {
+    acc[value] = key as Tool;
+    return acc;
+}, {} as Record<string, Tool>);
+
+const getToolFromPath = (path: string): Tool | null => {
+    if (path.startsWith('/app/')) {
+        const slug = path.substring(5); // length of '/app/'
+        return pathToTool[slug] || null;
+    }
+    return null;
+};
+// --- End Routing Configuration ---
+
 const App: React.FC = () => {
-  const [showLandingPage, setShowLandingPage] = useState(window.location.pathname !== '/app');
-  const [activeTool, setActiveTool] = useState<Tool>(Tool.DASHBOARD);
+  const [showLandingPage, setShowLandingPage] = useState(!window.location.pathname.startsWith('/app'));
+  const [activeTool, setActiveTool] = useState<Tool>(() => {
+    const tool = getToolFromPath(window.location.pathname);
+    return tool || Tool.DASHBOARD;
+  });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -42,7 +71,14 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handlePopState = () => {
-        setShowLandingPage(window.location.pathname !== '/app');
+        const path = window.location.pathname;
+        if (path.startsWith('/app')) {
+            setShowLandingPage(false);
+            const tool = getToolFromPath(path);
+            setActiveTool(tool || Tool.DASHBOARD);
+        } else {
+            setShowLandingPage(true);
+        }
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -50,10 +86,12 @@ const App: React.FC = () => {
   }, []);
 
   const handleEnterApp = () => {
-      if (window.location.pathname !== '/app') {
-          window.history.pushState({ path: '/app' }, '', '/app');
+      const path = `/app/${toolToPath[Tool.DASHBOARD]}`;
+      if (window.location.pathname !== path) {
+          window.history.pushState({ tool: Tool.DASHBOARD }, '', path);
       }
       setShowLandingPage(false);
+      setActiveTool(Tool.DASHBOARD);
   };
 
   const handleGoToLanding = () => {
@@ -171,35 +209,17 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    switch (activeTool) {
-      case Tool.DASHBOARD:
-        document.title = "Dashboard | Manibau Studios";
-        break;
-      case Tool.CHAT_WITH_AI:
-        document.title = "AI Studio | Manibau Studios";
-        break;
-      case Tool.GENERATE:
-        document.title = "Image Studio | Manibau Studios";
-        break;
-      case Tool.VIDEO_STUDIO:
-        document.title = "Video Studio | Manibau Studios";
-        break;
-      case Tool.SKETCH_STUDIO:
-        document.title = "Sketch Studio | Manibau Studios";
-        break;
-      case Tool.DEV_DRAFT:
-        document.title = "Developer Studio | Manibau Studios";
-        break;
-      case Tool.LIBRARY:
-        document.title = "Library | Manibau Studios";
-        break;
-      case Tool.CANVAS_STUDIO:
-        document.title = "Canvas Studio | Manibau Studios";
-        break;
-      default:
-        document.title = "Manibau Studios";
+    const path = `/app/${toolToPath[activeTool]}`;
+    const title = `${Object.keys(Tool)[Object.values(Tool).indexOf(activeTool)]
+        .split('_')
+        .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+        .join(' ')} | Manibau Studios`;
+    
+    document.title = title;
+    if (window.location.pathname !== path && !showLandingPage) {
+        window.history.pushState({ tool: activeTool }, title, path);
     }
-  }, [activeTool]);
+  }, [activeTool, showLandingPage]);
 
   const handleAddProject = (projectData: Omit<Project, 'id' | 'timestamp'>): string => {
     const now = new Date();
@@ -226,6 +246,10 @@ const App: React.FC = () => {
   const handleLoadProject = (projectId: string) => {
     const projectToLoad = projects.find(p => p.id === projectId);
     if (projectToLoad) {
+        const path = `/app/${toolToPath[projectToLoad.tool]}`;
+        if (window.location.pathname !== path) {
+            window.history.pushState({ tool: projectToLoad.tool }, '', path);
+        }
         setActiveTool(projectToLoad.tool);
         setLoadedProject(projectToLoad);
     }
@@ -250,6 +274,10 @@ const App: React.FC = () => {
   };
 
   const handleSetActiveTool = (tool: Tool) => {
+    const path = `/app/${toolToPath[tool]}`;
+    if (window.location.pathname !== path) {
+        window.history.pushState({ tool }, '', path);
+    }
     setLoadedProject(null);
     setActiveTool(tool);
     setIsMobileMenuOpen(false);
