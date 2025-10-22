@@ -29,6 +29,11 @@ const CloseIcon = () => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
   </svg>
 );
+const ChevronDownIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${className || ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+  </svg>
+);
 
 // --- Helper Types & Functions ---
 type ActiveTool = 'crop' | null;
@@ -68,6 +73,7 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
 
   // Tool state
   const [activeTool, setActiveTool] = useState<ActiveTool>(null);
+  const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(false);
 
   // Crop tool state
   const [cropRect, setCropRect] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
@@ -333,12 +339,30 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
           </div>
 
           <div className="flex-grow p-2 sm:p-4 overflow-y-auto custom-scrollbar">
-            <h3 className="text-sm font-semibold text-gray-400 mb-2 uppercase tracking-wider">Adjustments</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
-              {adjustmentTools.map(tool => (<button key={tool.name} onClick={tool.onClick} disabled={isLoading} className="flex flex-col items-center justify-center gap-1 bg-zinc-800/50 border border-zinc-700 py-1 rounded-lg text-xs font-medium text-gray-300 hover:border-zinc-600 hover:text-white transition-colors disabled:opacity-50"> {tool.name} </button>))}
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
-              {filters.map(f => (<button key={f.name} onClick={() => setFilter(f.value)} disabled={isLoading} className={`flex items-center justify-center text-xs font-medium py-1 rounded-lg border transition-colors disabled:opacity-50 ${filter === f.value ? 'bg-zinc-700 border-zinc-600 text-white' : 'bg-zinc-800/50 border-zinc-700 text-gray-300 hover:border-zinc-600'}`}> {f.name} </button>))}
+            <div className="border-b border-zinc-800 pb-4 mb-4">
+                <button 
+                    onClick={() => setIsAdjustmentsOpen(!isAdjustmentsOpen)} 
+                    className="w-full flex justify-between items-center text-left"
+                >
+                    <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Adjustments & Filters</h3>
+                    <ChevronDownIcon className={`transition-transform duration-200 ${isAdjustmentsOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isAdjustmentsOpen && (
+                    <div className="mt-4 space-y-4 animate-fade-in-down">
+                        <div>
+                            <h4 className="text-xs font-semibold text-gray-500 mb-2">Transform</h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                {adjustmentTools.map(tool => (<button key={tool.name} onClick={tool.onClick} disabled={isLoading} className="flex flex-col items-center justify-center gap-1 bg-zinc-800/50 border border-zinc-700 py-1 rounded-lg text-xs font-medium text-gray-300 hover:border-zinc-600 hover:text-white transition-colors disabled:opacity-50"> {tool.name} </button>))}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-semibold text-gray-500 mb-2">Filters</h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                {filters.map(f => (<button key={f.name} onClick={() => setFilter(f.value)} disabled={isLoading} className={`flex items-center justify-center text-xs font-medium py-1 rounded-lg border transition-colors disabled:opacity-50 ${filter === f.value ? 'bg-zinc-700 border-zinc-600 text-white' : 'bg-zinc-800/50 border-zinc-700 text-gray-300 hover:border-zinc-600'}`}> {f.name} </button>))}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <h3 className="text-sm font-semibold text-gray-400 mb-2 uppercase tracking-wider">AI Magic Tools</h3>
