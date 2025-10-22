@@ -204,20 +204,24 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
     onSaveChanges(finalImage, lastPrompt);
   };
 
-  // --- Mouse Handlers for Tools ---
-  const getCoords = (e: React.MouseEvent): { x: number; y: number } | null => {
+  // --- Mouse & Touch Handlers for Tools ---
+  const getCoords = (e: React.MouseEvent | React.TouchEvent): { x: number; y: number } | null => {
     if (!maskCanvasRef.current) return null;
     const canvas = maskCanvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
+    
+    const eventCoord = 'touches' in e ? e.touches[0] : e;
+    if (!eventCoord) return null;
+
     return {
-      x: (e.clientX - rect.left) * scaleX,
-      y: (e.clientY - rect.top) * scaleY,
+      x: (eventCoord.clientX - rect.left) * scaleX,
+      y: (eventCoord.clientY - rect.top) * scaleY,
     };
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     const coords = getCoords(e);
     if (!coords) return;
 
@@ -228,15 +232,12 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
     }
   };
 
-  const handleMouseUp = () => {
-    isDraggingCrop.current = false;
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDraggingCrop.current) return;
     const coords = getCoords(e);
-    if (!coords) return;
+    if (!coords || !dragStartCoords.current) return;
 
-    if (activeTool === 'crop' && isDraggingCrop.current && dragStartCoords.current) {
+    if (activeTool === 'crop') {
       const startX = dragStartCoords.current.x;
       const startY = dragStartCoords.current.y;
       const width = coords.x - startX;
@@ -249,6 +250,10 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
         height: Math.abs(height)
       });
     }
+  };
+
+  const handleDragEnd = () => {
+    isDraggingCrop.current = false;
   };
 
   // --- Tool-Specific Actions ---
@@ -323,10 +328,14 @@ const ImageEditorModal: React.FC<ImageEditorModalProps> = ({ imageUrl, originalP
           <canvas
             ref={maskCanvasRef}
             className={`absolute max-w-full max-h-full object-contain rounded-lg z-20 ${getCanvasCursor()}`}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onMouseMove={handleMouseMove}
+            onMouseDown={handleDragStart}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
+            onMouseMove={handleDragMove}
+            onTouchStart={handleDragStart}
+            onTouchEnd={handleDragEnd}
+            onTouchCancel={handleDragEnd}
+            onTouchMove={handleDragMove}
           />
         </div>
 
